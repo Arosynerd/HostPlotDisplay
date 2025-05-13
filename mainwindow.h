@@ -17,6 +17,8 @@
 #include <QHeaderView>
 #include <QDir>
 #include <QDebug>
+//数据解析
+#include "new_data_parser.h"
 
 // 接收缓冲区大小，单位字节
 #define BufferSize      50
@@ -36,13 +38,13 @@
 // 帧数据中包含有效字节的最大长度
 #define ValidByteLength	40			// 对最大帧长度加以限定，防止接收到过长的帧数据
 
-#define NO_FILE_SELECTED 0
-#define FILE1_SELECTED 1
-#define FILE2_SELECTED 2
-#define FILE3_SELECTED 3
-#define FILE4_SELECTED 4
-#define FILE5_SELECTED 5
-#define FILE6_SELECTED 6
+#define NO_FILE_SELECTED 9527
+#define FILE1_SELECTED 0
+#define FILE2_SELECTED 1
+#define FILE3_SELECTED 2
+#define FILE4_SELECTED 3
+#define FILE5_SELECTED 4
+#define FILE6_SELECTED 5
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -100,6 +102,8 @@ private:
     Plot *plot = NULL;// 必须初始化为空，否则后面NEW判断的时候会异常结束
 
     QSerialPort *mySerialPort;
+
+    DataParser *dataParser = NULL;// 数据解析类
 
     // 发送、接收字节计数
     long sendNum=0, recvNum=0, tSend=0, tRecv=0;// 发送/接收数量，历史发送/接收数量，Byte

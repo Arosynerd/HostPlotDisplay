@@ -21,6 +21,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     mycombobox.cpp \
+    new_data_parser.cpp \
     plot.cpp \
     qcustomplot.cpp
 

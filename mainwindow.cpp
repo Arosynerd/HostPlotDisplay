@@ -3,38 +3,37 @@
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+    : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     setWindowTitle("Qt Serial Debugger");
 
-    //code 0 start
+    // code 0 start
 
-                // 查找当前目录下的txt文件并导入表格
-          QStandardItemModel *model = new QStandardItemModel(this);
-          model->setColumnCount(2);
-          model->setHeaderData(0, Qt::Horizontal, "序号");
-          model->setHeaderData(1, Qt::Horizontal, "名称");
+    // 查找当前目录下的txt文件并导入表格
+    QStandardItemModel *model = new QStandardItemModel(this);
+    model->setColumnCount(2);
+    model->setHeaderData(0, Qt::Horizontal, "序号");
+    model->setHeaderData(1, Qt::Horizontal, "名称");
 
-          QDir directory(QCoreApplication::applicationDirPath());
-          QStringList txtFiles = directory.entryList(QStringList() << "*.txt", QDir::Files);
-          for (int i = 0; i < txtFiles.size(); ++i) {
-              QList<QStandardItem *> row;
-              row.append(new QStandardItem(QString::number(i + 1)));
-              row.append(new QStandardItem(txtFiles.at(i)));
-              model->appendRow(row);
-          }
+    QDir directory(QCoreApplication::applicationDirPath());
+    QStringList txtFiles = directory.entryList(QStringList() << "*.txt", QDir::Files);
+    for (int i = 0; i < txtFiles.size(); ++i)
+    {
+        QList<QStandardItem *> row;
+        row.append(new QStandardItem(QString::number(i + 1)));
+        row.append(new QStandardItem(txtFiles.at(i)));
+        model->appendRow(row);
+    }
 
-          ui->tableView->setModel(model);
-          ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-          qDebug() << "当前目录下的txt文件导入表格完成";
-         // 连接表格点击信号
-        // connect(ui->tableView, &QTableView::clicked, this, &MainWindow::on_tableView_clicked);
+    ui->tableView->setModel(model);
+    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    qDebug() << "当前目录下的txt文件导入表格完成";
+    // 连接表格点击信号
+    connect(ui->tableView, &QTableView::clicked, this, &MainWindow::on_tableView_clicked);
 
-
-    //code 0 end
-    // 状态栏
+    // code 0 end
+    //  状态栏
     QStatusBar *sBar = statusBar();
     // 状态栏的收、发计数标签
     lblSendNum = new QLabel(this);
@@ -46,14 +45,14 @@ MainWindow::MainWindow(QWidget *parent)
     lblRecvNum->setMinimumSize(100, 20);
     lblSendRate->setMinimumSize(100, 20);
     lblRecvRate->setMinimumSize(100, 20);
-    //statusBar()->showMessage("留言", 5000);// 留言显示，过期时间单位为ms，过期后不再有显示
-    //statusBar()->setSizeGripEnabled(false); // 是否显示右下角拖放控制点，默认显示
-    //statusBar()->setStyleSheet(QString("QStatusBar::item{border: 0px}")); // 设置不显示label的边框
-    //lblSendNum->setAlignment(Qt::AlignHCenter);// 设置label属性
-    //sBar->addPermanentWidget();//addSeparator();// 添加分割线，不能用
-    // 状态栏显示计数值
-    //lblSendNum->setText("S: 0");
-    //lblRecvNum->setText("R: 0");
+    // statusBar()->showMessage("留言", 5000);// 留言显示，过期时间单位为ms，过期后不再有显示
+    // statusBar()->setSizeGripEnabled(false); // 是否显示右下角拖放控制点，默认显示
+    // statusBar()->setStyleSheet(QString("QStatusBar::item{border: 0px}")); // 设置不显示label的边框
+    // lblSendNum->setAlignment(Qt::AlignHCenter);// 设置label属性
+    // sBar->addPermanentWidget();//addSeparator();// 添加分割线，不能用
+    //  状态栏显示计数值
+    // lblSendNum->setText("S: 0");
+    // lblRecvNum->setText("R: 0");
     setNumOnLabel(lblSendNum, "S: ", sendNum);
     setNumOnLabel(lblRecvNum, "R: ", recvNum);
     setNumOnLabel(lblSendRate, "Byte/s: ", 0);
@@ -67,12 +66,12 @@ MainWindow::MainWindow(QWidget *parent)
     // 状态栏添加超链接
     QLabel *lblLinkBlog = new QLabel(this);
     lblLinkBlog->setOpenExternalLinks(true);
-    //lblLinkBlog->setText("<a href=\"https://blog.csdn.net/Mark_md/article/details/108928314\">test");// 有下划线
-    lblLinkBlog->setText("<style> a {text-decoration: none} </style> <a href=\"https://blog.csdn.net\">test");// 无下划线
+    // lblLinkBlog->setText("<a href=\"https://blog.csdn.net/Mark_md/article/details/108928314\">test");// 有下划线
+    lblLinkBlog->setText("<style> a {text-decoration: none} </style> <a href=\"https://blog.csdn.net\">test"); // 无下划线
     QLabel *lblLinkSource = new QLabel(this);
     lblLinkSource->setOpenExternalLinks(true);
-    //lblLinkSource->setText("<a href=\"https://github.com/ZhiliangMa/Qt-SerialDebuger\">test");
-    lblLinkSource->setText("<style> a {text-decoration: none} </style> <a href=\"https://github.com/\">test");// 无下划线
+    // lblLinkSource->setText("<a href=\"https://github.com/ZhiliangMa/Qt-SerialDebuger\">test");
+    lblLinkSource->setText("<style> a {text-decoration: none} </style> <a href=\"https://github.com/\">test"); // 无下划线
     lblLinkBlog->setMinimumSize(40, 20);
     lblLinkSource->setMinimumSize(60, 20);
     // 从左往右依次添加
@@ -91,24 +90,21 @@ MainWindow::MainWindow(QWidget *parent)
 
     // 定时发送-定时器
     timSend = new QTimer;
-    timSend->setInterval(1000);// 设置默认定时时长1000ms
-    connect(timSend, &QTimer::timeout, this, [=](){
-        on_btnSend_clicked();
-    });
+    timSend->setInterval(1000); // 设置默认定时时长1000ms
+    connect(timSend, &QTimer::timeout, this, [=]()
+            { on_btnSend_clicked(); });
 
     // 发送速率、接收速率统计-定时器
     timRate = new QTimer;
     timRate->start(1000);
-    connect(timRate, &QTimer::timeout, this, [=](){
-        dataRateCalculate();
-    });
+    connect(timRate, &QTimer::timeout, this, [=]()
+            { dataRateCalculate(); });
 
     timTest = new QTimer;
-    timTest->setInterval(1000);// 设置默认定时时长1000ms
-    //timTest->start(1000);
-    connect(timTest, &QTimer::timeout, this, [=](){
-        dataShow();
-    });
+    timTest->setInterval(1000); // 设置默认定时时长1000ms
+    // timTest->start(1000);
+    connect(timTest, &QTimer::timeout, this, [=]()
+            { dataShow(); });
 
     // 新建一串口对象
     mySerialPort = new QSerialPort(this);
@@ -122,11 +118,15 @@ MainWindow::MainWindow(QWidget *parent)
 
     // 新建波形显示界面
     plot = new Plot;
+
+    // 生成对象
+    dataParser = new DataParser();
 }
 
 MainWindow::~MainWindow()
 {
-     if (plot) {
+    if (plot)
+    {
         delete plot;
         plot = nullptr;
     }
@@ -141,7 +141,7 @@ void MainWindow::paintEvent(QPaintEvent *)
     QPainter painter(this);
 
     // 设置画笔颜色
-    QPen pen(QColor(0,0,0));
+    QPen pen(QColor(0, 0, 0));
     // 设置画笔线宽（只对点线圆起作用，对文字不起作用）
     pen.setWidth(1);
     // 设置画笔线条风格，默认是SolidLine实线
@@ -150,10 +150,9 @@ void MainWindow::paintEvent(QPaintEvent *)
     // 让画家使用这个画笔
     painter.setPen(pen);
 
-    //painter.drawLine(QPoint(ui->txtRec->x() + ui->txtRec->width(), ui->txtRec->y()), QPoint(this->width(), ui->txtRec->y()));
-    //painter.drawLine(QPoint(ui->txtSend->x() + ui->txtSend->width(), ui->txtSend->y()), QPoint(this->width(), ui->txtSend->y()));
-    painter.drawLine(QPoint(ui->statusbar->x(), ui->statusbar->y()-2), QPoint(this->width(), ui->statusbar->y()-2));
-
+    // painter.drawLine(QPoint(ui->txtRec->x() + ui->txtRec->width(), ui->txtRec->y()), QPoint(this->width(), ui->txtRec->y()));
+    // painter.drawLine(QPoint(ui->txtSend->x() + ui->txtSend->width(), ui->txtSend->y()), QPoint(this->width(), ui->txtSend->y()));
+    painter.drawLine(QPoint(ui->statusbar->x(), ui->statusbar->y() - 2), QPoint(this->width(), ui->statusbar->y() - 2));
 }
 
 // 串口接收显示，槽函数
@@ -162,89 +161,92 @@ void MainWindow::serialPortRead_SlotForPlot(QByteArray recBuf)
     /*QString recBuf;
     recBuf = QString(mySerialPort->readAll());*/
 
-    //QByteArray recBuf;
-    // recBuf = mySerialPort->readAll();
-    // //test
-    // recBuf = QByteArray::fromHex(ui->txtRec->toPlainText().remove(" ").toUtf8());
-    // qDebug() << "Received Data:" << recBuf;
-    //test
+    // QByteArray recBuf;
+    //  recBuf = mySerialPort->readAll();
+    //  //test
+    //  recBuf = QByteArray::fromHex(ui->txtRec->toPlainText().remove(" ").toUtf8());
+    //  qDebug() << "Received Data:" << recBuf;
+    // test
     /* 帧过滤部分代码 */
     short wmValue[20] = {0};
     xFrameDataFilter(&recBuf, wmValue);
 
     // 调试信息输出，显示缓冲区内容（16进制显示）及接收标志位
-    if(!ui->widget_5->isHidden()){
-        QByteArray str1;
-        //for(int i=0; i<(tnum + 1); i++)
-        for(int i=0; i<BufferSize; i++)
-        {
-            str1.append(chrtmp[i]);
-        }
-        //ui->txtFrameTemp->setPlainText(str1.toHex().toUpper());
-        str1 = str1.toHex().toUpper();
-        QString str2;
-        for(int i = 0; i<str1.length (); i+=2)
-        {
-            str2 += str1.mid (i,2);
-            str2 += " ";
-        }
-        ui->txtFrameBuffer->setPlainText(str2);
-        // 显示标志位
-        ui->txtFrameTnum->setText(QString::number(tnum));
-        ui->txtFrameH1->setText(QString::number(f_h1_flag));
-        ui->txtFrameH->setText(QString::number(f_h_flag));
-        ui->txtFrameFun->setText(QString::number(f_fun_word));
-        ui->txtFrameLen->setText(QString::number(f_length));
-        ui->txtFrameErrorNum->setText(QString::number(recvErrorNum));
+    // if(!ui->widget_5->isHidden()){
+    //     QByteArray str1;
+    //     //for(int i=0; i<(tnum + 1); i++)
+    //     for(int i=0; i<BufferSize; i++)
+    //     {
+    //         str1.append(chrtmp[i]);
+    //     }
+    //     //ui->txtFrameTemp->setPlainText(str1.toHex().toUpper());
+    //     str1 = str1.toHex().toUpper();
+    //     QString str2;
+    //     for(int i = 0; i<str1.length (); i+=2)
+    //     {
+    //         str2 += str1.mid (i,2);
+    //         str2 += " ";
+    //     }
+    //     ui->txtFrameBuffer->setPlainText(str2);
+    //     // 显示标志位
+    //     ui->txtFrameTnum->setText(QString::number(tnum));
+    //     ui->txtFrameH1->setText(QString::number(f_h1_flag));
+    //     ui->txtFrameH->setText(QString::number(f_h_flag));
+    //     ui->txtFrameFun->setText(QString::number(f_fun_word));
+    //     ui->txtFrameLen->setText(QString::number(f_length));
+    //     ui->txtFrameErrorNum->setText(QString::number(recvErrorNum));
+}
+
+// 接收字节计数
+recvNum += recBuf.size();
+// 状态栏显示计数值
+setNumOnLabel(lblRecvNum, "R: ", recvNum);
+
+// 判断是否为16进制接收，将以后接收的数据全部转换为16进制显示（先前接收的部分在多选框槽函数中进行转换。最好多选框和接收区组成一个自定义控件，方便以后调用）
+if (ui->chkRec->checkState() == false)
+{
+    // GB2312编码输入
+    QString strb = QString::fromLocal8Bit(recBuf); // QString::fromUtf8(recBuf);//QString::fromLatin1(recBuf);
+    // 在当前位置插入文本，不会发生换行。如果没有移动光标到文件结尾，会导致文件超出当前界面显示范围，界面也不会向下滚动。
+    ui->txtRec->insertPlainText(strb);
+}
+else
+{
+    // 16进制显示，并转换为大写
+    QString str1 = recBuf.toHex().toUpper(); //.data();
+    // 添加空格
+    QString str2;
+    for (int i = 0; i < str1.length(); i += 2)
+    {
+        str2 += str1.mid(i, 2);
+        str2 += " ";
     }
+    ui->txtRec->insertPlainText(str2);
+    // ui->txtRec->insertPlainText(recBuf.toHex());
+}
 
-    // 接收字节计数
-    recvNum += recBuf.size();
-    // 状态栏显示计数值
-    setNumOnLabel(lblRecvNum, "R: ", recvNum);
+// 移动光标到文本结尾
+ui->txtRec->moveCursor(QTextCursor::End);
 
-    // 判断是否为16进制接收，将以后接收的数据全部转换为16进制显示（先前接收的部分在多选框槽函数中进行转换。最好多选框和接收区组成一个自定义控件，方便以后调用）
-    if(ui->chkRec->checkState() == false){
-        // GB2312编码输入
-        QString strb = QString::fromLocal8Bit(recBuf);//QString::fromUtf8(recBuf);//QString::fromLatin1(recBuf);
-        // 在当前位置插入文本，不会发生换行。如果没有移动光标到文件结尾，会导致文件超出当前界面显示范围，界面也不会向下滚动。
-        ui->txtRec->insertPlainText(strb);
-    }else{
-        // 16进制显示，并转换为大写
-        QString str1 = recBuf.toHex().toUpper();//.data();
-        // 添加空格
-        QString str2;
-        for(int i = 0; i<str1.length (); i+=2)
-        {
-            str2 += str1.mid (i,2);
-            str2 += " ";
-        }
-        ui->txtRec->insertPlainText(str2);
-        //ui->txtRec->insertPlainText(recBuf.toHex());
-    }
+// 将文本追加到末尾显示，会导致插入的文本换行
+/*ui->txtRec->appendPlainText(recBuf);*/
 
-    // 移动光标到文本结尾
-    ui->txtRec->moveCursor(QTextCursor::End);
+/*// 在当前位置插入文本，不会发生换行。如果没有移动光标到文件结尾，会导致文件超出当前界面显示范围，界面也不会向下滚动。
+ui->txtRec->insertPlainText(recBuf);
+ui->txtRec->moveCursor(QTextCursor::End);*/
 
-    // 将文本追加到末尾显示，会导致插入的文本换行
-    /*ui->txtRec->appendPlainText(recBuf);*/
+// 利用一个QString去获取消息框文本，再将新接收到的消息添加到QString尾部，但感觉效率会比当前位置插入低。也不会发生换行
+/*QString txtBuf;
+txtBuf = ui->txtRec->toPlainText();
+txtBuf += recBuf;
+ui->txtRec->setPlainText(txtBuf);
+ui->txtRec->moveCursor(QTextCursor::End);*/
 
-    /*// 在当前位置插入文本，不会发生换行。如果没有移动光标到文件结尾，会导致文件超出当前界面显示范围，界面也不会向下滚动。
-    ui->txtRec->insertPlainText(recBuf);
-    ui->txtRec->moveCursor(QTextCursor::End);*/
-
-    // 利用一个QString去获取消息框文本，再将新接收到的消息添加到QString尾部，但感觉效率会比当前位置插入低。也不会发生换行
-    /*QString txtBuf;
-    txtBuf = ui->txtRec->toPlainText();
-    txtBuf += recBuf;
-    ui->txtRec->setPlainText(txtBuf);
-    ui->txtRec->moveCursor(QTextCursor::End);*/
-
-    // 利用一个QString去缓存接收到的所有消息，效率会比上面高一点。但清空接收的时候，要将QString一并清空。
-    /*static QString txtBuf;
-    txtBuf += recBuf;
-    ui->txtRec->setPlainText(txtBuf);
-    ui->txtRec->moveCursor(QTextCursor::End);*/
+// 利用一个QString去缓存接收到的所有消息，效率会比上面高一点。但清空接收的时候，要将QString一并清空。
+/*static QString txtBuf;
+txtBuf += recBuf;
+ui->txtRec->setPlainText(txtBuf);
+ui->txtRec->moveCursor(QTextCursor::End);*/
 }
 
 void MainWindow::serialPortRead_Slot()
@@ -259,23 +261,24 @@ void MainWindow::serialPortRead_Slot()
 
     /* 帧过滤部分代码 */
     short wmValue[20] = {0};
-    //xFrameDataFilter(&recBuf, wmValue);
-     qDebug() << "test3";
+    // xFrameDataFilter(&recBuf, wmValue);
+    qDebug() << "test3";
 
     // 调试信息输出，显示缓冲区内容（16进制显示）及接收标志位
-    if(!ui->widget_5->isHidden()){
+    if (!ui->widget_5->isHidden())
+    {
         QByteArray str1;
-        //for(int i=0; i<(tnum + 1); i++)
-        for(int i=0; i<BufferSize; i++)
+        // for(int i=0; i<(tnum + 1); i++)
+        for (int i = 0; i < BufferSize; i++)
         {
             str1.append(chrtmp[i]);
         }
-        //ui->txtFrameTemp->setPlainText(str1.toHex().toUpper());
+        // ui->txtFrameTemp->setPlainText(str1.toHex().toUpper());
         str1 = str1.toHex().toUpper();
         QString str2;
-        for(int i = 0; i<str1.length (); i+=2)
+        for (int i = 0; i < str1.length(); i += 2)
         {
-            str2 += str1.mid (i,2);
+            str2 += str1.mid(i, 2);
             str2 += " ";
         }
         ui->txtFrameBuffer->setPlainText(str2);
@@ -294,23 +297,26 @@ void MainWindow::serialPortRead_Slot()
     setNumOnLabel(lblRecvNum, "R: ", recvNum);
 
     // 判断是否为16进制接收，将以后接收的数据全部转换为16进制显示（先前接收的部分在多选框槽函数中进行转换。最好多选框和接收区组成一个自定义控件，方便以后调用）
-    if(ui->chkRec->checkState() == false){
+    if (ui->chkRec->checkState() == false)
+    {
         // GB2312编码输入
-        QString strb = QString::fromLocal8Bit(recBuf);//QString::fromUtf8(recBuf);//QString::fromLatin1(recBuf);
+        QString strb = QString::fromLocal8Bit(recBuf); // QString::fromUtf8(recBuf);//QString::fromLatin1(recBuf);
         // 在当前位置插入文本，不会发生换行。如果没有移动光标到文件结尾，会导致文件超出当前界面显示范围，界面也不会向下滚动。
         ui->txtRec->insertPlainText(strb);
-    }else{
+    }
+    else
+    {
         // 16进制显示，并转换为大写
-        QString str1 = recBuf.toHex().toUpper();//.data();
+        QString str1 = recBuf.toHex().toUpper(); //.data();
         // 添加空格
         QString str2;
-        for(int i = 0; i<str1.length (); i+=2)
+        for (int i = 0; i < str1.length(); i += 2)
         {
-            str2 += str1.mid (i,2);
+            str2 += str1.mid(i, 2);
             str2 += " ";
         }
         ui->txtRec->insertPlainText(str2);
-        //ui->txtRec->insertPlainText(recBuf.toHex());
+        // ui->txtRec->insertPlainText(recBuf.toHex());
     }
 
     // 移动光标到文本结尾
@@ -337,21 +343,6 @@ void MainWindow::serialPortRead_Slot()
     ui->txtRec->moveCursor(QTextCursor::End);*/
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // 打开/关闭串口 槽函数
 void MainWindow::on_btnSwitch_clicked()
 {
@@ -359,31 +350,45 @@ void MainWindow::on_btnSwitch_clicked()
     QSerialPort::BaudRate baudRate;
     QSerialPort::DataBits dataBits;
     QSerialPort::StopBits stopBits;
-    QSerialPort::Parity   checkBits;
+    QSerialPort::Parity checkBits;
 
     // 获取串口波特率
     baudRate = (QSerialPort::BaudRate)ui->cmbBaudRate->currentText().toUInt();
     // 获取串口数据位
     dataBits = (QSerialPort::DataBits)ui->cmbData->currentText().toUInt();
     // 获取串口停止位
-    if(ui->cmbStop->currentText() == "1"){
+    if (ui->cmbStop->currentText() == "1")
+    {
         stopBits = QSerialPort::OneStop;
-    }else if(ui->cmbStop->currentText() == "1.5"){
+    }
+    else if (ui->cmbStop->currentText() == "1.5")
+    {
         stopBits = QSerialPort::OneAndHalfStop;
-    }else if(ui->cmbStop->currentText() == "2"){
+    }
+    else if (ui->cmbStop->currentText() == "2")
+    {
         stopBits = QSerialPort::TwoStop;
-    }else{
+    }
+    else
+    {
         stopBits = QSerialPort::OneStop;
     }
 
     // 获取串口奇偶校验位
-    if(ui->cmbCheck->currentText() == "无"){
+    if (ui->cmbCheck->currentText() == "无")
+    {
         checkBits = QSerialPort::NoParity;
-    }else if(ui->cmbCheck->currentText() == "奇校验"){
+    }
+    else if (ui->cmbCheck->currentText() == "奇校验")
+    {
         checkBits = QSerialPort::OddParity;
-    }else if(ui->cmbCheck->currentText() == "偶校验"){
+    }
+    else if (ui->cmbCheck->currentText() == "偶校验")
+    {
         checkBits = QSerialPort::EvenParity;
-    }else{
+    }
+    else
+    {
         checkBits = QSerialPort::NoParity;
     }
 
@@ -393,18 +398,20 @@ void MainWindow::on_btnSwitch_clicked()
     mySerialPort->setDataBits(dataBits);
     mySerialPort->setStopBits(stopBits);
     mySerialPort->setParity(checkBits);
-    //mySerialPort->setPortName(ui->cmbSerialPort->currentText());// 不匹配带有串口设备信息的文本
-    // 匹配带有串口设备信息的文本
+    // mySerialPort->setPortName(ui->cmbSerialPort->currentText());// 不匹配带有串口设备信息的文本
+    //  匹配带有串口设备信息的文本
     QString spTxt = ui->cmbSerialPort->currentText();
-    spTxt = spTxt.section(':', 0, 0);//spTxt.mid(0, spTxt.indexOf(":"));
-    //qDebug() << spTxt;
+    spTxt = spTxt.section(':', 0, 0); // spTxt.mid(0, spTxt.indexOf(":"));
+    // qDebug() << spTxt;
     mySerialPort->setPortName(spTxt);
 
     // 根据初始化好的串口属性，打开串口
     // 如果打开成功，反转打开按钮显示和功能。打开失败，无变化，并且弹出错误对话框。
-    if(ui->btnSwitch->text() == "打开串口"){
-        if(mySerialPort->open(QIODevice::ReadWrite) == true){
-            //QMessageBox::
+    if (ui->btnSwitch->text() == "打开串口")
+    {
+        if (mySerialPort->open(QIODevice::ReadWrite) == true)
+        {
+            // QMessageBox::
             ui->btnSwitch->setText("关闭串口");
             // 让端口号下拉框不可选，避免误操作（选择功能不可用，控件背景为灰色）
             ui->cmbSerialPort->setEnabled(false);
@@ -412,10 +419,14 @@ void MainWindow::on_btnSwitch_clicked()
             ui->cmbStop->setEnabled(false);
             ui->cmbData->setEnabled(false);
             ui->cmbCheck->setEnabled(false);
-        }else{
+        }
+        else
+        {
             QMessageBox::critical(this, "错误提示", "串口打开失败！！！\r\n\r\n该串口可能被占用，请选择正确的串口\r\n或者波特率过高，超出硬件支持范围");
         }
-    }else{
+    }
+    else
+    {
         mySerialPort->close();
         ui->btnSwitch->setText("打开串口");
         // 端口号下拉框恢复可选，避免误操作
@@ -425,7 +436,6 @@ void MainWindow::on_btnSwitch_clicked()
         ui->cmbData->setEnabled(true);
         ui->cmbCheck->setEnabled(true);
     }
-
 }
 
 // 发送按键槽函数
@@ -434,21 +444,24 @@ void MainWindow::on_btnSend_clicked()
 {
     QByteArray sendData;
     // 判断是否为16进制发送，将发送区全部的asc2转换为16进制字符串显示，发送的时候转换为16进制发送
-    if(ui->chkSend->checkState() == false){
+    if (ui->chkSend->checkState() == false)
+    {
         // 字符串形式发送，GB2312编码用以兼容大多数单片机
-        sendData = ui->txtSend->toPlainText().toLocal8Bit();// GB2312编码输出
-        //sendData = ui->txtSend->toPlainText().toUtf8();// Unicode编码输出
-        //sendData = ui->txtSend->toPlainText().toLatin1();
-    }else{
+        sendData = ui->txtSend->toPlainText().toLocal8Bit(); // GB2312编码输出
+        // sendData = ui->txtSend->toPlainText().toUtf8();// Unicode编码输出
+        // sendData = ui->txtSend->toPlainText().toLatin1();
+    }
+    else
+    {
         // 16进制发送，不要用.data()，.data()返回的是字符数组，0x00在ASC2中的意义为NUL，也就是'\0'结束符，所以遇到0x00就会终止
-        //sendData = QByteArray::fromHex(ui->txtSend->toPlainText().toUtf8());// Unicode编码输出
-        sendData = QByteArray::fromHex(ui->txtSend->toPlainText().toLocal8Bit());// GB2312编码输出
+        // sendData = QByteArray::fromHex(ui->txtSend->toPlainText().toUtf8());// Unicode编码输出
+        sendData = QByteArray::fromHex(ui->txtSend->toPlainText().toLocal8Bit()); // GB2312编码输出
     }
 
     // 如发送成功，会返回发送的字节长度。失败，返回-1。
     int a = mySerialPort->write(sendData);
     // 发送字节计数并显示
-    if(a > 0)
+    if (a > 0)
     {
         // 发送字节计数
         sendNum += a;
@@ -481,7 +494,7 @@ void MainWindow::on_btnClearRec_clicked()
     setNumOnLabel(lblSendNum, "S: ", sendNum);
     setNumOnLabel(lblRecvNum, "R: ", recvNum);
     // 清空帧数量
-    recvFrameNum=0, recvFrameRate=0, recvErrorNum=0, tFrame=0;
+    recvFrameNum = 0, recvFrameRate = 0, recvErrorNum = 0, tFrame = 0;
     setNumOnLabel(lblRecvFrameNum, "FNum: ", recvFrameNum);
     ui->txtFrameErrorNum->setText(QString::number(recvErrorNum));
 }
@@ -504,27 +517,29 @@ void MainWindow::on_chkRec_stateChanged(int arg1)
 
     // 获取多选框状态，未选为0，选中为2
     // 为0时，多选框未被勾选，接收区先前接收的16进制数据转换为asc2字符串格式
-    if(arg1 == 0){
+    if (arg1 == 0)
+    {
 
-        //QString str1 = QByteArray::fromHex(txtBuf.toUtf8());
-        //QString str1 = QByteArray::fromHex(txtBuf.toLocal8Bit());
-        //把gb2312编码转换成unicode
+        // QString str1 = QByteArray::fromHex(txtBuf.toUtf8());
+        // QString str1 = QByteArray::fromHex(txtBuf.toLocal8Bit());
+        // 把gb2312编码转换成unicode
         QString str1 = QTextCodec::codecForName("GB2312")->toUnicode(QByteArray::fromHex(txtBuf.toLocal8Bit()));
         // 文本控件清屏，显示新文本
         ui->txtRec->clear();
         ui->txtRec->insertPlainText(str1);
         // 移动光标到文本结尾
         ui->txtRec->moveCursor(QTextCursor::End);
+    }
+    else
+    { // 不为0时，多选框被勾选，接收区先前接收asc2字符串转换为16进制显示
 
-    }else{// 不为0时，多选框被勾选，接收区先前接收asc2字符串转换为16进制显示
-
-        //QString str1 = txtBuf.toUtf8().toHex().toUpper();// Unicode编码输出
-        QString str1 = txtBuf.toLocal8Bit().toHex().toUpper();// GB2312编码输出
+        // QString str1 = txtBuf.toUtf8().toHex().toUpper();// Unicode编码输出
+        QString str1 = txtBuf.toLocal8Bit().toHex().toUpper(); // GB2312编码输出
         // 添加空格
         QByteArray str2;
-        for(int i = 0; i<str1.length (); i+=2)
+        for (int i = 0; i < str1.length(); i += 2)
         {
-            str2 += str1.mid (i,2);
+            str2 += str1.mid(i, 2);
             str2 += " ";
         }
         // 文本控件清屏，显示新文本
@@ -532,7 +547,6 @@ void MainWindow::on_chkRec_stateChanged(int arg1)
         ui->txtRec->insertPlainText(str2);
         // 移动光标到文本结尾
         ui->txtRec->moveCursor(QTextCursor::End);
-
     }
 }
 
@@ -544,27 +558,29 @@ void MainWindow::on_chkSend_stateChanged(int arg1)
 
     // 获取多选框状态，未选为0，选中为2
     // 为0时，多选框未被勾选，将先前的发送区的16进制字符串转换为asc2字符串
-    if(arg1 == 0){
+    if (arg1 == 0)
+    {
 
-        //QByteArray str1 = QByteArray::fromHex(txtBuf.toUtf8());//仅能处理Unicode编码，因为QString就是Unicode
-        //QString str1 = QString::fromLocal8Bit(txtBuf.toUtf8());//仅能处理GB2312编码，Unicode的数据无论如何都会乱码
-        //把gb2312编码转换成unicode
+        // QByteArray str1 = QByteArray::fromHex(txtBuf.toUtf8());//仅能处理Unicode编码，因为QString就是Unicode
+        // QString str1 = QString::fromLocal8Bit(txtBuf.toUtf8());//仅能处理GB2312编码，Unicode的数据无论如何都会乱码
+        // 把gb2312编码转换成unicode
         QString str1 = QTextCodec::codecForName("GB2312")->toUnicode(QByteArray::fromHex(txtBuf.toLocal8Bit()));
         // 文本控件清屏，显示新文本
         ui->txtSend->clear();
         ui->txtSend->insertPlainText(str1);
         // 移动光标到文本结尾
         ui->txtSend->moveCursor(QTextCursor::End);
+    }
+    else
+    { // 多选框被勾选，将先前的发送区的asc2字符串转换为16进制字符串
 
-    }else{// 多选框被勾选，将先前的发送区的asc2字符串转换为16进制字符串
-
-        //QByteArray str1 = txtBuf.toUtf8().toHex().toUpper();// Unicode编码输出
-        QString str1 = txtBuf.toLocal8Bit().toHex().toUpper();// GB2312编码输出
+        // QByteArray str1 = txtBuf.toUtf8().toHex().toUpper();// Unicode编码输出
+        QString str1 = txtBuf.toLocal8Bit().toHex().toUpper(); // GB2312编码输出
         // 添加空格
         QString str2;
-        for(int i = 0; i<str1.length (); i+=2)
+        for (int i = 0; i < str1.length(); i += 2)
         {
-            str2 += str1.mid (i,2);
+            str2 += str1.mid(i, 2);
             str2 += " ";
         }
         // 文本控件清屏，显示新文本
@@ -572,7 +588,6 @@ void MainWindow::on_chkSend_stateChanged(int arg1)
         ui->txtSend->insertPlainText(str2);
         // 移动光标到文本结尾
         ui->txtSend->moveCursor(QTextCursor::End);
-
     }
 }
 
@@ -580,17 +595,23 @@ void MainWindow::on_chkSend_stateChanged(int arg1)
 void MainWindow::on_chkTimSend_stateChanged(int arg1)
 {
     // 获取复选框状态，未选为0，选中为2
-    if(arg1 == 0){
+    if (arg1 == 0)
+    {
         timSend->stop();
         // 时间输入框恢复可选
         ui->txtSendMs->setEnabled(true);
-    }else{
+    }
+    else
+    {
         // 对输入的值做限幅，小于20ms会弹出对话框提示
-        if(ui->txtSendMs->text().toInt() >= 20){
-            timSend->start(ui->txtSendMs->text().toInt());// 设置定时时长，重新计数
+        if (ui->txtSendMs->text().toInt() >= 20)
+        {
+            timSend->start(ui->txtSendMs->text().toInt()); // 设置定时时长，重新计数
             // 让时间输入框不可选，避免误操作（输入功能不可用，控件背景为灰色）
             ui->txtSendMs->setEnabled(false);
-        }else{
+        }
+        else
+        {
             ui->chkTimSend->setCheckState(Qt::Unchecked);
             QMessageBox::critical(this, "错误提示", "定时发送的最小间隔为 20ms\r\n请确保输入的值 >=20");
         }
@@ -612,7 +633,8 @@ void MainWindow::dataRateCalculate(void)
     tFrame = recvFrameNum;
 }
 
-void MainWindow::dataShow(void){
+void MainWindow::dataShow(void)
+{
     qDebug() << "dataShow";
 }
 // "显示波形界面" 按键槽函数
@@ -622,7 +644,8 @@ void MainWindow::on_pushButton_clicked()
     // 从串口接收数据
     receivedData = QByteArray::fromHex(ui->txtRec->toPlainText().toUtf8());
     // 删除现有的 plot 对象
-    if (plot) {
+    if (plot)
+    {
         delete plot;
         plot = nullptr;
     }
@@ -632,20 +655,35 @@ void MainWindow::on_pushButton_clicked()
 
     // 显示新的波形绘图窗口
     plot->show();
-    //修改plot的标题
+    // 修改plot的标题
 
     int rowIndex = file_selected;
     QString secondColumnData = ui->tableView->model()->index(rowIndex, 1).data().toString();
     qDebug() << "Second column content:" << secondColumnData;
-    plot->setWindowTitle("波形显示");
-    for (int i = 0; i < receivedData.size(); i += 9) {
+    // QString plotTitle = "波形显示";
+    plot->setWindowTitle(secondColumnData);
+    for (int i = 0; i < receivedData.size(); i += 9)
+    {
         sendDataFrame = receivedData.mid(i, 9);
         // int bytesWritten = mySerialPort->write(chunk); // 发送数据
         // if (bytesWritten > 0) {
         //     sendNum += bytesWritten; // 更新发送字节计数
         //     setNumOnLabel(lblSendNum, "S: ", sendNum); // 更新状态栏显示
         // }
-       
+        if (1)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                value[i] = ((short)chrtmp[i * 2 + 4] << 8) | chrtmp[i * 2 + 4 + 1];
+            }
+        }
+
+        // 显示波形（在这里显示可以处理多帧粘包，避免多帧粘包只显示一帧的情况）
+        // 将解析出的short数组，传入波形图，进行绘图
+        if (!plot->isHidden())
+        {
+            plot->ShowPlot_WaveForm(plot->pPlot1, value);
+        }
         serialPortRead_SlotForPlot(sendDataFrame);
     }
 }
@@ -666,72 +704,75 @@ void MainWindow::xFrameDataFilter(QByteArray *str, short value[])
 {
     int num = str->size();
     qDebug() << "The size of the QByteArray is:" << num;
-    if(num)
+    if (num)
     {
-        for(int i=0; i<num; i++)
+        for (int i = 0; i < num; i++)
         {
-            chrtmp[tnum] = str->at(i);  		// 从接收缓存区读取一个字节
-            if (f_h_flag == 1)  // 有帧头。判断功能字、有效字段长度，接收消息
+            chrtmp[tnum] = str->at(i); // 从接收缓存区读取一个字节
+            if (f_h_flag == 1)         // 有帧头。判断功能字、有效字段长度，接收消息
             {
                 if (f_fun_word) // 有帧头，有功能字
                 {
                     if (f_length) // 有帧头，有功能字，有有效字节长度
                     {
-                        if((tnum-4) <f_length) // 有帧头，有功能字，未超出有效字节长度+校验位，接收数据
+                        if ((tnum - 4) < f_length) // 有帧头，有功能字，未超出有效字节长度+校验位，接收数据
                         {
-                            tnum ++;
+                            tnum++;
                         }
                         else // 有帧头，有功能字，超出有效字节长度。判断校验位
                         {
                             // 累加和校验计算
-                            unsigned char crc=0;
-                            for(i=0; i<tnum;i++)
+                            unsigned char crc = 0;
+                            for (i = 0; i < tnum; i++)
                             {
                                 crc += chrtmp[i];
                             }
 
                             // 校验对比
-                            if(crc == chrtmp[tnum]) // 校验通过，将缓冲区的数据打包发送
+                            if (crc == chrtmp[tnum]) // 校验通过，将缓冲区的数据打包发送
                             {
-                                ++recvFrameNum;// 有效帧数量计数
+                                ++recvFrameNum; // 有效帧数量计数
                                 setNumOnLabel(lblRecvFrameNum, "FNum: ", recvFrameNum);
 
                                 // 调试信息输出，显示有效帧的内容（16进制显示）
-                                if(!ui->widget_5->isHidden()){
+                                if (!ui->widget_5->isHidden())
+                                {
                                     QByteArray str1;
-                                    for(int i=0; i<(tnum+1); i++)
+                                    for (int i = 0; i < (tnum + 1); i++)
                                     {
                                         str1.append(chrtmp[i]);
                                     }
-                                    //ui->txtFrameEffective->appendPlainText(str1.toHex().toUpper());
+                                    // ui->txtFrameEffective->appendPlainText(str1.toHex().toUpper());
                                     str1 = str1.toHex().toUpper();
                                     QString str2;
-                                    for(int i = 0; i<str1.length (); i+=2)
+                                    for (int i = 0; i < str1.length(); i += 2)
                                     {
-                                        str2 += str1.mid (i,2);
+                                        str2 += str1.mid(i, 2);
                                         str2 += " ";
                                     }
                                     ui->txtFrameEffective->appendPlainText(str2);
                                 }
 
                                 // 根据功能字进行功能解析，自动根据帧长度解析为对应的short值。
-                                if(f_fun_word == FunWord_WF)
+                                if (f_fun_word == FunWord_WF)
                                 {
-                                    for(int i=0; i<(f_length/2); i++)
+                                    for (int i = 0; i < (f_length / 2); i++)
                                     {
-                                        value[i] = ((short)chrtmp[i*2+4] << 8) | chrtmp[i*2+4+1];
+                                        value[i] = ((short)chrtmp[i * 2 + 4] << 8) | chrtmp[i * 2 + 4 + 1];
                                     }
                                 }
 
                                 // 显示波形（在这里显示可以处理多帧粘包，避免多帧粘包只显示一帧的情况）
                                 // 将解析出的short数组，传入波形图，进行绘图
-                                if(!plot->isHidden()){
+                                if (!plot->isHidden())
+                                {
                                     plot->ShowPlot_WaveForm(plot->pPlot1, value);
                                 }
-                                //qDebug() << "test4, i:" << i;
-
-                            }else{
-                                ++recvErrorNum;// 误码帧数量计数
+                                // qDebug() << "test4, i:" << i;
+                            }
+                            else
+                            {
+                                ++recvErrorNum; // 误码帧数量计数
                             }
 
                             // 清0重新接收
@@ -741,18 +782,16 @@ void MainWindow::xFrameDataFilter(QByteArray *str, short value[])
                             f_h_flag = 0;
                             f_fun_word = 0;
                             f_length = 0;
-
                         }
                         // 把上面下面的判断标志位 == 1去掉
 
-
-                    }           // 有帧头，有功能字，判断是否是有效字节长度
+                    } // 有帧头，有功能字，判断是否是有效字节长度
                     else
                     {
-                        if(chrtmp[tnum] <= ValidByteLength)
+                        if (chrtmp[tnum] <= ValidByteLength)
                         {
-                            f_length = chrtmp[tnum];// 记录当前帧的有效字节长度
-                            tnum ++;
+                            f_length = chrtmp[tnum]; // 记录当前帧的有效字节长度
+                            tnum++;
                         }
                         else
                         {
@@ -765,12 +804,12 @@ void MainWindow::xFrameDataFilter(QByteArray *str, short value[])
                         }
                     }
                 }
-                else						// 有帧头，无功能字，判断是否为有效功能字
+                else // 有帧头，无功能字，判断是否为有效功能字
                 {
                     if ((chrtmp[tnum] == FunWord_WF) || chrtmp[tnum] == FunWord_SM)
                     {
-                        f_fun_word = chrtmp[tnum];//记录功能字
-                        tnum ++;
+                        f_fun_word = chrtmp[tnum]; // 记录功能字
+                        tnum++;
                     }
                     else
                     {
@@ -782,72 +821,77 @@ void MainWindow::xFrameDataFilter(QByteArray *str, short value[])
                     }
                 }
             }
-            else						// 没有接收到帧头
+            else // 没有接收到帧头
             {
-                if (f_h1_flag == 1)			        //没有帧头，有帧头1。下一步判断是否为第2个字节
+                if (f_h1_flag == 1) // 没有帧头，有帧头1。下一步判断是否为第2个字节
                 {
-                    if (chrtmp[tnum] == Frame_Header2)          // 如果为帧头的第2个字节，接收到帧头标志位标志位置1，tnum自增
+                    if (chrtmp[tnum] == Frame_Header2) // 如果为帧头的第2个字节，接收到帧头标志位标志位置1，tnum自增
                     {
                         f_h_flag = 1;
-                        tnum ++;
+                        tnum++;
                     }
                     else
                     {
                         // 这里再添加一个判断，出现 3A 3A 3B xx的情况，如果没有这个判断会重新计数，导致丢帧
-                        if(chrtmp[tnum] == Frame_Header1){
+                        if (chrtmp[tnum] == Frame_Header1)
+                        {
                             f_h1_flag = 1;
                             tnum = 1;
-                        }else{
+                        }
+                        else
+                        {
                             // 重新计数，但如果出现 3A 3A 3B xx的情况，会导致丢帧，要加上上面的判断
                             f_h1_flag = 0;
                             tnum = 0;
                         }
                     }
                 }
-                else						//没有帧头，没有有帧头1。下一步判断，是否为帧头的第1个字节
+                else // 没有帧头，没有有帧头1。下一步判断，是否为帧头的第1个字节
                 {
-                    if (chrtmp[tnum] == Frame_Header1)  // 如果为帧头的第1个字节，标志位置1，tnum自增
+                    if (chrtmp[tnum] == Frame_Header1) // 如果为帧头的第1个字节，标志位置1，tnum自增
                     {
                         f_h1_flag = 1;
-                        tnum ++;
+                        tnum++;
                     }
-                    else                                // 否则，标志位清0，tnum清0
+                    else // 否则，标志位清0，tnum清0
                     {
                         tnum = 0;
                     }
                 }
             }
 
-
             // 2.判断多长的数据没有换行符，如果超过2000，会人为向数据接收区添加换行，来保证CPU占用率不会过高，不会导致卡顿
             //   但由于是先插入换行，后插入接收到的数据，所以每一箩数据并不是2000
-            static int xx=0;
-            if(chrtmp[tnum] != 0x0A){
+            static int xx = 0;
+            if (chrtmp[tnum] != 0x0A)
+            {
                 ++xx;
-                if(xx > 2000){
+                if (xx > 2000)
+                {
                     ui->txtRec->appendPlainText("");
                     ui->txtRec->appendPlainText("");
-                    xx=0;
+                    xx = 0;
                 }
-            }else{
-                xx=0;
+            }
+            else
+            {
+                xx = 0;
             }
 
-            
             // 3.超过数据帧最大长度的不要，最多同时显示20条曲线。
             //   大于MaxFrameLength个字节的帧不接收
-            if (tnum > (MaxFrameLength - 1) )
+            if (tnum > (MaxFrameLength - 1))
             {
                 tnum = 0;
                 f_h1_flag = 0;
                 f_h_flag = 0;
                 f_t1_flag = 0;
-                //f_fun_word = 0;
-                //f_length = 0;
+                // f_fun_word = 0;
+                // f_length = 0;
                 continue;
             }
         }
-            qDebug() << "testtest";
+        qDebug() << "testtest";
     }
 }
 
@@ -970,8 +1014,7 @@ void MainWindow::xFrameDataFilter(QByteArray *str)
     }
 }*/
 
-
-//丢弃功能
+// 丢弃功能
 void MainWindow::on_btnFramaDebug_clicked()
 {
     // if(ui->widget_5->isHidden()){
@@ -983,8 +1026,7 @@ void MainWindow::on_btnFramaDebug_clicked()
     // }
 }
 
-
-//发送0
+// 发送0
 void MainWindow::on_pushButton_2_released()
 {
     // QByteArray sendData = "0"; // 发送固定字符串 "0"
@@ -1003,7 +1045,7 @@ void MainWindow::on_pushButton_2_released()
     qDebug() << "Received data: " << receivedData;
 }
 
-//发送1
+// 发送1
 void MainWindow::on_pushButton_3_released()
 {
     // QByteArray sendData = "1"; // 发送固定字符串 "0"
@@ -1022,7 +1064,8 @@ void MainWindow::on_pushButton_3_released()
     qDebug() << "Received data: " << receivedData;
 
     // 每九个字节为一组发送
-    for (int i = 0; i < receivedData.size(); i += 9) {
+    for (int i = 0; i < receivedData.size(); i += 9)
+    {
         sendDataFrame = receivedData.mid(i, 9);
         // int bytesWritten = mySerialPort->write(chunk); // 发送数据
         // if (bytesWritten > 0) {
@@ -1034,10 +1077,9 @@ void MainWindow::on_pushButton_3_released()
     }
 }
 
-//发送2
+// 发送2
 
-
-//保存
+// 保存
 void MainWindow::on_pushButton_4_released()
 {
     // QByteArray sendData = "2"; // 发送固定字符串 "0"
@@ -1054,48 +1096,52 @@ void MainWindow::on_pushButton_4_released()
     // }
     QString fileName = QCoreApplication::applicationDirPath() + "/" + QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss") + ".txt";
     QFile file(fileName);
-    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
         QTextStream out(&file);
-        //out << ui->textEdit->toPlainText();
+        // out << ui->textEdit->toPlainText();
         out << ui->txtRec->toPlainText();
         file.close();
         this->setWindowTitle(fileName);
         QMessageBox::information(this, "提示", "文件已保存为: " + fileName);
-    } else {
+    }
+    else
+    {
         QMessageBox::warning(this, "警告", "无法保存文件");
     }
 
+    // refrese files
+    QStandardItemModel *model = new QStandardItemModel(this);
+    model->setColumnCount(2);
+    model->setHeaderData(0, Qt::Horizontal, "序号");
+    model->setHeaderData(1, Qt::Horizontal, "名称");
 
-    //refrese files
-     QStandardItemModel *model = new QStandardItemModel(this);
-          model->setColumnCount(2);
-          model->setHeaderData(0, Qt::Horizontal, "序号");
-          model->setHeaderData(1, Qt::Horizontal, "名称");
+    QDir directory(QCoreApplication::applicationDirPath());
+    QStringList txtFiles = directory.entryList(QStringList() << "*.txt", QDir::Files);
+    for (int i = 0; i < txtFiles.size(); ++i)
+    {
+        QList<QStandardItem *> row;
+        row.append(new QStandardItem(QString::number(i + 1)));
+        row.append(new QStandardItem(txtFiles.at(i)));
+        model->appendRow(row);
+    }
 
-          QDir directory(QCoreApplication::applicationDirPath());
-          QStringList txtFiles = directory.entryList(QStringList() << "*.txt", QDir::Files);
-          for (int i = 0; i < txtFiles.size(); ++i) {
-              QList<QStandardItem *> row;
-              row.append(new QStandardItem(QString::number(i + 1)));
-              row.append(new QStandardItem(txtFiles.at(i)));
-              model->appendRow(row);
-          }
-
-          ui->tableView->setModel(model);
-          ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-          qDebug() << "当前目录下的txt文件导入表格完成";
+    ui->tableView->setModel(model);
+    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    qDebug() << "当前目录下的txt文件导入表格完成";
 }
 void MainWindow::on_tableView_clicked(const QModelIndex &index)
 {
-    //bug:会连续触发
-    if (index.isValid()) {
+    dataParser->test();
+    // bug:会连续触发
+    if (index.isValid())
+    {
         // 获取点击行的序号（第一列的值）
         QString number = index.sibling(index.row(), 0).data().toString();
         qDebug() << "点击了第" << number << "行";
 
-        //记录选中的文件序号
-        file_selected = number.toInt();
-        
+        // 记录选中的文件序号
+        file_selected = number.toInt() - 1;
 
         // 获取点击行的名称（第二列的值）
         QString fileName = index.sibling(index.row(), 1).data().toString();
@@ -1106,12 +1152,15 @@ void MainWindow::on_tableView_clicked(const QModelIndex &index)
 
         // 读取文件内容并显示在 textEdit 控件上
         QFile file(filePath);
-        if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
             QTextStream in(&file);
             ui->txtRec->setPlainText(in.readAll());
             file.close();
-            this->setWindowTitle(fileName); // 更新窗口标题为文件名
-        } else {
+            // this->setWindowTitle(fileName); // 更新窗口标题为文件名
+        }
+        else
+        {
             QMessageBox::warning(this, "警告", "无法打开文件: " + fileName);
         }
     }
