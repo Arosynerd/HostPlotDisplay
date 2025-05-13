@@ -96,7 +96,7 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
     // 设置鼠标滚轮的缩放倍率，如果不设置默认为0.85，大于1反方向缩放
     //customPlot->axisRect()->setRangeZoomFactor(0.5);
     // 设置鼠标滚轮缩放的轴方向，仅设置垂直轴。垂直轴和水平轴全选使用：Qt::Vertical | Qt::Horizontal
-    customPlot->axisRect()->setRangeZoom(Qt::Vertical);
+    customPlot->axisRect()->setRangeZoom(Qt::Horizontal);
 }
 
 // 绘图图表的设置控件初始化，主要用于关联控件的信号槽

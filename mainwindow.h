@@ -10,6 +10,14 @@
 #include <QPainter>
 #include "plot.h"
 
+//其他头
+#include <QStandardItemModel>
+#include <QStandardItem>
+#include <QTableView>
+#include <QHeaderView>
+#include <QDir>
+#include <QDebug>
+
 // 接收缓冲区大小，单位字节
 #define BufferSize      50
 // 最大帧长度，单位字节
@@ -27,6 +35,14 @@
 #define FunWord_SM      0x02
 // 帧数据中包含有效字节的最大长度
 #define ValidByteLength	40			// 对最大帧长度加以限定，防止接收到过长的帧数据
+
+#define NO_FILE_SELECTED 0
+#define FILE1_SELECTED 1
+#define FILE2_SELECTED 2
+#define FILE3_SELECTED 3
+#define FILE4_SELECTED 4
+#define FILE5_SELECTED 5
+#define FILE6_SELECTED 6
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -46,6 +62,8 @@ public:
 private slots:
     void on_btnSwitch_clicked();
 
+    void serialPortRead_SlotForPlot(QByteArray recBuf);//新增，用于画曲线
+
     void serialPortRead_Slot();
 
     void on_btnSend_clicked();
@@ -58,6 +76,8 @@ private slots:
 
     void on_chkSend_stateChanged(int arg1);
 
+    void on_pushButton_2_released();
+
     void on_chkTimSend_stateChanged(int arg1);
 
     void on_pushButton_clicked();
@@ -65,6 +85,14 @@ private slots:
     void on_btnFramaDebug_clicked();
 
     void dataRateCalculate(void);
+
+    void dataShow(void); // 新增 绘制曲线
+
+    void on_pushButton_3_released();
+
+    void on_pushButton_4_released();
+
+    void on_tableView_clicked(const QModelIndex &index); // 新增的槽函数
 
 private:
     Ui::MainWindow *ui;
@@ -91,6 +119,8 @@ private:
     // 即是标志位，也包含信息
     int f_fun_word = 0;                         // 功能字，限定为0x01、0x02
     int f_length = 0;                           // 帧数据中包含有效字节的长度
+    int data_send_count = 0;                    // 发送数据的计数,用于绘制波形
+    int file_selected = NO_FILE_SELECTED;                     // 选择的文件 0为未选中
     void xFrameDataFilter(QByteArray *str, short value[]);
     //QByteArray xFrameDataFilter(QByteArray *str);
 
@@ -98,5 +128,11 @@ private:
     QTimer *timSend;
     // 发送速率、接收速率统计-定时器
     QTimer *timRate;
+    
+    QTimer *timTest;
+
+    QByteArray receivedData;
+
+    QByteArray sendDataFrame;
 };
 #endif // MAINWINDOW_H
