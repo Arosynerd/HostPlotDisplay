@@ -12,17 +12,15 @@ MainWindow::MainWindow(QWidget *parent)
 
     // 查找当前目录下的txt文件并导入表格
     QStandardItemModel *model = new QStandardItemModel(this);
-    model->setColumnCount(2);
-    model->setHeaderData(0, Qt::Horizontal, "序号");
-    model->setHeaderData(1, Qt::Horizontal, "名称");
+    model->setColumnCount(1); // 修改列数为1
+    model->setHeaderData(0, Qt::Horizontal, "名称");
 
     QDir directory(QCoreApplication::applicationDirPath());
     QStringList txtFiles = directory.entryList(QStringList() << "*.txt", QDir::Files);
     for (int i = 0; i < txtFiles.size(); ++i)
     {
         QList<QStandardItem *> row;
-        row.append(new QStandardItem(QString::number(i + 1)));
-        row.append(new QStandardItem(txtFiles.at(i)));
+        row.append(new QStandardItem(txtFiles.at(i))); // 仅添加名称列
         model->appendRow(row);
     }
 
@@ -121,6 +119,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     // 生成对象
     dataParser = new DataParser();
+
+    // 添加事件过滤器以捕获键盘事件
+    qApp->installEventFilter(this);
 }
 
 MainWindow::~MainWindow()
@@ -195,7 +196,7 @@ void MainWindow::serialPortRead_SlotForPlot(QByteArray recBuf)
     //     ui->txtFrameFun->setText(QString::number(f_fun_word));
     //     ui->txtFrameLen->setText(QString::number(f_length));
     //     ui->txtFrameErrorNum->setText(QString::number(recvErrorNum));
-}
+//}
 
 // 接收字节计数
 recvNum += recBuf.size();
@@ -658,32 +659,33 @@ void MainWindow::on_pushButton_clicked()
     // 修改plot的标题
 
     int rowIndex = file_selected;
-    QString secondColumnData = ui->tableView->model()->index(rowIndex, 1).data().toString();
+    QString secondColumnData = ui->tableView->model()->index(rowIndex, 0).data().toString();
     qDebug() << "Second column content:" << secondColumnData;
     // QString plotTitle = "波形显示";
     plot->setWindowTitle(secondColumnData);
     for (int i = 0; i < receivedData.size(); i += 9)
     {
         sendDataFrame = receivedData.mid(i, 9);
+        //qDebug() << "sendDataFrame:" << sendDataFrame.toHex().toUpper();
         // int bytesWritten = mySerialPort->write(chunk); // 发送数据
         // if (bytesWritten > 0) {
         //     sendNum += bytesWritten; // 更新发送字节计数
         //     setNumOnLabel(lblSendNum, "S: ", sendNum); // 更新状态栏显示
         // }
-        if (1)
-        {
-            for (int i = 0; i < 2; i++)
-            {
-                value[i] = ((short)chrtmp[i * 2 + 4] << 8) | chrtmp[i * 2 + 4 + 1];
-            }
-        }
+//        if (1)
+//        {
+//            for (int i = 0; i < 2; i++)
+//            {
+//                value[i] = ((short)chrtmp[i * 2 + 4] << 8) | chrtmp[i * 2 + 4 + 1];
+//            }
+//        }
 
-        // 显示波形（在这里显示可以处理多帧粘包，避免多帧粘包只显示一帧的情况）
-        // 将解析出的short数组，传入波形图，进行绘图
-        if (!plot->isHidden())
-        {
-            plot->ShowPlot_WaveForm(plot->pPlot1, value);
-        }
+//        // 显示波形（在这里显示可以处理多帧粘包，避免多帧粘包只显示一帧的情况）
+//        // 将解析出的short数组，传入波形图，进行绘图
+//        if (!plot->isHidden())
+//        {
+//            plot->ShowPlot_WaveForm(plot->pPlot1, value);
+//        }
         serialPortRead_SlotForPlot(sendDataFrame);
     }
 }
@@ -1112,17 +1114,15 @@ void MainWindow::on_pushButton_4_released()
 
     // refrese files
     QStandardItemModel *model = new QStandardItemModel(this);
-    model->setColumnCount(2);
-    model->setHeaderData(0, Qt::Horizontal, "序号");
-    model->setHeaderData(1, Qt::Horizontal, "名称");
+    model->setColumnCount(1); // 修改列数为1
+    model->setHeaderData(0, Qt::Horizontal, "名称");
 
     QDir directory(QCoreApplication::applicationDirPath());
     QStringList txtFiles = directory.entryList(QStringList() << "*.txt", QDir::Files);
     for (int i = 0; i < txtFiles.size(); ++i)
     {
         QList<QStandardItem *> row;
-        row.append(new QStandardItem(QString::number(i + 1)));
-        row.append(new QStandardItem(txtFiles.at(i)));
+        row.append(new QStandardItem(txtFiles.at(i))); // 仅添加名称列
         model->appendRow(row);
     }
 
@@ -1137,14 +1137,14 @@ void MainWindow::on_tableView_clicked(const QModelIndex &index)
     if (index.isValid())
     {
         // 获取点击行的序号（第一列的值）
-        QString number = index.sibling(index.row(), 0).data().toString();
+        QString number = QString::number(index.row() + 1);
         qDebug() << "点击了第" << number << "行";
 
         // 记录选中的文件序号
         file_selected = number.toInt() - 1;
 
         // 获取点击行的名称（第二列的值）
-        QString fileName = index.sibling(index.row(), 1).data().toString();
+        QString fileName = index.sibling(index.row(), 0).data().toString();
         qDebug() << "文件名称：" << fileName;
 
         // 构造文件路径
@@ -1164,4 +1164,23 @@ void MainWindow::on_tableView_clicked(const QModelIndex &index)
             QMessageBox::warning(this, "警告", "无法打开文件: " + fileName);
         }
     }
+}
+
+void MainWindow::onKey1Pressed()
+{
+    qDebug() << "数字键1按下";
+}
+
+bool MainWindow::eventFilter(QObject *obj, QEvent *event)
+{
+    if (event->type() == QEvent::KeyPress)
+    {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+        if (keyEvent->key() == Qt::Key_1)
+        {
+            onKey1Pressed();
+            return true;
+        }
+    }
+    return QMainWindow::eventFilter(obj, event);
 }

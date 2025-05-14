@@ -46,6 +46,7 @@
 #define FILE5_SELECTED 4
 #define FILE6_SELECTED 5
 
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -60,6 +61,9 @@ public:
 
     // 绘图事件
     void paintEvent(QPaintEvent *);
+
+protected:
+    bool eventFilter(QObject *obj, QEvent *event) override;
 
 private slots:
     void on_btnSwitch_clicked();
@@ -95,6 +99,9 @@ private slots:
     void on_pushButton_4_released();
 
     void on_tableView_clicked(const QModelIndex &index); // 新增的槽函数
+
+    void onKey1Pressed(); // 处理数字键1按下事件
+
 
 private:
     Ui::MainWindow *ui;
