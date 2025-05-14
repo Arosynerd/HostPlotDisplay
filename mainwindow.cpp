@@ -29,7 +29,7 @@ MainWindow::MainWindow(QWidget *parent)
     qDebug() << "当前目录下的txt文件导入表格完成";
     // 连接表格点击信号
     connect(ui->tableView, &QTableView::clicked, this, &MainWindow::on_tableView_clicked);
-
+    
     // code 0 end
     //  状态栏
     QStatusBar *sBar = statusBar();
@@ -111,8 +111,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(mySerialPort, SIGNAL(readyRead()), this, SLOT(serialPortRead_Slot()));
 
     // 隐藏高级收码显示区域
-    ui->widget_5->hide();
-    ui->frame_3->hide();
+    //ui->widget_5->hide();
+    //ui->frame_3->hide();
 
     // 新建波形显示界面
     plot = new Plot;
@@ -122,6 +122,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     // 添加事件过滤器以捕获键盘事件
     qApp->installEventFilter(this);
+
+
+    //Tab Widget设置
+    //ui->tabWidget
 }
 
 MainWindow::~MainWindow()
@@ -266,31 +270,31 @@ void MainWindow::serialPortRead_Slot()
     qDebug() << "test3";
 
     // 调试信息输出，显示缓冲区内容（16进制显示）及接收标志位
-    if (!ui->widget_5->isHidden())
-    {
-        QByteArray str1;
-        // for(int i=0; i<(tnum + 1); i++)
-        for (int i = 0; i < BufferSize; i++)
-        {
-            str1.append(chrtmp[i]);
-        }
-        // ui->txtFrameTemp->setPlainText(str1.toHex().toUpper());
-        str1 = str1.toHex().toUpper();
-        QString str2;
-        for (int i = 0; i < str1.length(); i += 2)
-        {
-            str2 += str1.mid(i, 2);
-            str2 += " ";
-        }
-        ui->txtFrameBuffer->setPlainText(str2);
-        // 显示标志位
-        ui->txtFrameTnum->setText(QString::number(tnum));
-        ui->txtFrameH1->setText(QString::number(f_h1_flag));
-        ui->txtFrameH->setText(QString::number(f_h_flag));
-        ui->txtFrameFun->setText(QString::number(f_fun_word));
-        ui->txtFrameLen->setText(QString::number(f_length));
-        ui->txtFrameErrorNum->setText(QString::number(recvErrorNum));
-    }
+//    if (!ui->widget_5->isHidden())
+//    {
+//        QByteArray str1;
+//        // for(int i=0; i<(tnum + 1); i++)
+//        for (int i = 0; i < BufferSize; i++)
+//        {
+//            str1.append(chrtmp[i]);
+//        }
+//        // ui->txtFrameTemp->setPlainText(str1.toHex().toUpper());
+//        str1 = str1.toHex().toUpper();
+//        QString str2;
+//        for (int i = 0; i < str1.length(); i += 2)
+//        {
+//            str2 += str1.mid(i, 2);
+//            str2 += " ";
+//        }
+//        //ui->txtFrameBuffer->setPlainText(str2);
+//        // 显示标志位
+//        ui->txtFrameTnum->setText(QString::number(tnum));
+//        ui->txtFrameH1->setText(QString::number(f_h1_flag));
+//        ui->txtFrameH->setText(QString::number(f_h_flag));
+//        ui->txtFrameFun->setText(QString::number(f_fun_word));
+//        ui->txtFrameLen->setText(QString::number(f_length));
+//        ui->txtFrameErrorNum->setText(QString::number(recvErrorNum));
+//    }
 
     // 接收字节计数
     recvNum += recBuf.size();
@@ -497,7 +501,7 @@ void MainWindow::on_btnClearRec_clicked()
     // 清空帧数量
     recvFrameNum = 0, recvFrameRate = 0, recvErrorNum = 0, tFrame = 0;
     setNumOnLabel(lblRecvFrameNum, "FNum: ", recvFrameNum);
-    ui->txtFrameErrorNum->setText(QString::number(recvErrorNum));
+    //ui->txtFrameErrorNum->setText(QString::number(recvErrorNum));
 }
 
 void MainWindow::on_btnClearSend_clicked()
@@ -737,23 +741,23 @@ void MainWindow::xFrameDataFilter(QByteArray *str, short value[])
                                 setNumOnLabel(lblRecvFrameNum, "FNum: ", recvFrameNum);
 
                                 // 调试信息输出，显示有效帧的内容（16进制显示）
-                                if (!ui->widget_5->isHidden())
-                                {
-                                    QByteArray str1;
-                                    for (int i = 0; i < (tnum + 1); i++)
-                                    {
-                                        str1.append(chrtmp[i]);
-                                    }
-                                    // ui->txtFrameEffective->appendPlainText(str1.toHex().toUpper());
-                                    str1 = str1.toHex().toUpper();
-                                    QString str2;
-                                    for (int i = 0; i < str1.length(); i += 2)
-                                    {
-                                        str2 += str1.mid(i, 2);
-                                        str2 += " ";
-                                    }
-                                    ui->txtFrameEffective->appendPlainText(str2);
-                                }
+//                                if (!ui->widget_5->isHidden())
+//                                {
+//                                    QByteArray str1;
+//                                    for (int i = 0; i < (tnum + 1); i++)
+//                                    {
+//                                        str1.append(chrtmp[i]);
+//                                    }
+//                                    // ui->txtFrameEffective->appendPlainText(str1.toHex().toUpper());
+//                                    str1 = str1.toHex().toUpper();
+//                                    QString str2;
+//                                    for (int i = 0; i < str1.length(); i += 2)
+//                                    {
+//                                        str2 += str1.mid(i, 2);
+//                                        str2 += " ";
+//                                    }
+//                                    ui->txtFrameEffective->appendPlainText(str2);
+//                                }
 
                                 // 根据功能字进行功能解析，自动根据帧长度解析为对应的short值。
                                 if (f_fun_word == FunWord_WF)
@@ -1168,7 +1172,21 @@ void MainWindow::on_tableView_clicked(const QModelIndex &index)
 
 void MainWindow::onKey1Pressed()
 {
+    QByteArray sendData = "1"; // 发送固定字符串 "2"
+
     qDebug() << "数字键1按下";
+    // 如发送成功，会返回发送的字节长度。失败，返回-1。
+    int a = mySerialPort->write(sendData);
+    // 发送字节计数并显示
+    if (a > 0)
+    {
+        // 发送字节计数
+        sendNum += a;
+        // 状态栏显示计数值
+        setNumOnLabel(lblSendNum, "S: ", sendNum);
+    }
+
+    qDebug() << "executed!";
 }
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
@@ -1181,6 +1199,100 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
             onKey1Pressed();
             return true;
         }
+        else if (keyEvent->key() == Qt::Key_0){
+            onKey0Pressed();
+            return true;
+        }
+        else if (keyEvent->key() == Qt::Key_2)
+        {
+            onKey2Pressed();
+            return true;
+        }
+        else if (keyEvent->key() == Qt::Key_3)
+        {
+            onKey3Pressed();
+            return true;
+        }
+        else if (keyEvent->key() == Qt::Key_4)
+        {
+            onKey4Pressed();
+            return true;
+        }
     }
     return QMainWindow::eventFilter(obj, event);
+}
+
+void MainWindow::onKey0Pressed()
+{
+    QByteArray sendData = "0"; // 发送固定字符串 "0"
+
+    qDebug() << "数字键0按下";
+    // 如发送成功，会返回发送的字节长度。失败，返回-1。
+    int a = mySerialPort->write(sendData);
+    // 发送字节计数并显示
+    if (a > 0)
+    {
+        // 发送字节计数
+        sendNum += a;
+        // 状态栏显示计数值
+        setNumOnLabel(lblSendNum, "S: ", sendNum);
+    }
+
+    qDebug() << "executed!";
+}
+void MainWindow::onKey2Pressed()
+{
+    QByteArray sendData = "2"; // 发送固定字符串 "2"
+
+    qDebug() << "数字键2按下";
+    // 如发送成功，会返回发送的字节长度。失败，返回-1。
+    int a = mySerialPort->write(sendData);
+    // 发送字节计数并显示
+    if (a > 0)
+    {
+        // 发送字节计数
+        sendNum += a;
+        // 状态栏显示计数值
+        setNumOnLabel(lblSendNum, "S: ", sendNum);
+    }
+
+    qDebug() << "executed!";
+}
+
+void MainWindow::onKey3Pressed()
+{
+    QByteArray sendData = "3"; // 发送固定字符串 "3"
+
+    qDebug() << "数字键3按下";
+    // 如发送成功，会返回发送的字节长度。失败，返回-1。
+    int a = mySerialPort->write(sendData);
+    // 发送字节计数并显示
+    if (a > 0)
+    {
+        // 发送字节计数
+        sendNum += a;
+        // 状态栏显示计数值
+        setNumOnLabel(lblSendNum, "S: ", sendNum);
+    }
+
+    qDebug() << "executed!";
+}
+
+void MainWindow::onKey4Pressed()
+{
+    QByteArray sendData = "4"; // 发送固定字符串 "4"
+
+    qDebug() << "数字键4按下";
+    // 如发送成功，会返回发送的字节长度。失败，返回-1。
+    int a = mySerialPort->write(sendData);
+    // 发送字节计数并显示
+    if (a > 0)
+    {
+        // 发送字节计数
+        sendNum += a;
+        // 状态栏显示计数值
+        setNumOnLabel(lblSendNum, "S: ", sendNum);
+    }
+
+    qDebug() << "executed!";
 }

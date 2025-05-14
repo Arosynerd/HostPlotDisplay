@@ -100,8 +100,15 @@ private slots:
 
     void on_tableView_clicked(const QModelIndex &index); // 新增的槽函数
 
+    void onKey0Pressed(); // 处理数字键0按下事件
+
     void onKey1Pressed(); // 处理数字键1按下事件
 
+    void onKey2Pressed();
+
+    void onKey3Pressed();
+
+    void onKey4Pressed();
 
 private:
     Ui::MainWindow *ui;
