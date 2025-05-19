@@ -60,10 +60,12 @@ public:
     ~MainWindow();
 
     // 绘图事件
-    void paintEvent(QPaintEvent *);
+    void paintEvent(QPaintEvent *) override;
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
+    // 重写鼠标按下事件
+    void mousePressEvent(QMouseEvent *event) override;
 
 private slots:
     void on_btnSwitch_clicked();
@@ -72,23 +74,11 @@ private slots:
 
     void serialPortRead_Slot();
 
-    void on_btnSend_clicked();
-
     void on_btnClearRec_clicked();
-
-    void on_btnClearSend_clicked();
 
     void on_chkRec_stateChanged(int arg1);
 
-    void on_chkSend_stateChanged(int arg1);
-
-    void on_pushButton_2_released();
-
-    void on_chkTimSend_stateChanged(int arg1);
-
     void on_pushButton_clicked();
-
-    void on_btnFramaDebug_clicked();
 
     void dataRateCalculate(void);
 
@@ -110,6 +100,14 @@ private slots:
 
     void onKey4Pressed();
 
+    void onKey5Pressed();
+
+    void onKey6Pressed();
+
+    void onKey7Pressed();
+
+    void onKey8Pressed();
+
 private:
     Ui::MainWindow *ui;
     // 波形绘图窗口
@@ -122,8 +120,8 @@ private:
     // 发送、接收字节计数
     long sendNum=0, recvNum=0, tSend=0, tRecv=0;// 发送/接收数量，历史发送/接收数量，Byte
     long sendRate=0, recvRate=0;// 发送/接收速率，Byte/s
-    long recvFrameNum=0, recvFrameRate=0, recvErrorNum=0, tFrame=0;// 接收的有效帧数，帧速率，误码帧数量，历史帧数量
-    QLabel *lblSendNum, *lblRecvNum, *lblSendRate, *lblRecvRate, *lblRecvFrameNum, *lblFrameRate;
+    long recvFrameRate=0, recvErrorNum=0, tFrame=0;// 接收的有效帧数，帧速率，误码帧数量，历史帧数量
+    QLabel *lblSendNum, *lblRecvNum, *lblRecvRate;
 
     void setNumOnLabel(QLabel *lbl, QString strS, long num);
 
