@@ -1004,8 +1004,10 @@ void MainWindow::xFrameDataFilter(QByteArray *str)
 // 发送1
 void MainWindow::on_pushButton_3_released()
 {
+    
     GODEST_log_data_t logData[2048];
     memset(logData, 0, sizeof(logData));
+
     qDebug() << "查找每两个\"EVENT: 201\"之间的内容";
     QString plainText = ui->txtRec->toPlainText();
     QStringList lines = plainText.split('\n');
@@ -1052,6 +1054,23 @@ void MainWindow::on_pushButton_3_released()
             for (const QString &line : betweenLines) {
                 // 修改此处，使用 QString::SkipEmptyParts
                 QStringList items = line.split(' ', QString::SkipEmptyParts);
+                //    logData[0].id = items[0].toInt();
+                //      logData[0].timestamp = items[1].toInt();
+                //      logData[0].currentMode = items[2].toInt();
+                //      logData[0].phaseFlag = items[4].toInt();
+                //      logData[0].goDestSpeed = items[5].toInt();
+                //      logData[0].firstPhaseCount = items[6].toInt();
+                //      logData[0].originBearing = items[7].toFloat();
+                //      logData[0].currentBearing = items[8].toFloat();
+                //      logData[0].currentYaw = items[9].toFloat();
+                     logData[0].currentDistance = items[10].toFloat();
+//                     logData[0].lineSeparation = items[11].toFloat();
+//                     logData[0].bearingError = items[12].toFloat();
+//                     logData[0].yawCurrentBearing = items[13].toFloat();
+//                     logData[0].rudderAngle = items[14].toFloat();
+//                     logData[0].motorSpeedLeft = items[15].toInt();
+//                     logData[0].motorSpeedRight = items[16].toInt();
+
                 if (items.size() >= 11)
                     qDebug() << items[10];
             }

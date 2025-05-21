@@ -161,6 +161,7 @@ typedef struct GODEST_log_data_t {
     int id;
     int timestamp;
     int currentMode;
+    
     int phaseFlag;
     int goDestSpeed;
     int firstPhaseCount;
