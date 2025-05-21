@@ -415,22 +415,21 @@ void MainWindow::on_btnSwitch_clicked()
         on_inandoutButton_released();
         // 设置状态栏显示串口号
         setStrOnLabel(PortSelected, "Port: ", spTxt);
-
     }
 
-else
-{
-    mySerialPort->close();
-    ui->btnSwitch->setText("打开串口");
-    // 端口号下拉框恢复可选，避免误操作
-    ui->cmbSerialPort->setEnabled(true);
-    ui->cmbBaudRate->setEnabled(true);
-    ui->cmbStop->setEnabled(true);
-    ui->cmbData->setEnabled(true);
-    ui->cmbCheck->setEnabled(true);
-    // 设置状态栏显示串口号
-    setStrOnLabel(PortSelected, "Port: ", "NoPort");
-}
+    else
+    {
+        mySerialPort->close();
+        ui->btnSwitch->setText("打开串口");
+        // 端口号下拉框恢复可选，避免误操作
+        ui->cmbSerialPort->setEnabled(true);
+        ui->cmbBaudRate->setEnabled(true);
+        ui->cmbStop->setEnabled(true);
+        ui->cmbData->setEnabled(true);
+        ui->cmbCheck->setEnabled(true);
+        // 设置状态栏显示串口号
+        setStrOnLabel(PortSelected, "Port: ", "NoPort");
+    }
 }
 
 void MainWindow::Open_Serial(QString spTxt)
@@ -1005,32 +1004,73 @@ void MainWindow::xFrameDataFilter(QByteArray *str)
 // 发送1
 void MainWindow::on_pushButton_3_released()
 {
-    // QByteArray sendData = "1"; // 发送固定字符串 "0"
+    GODEST_log_data_t logData[2048];
+    memset(logData, 0, sizeof(logData));
+    qDebug() << "查找每两个\"EVENT: 201\"之间的内容";
+    QString plainText = ui->txtRec->toPlainText();
+    QStringList lines = plainText.split('\n');
 
-    // // 如发送成功，会返回发送的字节长度。失败，返回-1。
-    // int a = mySerialPort->write(sendData);
-    // // 发送字节计数并显示
-    // if(a > 0)
-    // {
-    //     // 发送字节计数
-    //     sendNum += a;
-    //     // 状态栏显示计数值
-    //     setNumOnLabel(lblSendNum, "S: ", sendNum);
-    // }
-    receivedData = QByteArray::fromHex(ui->txtRec->toPlainText().toUtf8());
-    qDebug() << "Received data: " << receivedData;
-
-    // 每九个字节为一组发送
-    for (int i = 0; i < receivedData.size(); i += 9)
+    QList<int> eventIndices;
+    for (int i = 0; i < lines.size(); ++i)
     {
-        sendDataFrame = receivedData.mid(i, 9);
-        // int bytesWritten = mySerialPort->write(chunk); // 发送数据
-        // if (bytesWritten > 0) {
-        //     sendNum += bytesWritten; // 更新发送字节计数
-        //     setNumOnLabel(lblSendNum, "S: ", sendNum); // 更新状态栏显示
-        // }
-        qDebug() << "Sent chunk:" << sendDataFrame;
-        qDebug() << "========================";
+        if (lines[i].contains("EVENT: 201", Qt::CaseInsensitive))
+        {
+            eventIndices << i;
+        }
+    }
+
+    if (eventIndices.size() < 2)
+    {
+        if (eventIndices.size() == 1)
+        {
+            // 只有一个EVENT: 201，输出它到结尾
+            QStringList betweenLines;
+            for (int i = eventIndices[0] + 1; i < lines.size(); ++i)
+                betweenLines << lines[i];
+            qDebug() << "最后一个\"EVENT: 201\"到结尾的内容:";
+            for (const QString &line : betweenLines)
+                qDebug() << line;
+        }
+        else
+        {
+            qDebug() << "未找到\"EVENT: 201\"或只有一个";
+        }
+        return;
+    }
+
+    // 输出每两个EVENT: 201之间的内容
+    for (int idx = 0; idx < eventIndices.size() - 1; ++idx)
+    {
+        int start = eventIndices[idx];
+        int end = eventIndices[idx + 1];
+        if (end > start + 1)
+        {
+            QStringList betweenLines;
+            for (int i = start + 1; i < end; ++i)
+                betweenLines << lines[i];
+            qDebug() << QString("第%1对\"EVENT: 201\"之间的内容:").arg(idx + 1);
+            for (const QString &line : betweenLines) {
+                // 修改此处，使用 QString::SkipEmptyParts
+                QStringList items = line.split(' ', QString::SkipEmptyParts);
+                if (items.size() >= 11)
+                    qDebug() << items[10];
+            }
+        }
+    }
+
+    // 如果EVENT: 201数量为奇数，输出最后一个到结尾
+    if (eventIndices.size() % 2 == 1)
+    {
+        int last = eventIndices.last();
+        if (last + 1 < lines.size())
+        {
+            QStringList betweenLines;
+            for (int i = last + 1; i < lines.size(); ++i)
+                betweenLines << lines[i];
+            qDebug() << "最后一个\"EVENT: 201\"到结尾的内容:";
+            for (const QString &line : betweenLines)
+                qDebug() << line;
+        }
     }
 }
 

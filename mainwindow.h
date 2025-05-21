@@ -156,5 +156,47 @@ private:
     QByteArray receivedData;
 
     QByteArray sendDataFrame;
+
+typedef struct GODEST_log_data_t {
+    int id;
+    int timestamp;
+    int currentMode;
+    int phaseFlag;
+    int goDestSpeed;
+    int firstPhaseCount;
+    float originBearing;
+    float currentBearing;
+    float currentYaw;
+    float currentDistance;
+    float lineSeparation;
+    float bearingError;
+    float yawCurrentBearing;
+    float rudderAngle;
+    int motorSpeedLeft;
+    int motorSpeedRight;
+    float kp_yaw_first;
+    float ki_yaw_first;
+    float kd_yaw_first;
+    int integralLimit_yaw_first;
+    float kp_pos;
+    float ki_pos;
+    float kd_pos;
+    int integralLimit_pos;
+    float kp_yaw_third;
+    float ki_yaw_third;
+    float kd_yaw_third;
+    int integralLimit_yaw_third;
+    double latitude;
+    double longitude;
+    double speed;
+    float kp_angle;
+    float minYawDeviation;
+    float maxYawDeviation;
+    float yawDeviation;
+    float imuYaw;
+    float ddmYaw;
+    float gpsYaw;
+} GODEST_log_data_t;
+
 };
 #endif // MAINWINDOW_H
