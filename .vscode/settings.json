@@ -23,7 +23,11 @@
         "type_traits": "cpp",
         "utility": "cpp",
         "variant": "cpp",
-        "initializer_list": "cpp"
+        "initializer_list": "cpp",
+        "deque": "cpp",
+        "list": "cpp",
+        "vector": "cpp",
+        "unordered_map": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

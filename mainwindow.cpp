@@ -1,14 +1,13 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QDebug>
-#include  "test.h"
+#include "test.h"
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     setWindowTitle("Qt Serial Debugger");
 
-    test();
     // 查找当前目录下的txt文件并导入表格
     QStandardItemModel *model = new QStandardItemModel(this);
     model->setColumnCount(1); // 修改列数为1
@@ -29,25 +28,28 @@ MainWindow::MainWindow(QWidget *parent)
     // 连接表格点击信号
     connect(ui->tableView, &QTableView::clicked, this, &MainWindow::on_tableView_clicked);
 
-
     //  状态栏
     QStatusBar *sBar = statusBar();
     // 状态栏的收、发计数标签
     lblSendNum = new QLabel(this);
     lblRecvNum = new QLabel(this);
     lblRecvRate = new QLabel(this);
+    PortSelected = new QLabel(this);
     // 设置标签最小大小
     lblSendNum->setMinimumSize(100, 20);
     lblRecvNum->setMinimumSize(100, 20);
     lblRecvRate->setMinimumSize(100, 20);
+    PortSelected->setMinimumSize(100, 20);
 
     setNumOnLabel(lblSendNum, "S: ", sendNum);
     setNumOnLabel(lblRecvNum, "R: ", recvNum);
     setNumOnLabel(lblRecvRate, "Byte/s: ", 0);
+    setStrOnLabel(PortSelected, "Port: ", strPortSelected);
     // 从右往左依次添加
     sBar->addPermanentWidget(lblSendNum);
     sBar->addPermanentWidget(lblRecvNum);
     sBar->addPermanentWidget(lblRecvRate);
+    sBar->addPermanentWidget(PortSelected);
 
     // 发送速率、接收速率统计-定时器
     timRate = new QTimer;
@@ -70,9 +72,35 @@ MainWindow::MainWindow(QWidget *parent)
     // 添加事件过滤器以捕获键盘事件
     qApp->installEventFilter(this);
 
+    QStringList serialPortName;
+
+    // 自动扫描当前可用串口，返回值追加到字符数组中
+    foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
+    {
+
+        // serialPortName << info.portName();// 不携带有串口设备信息的文本
+
+        // 携带有串口设备信息的文本
+        QString serialPortInfo = info.portName() + ": " + info.description(); // 串口设备信息，芯片/驱动名称
+        // QString serialPortInfo = info.portName() + ": " + info.manufacturer();// 串口设备制造商
+        // QString serialPortInfo = info.portName() + ": " + info.serialNumber();// 串口设备的序列号，没什么用
+        // QString serialPortInfo = info.portName() + ": " + info.systemLocation();// 串口设备的系统位置，没什么用
+        serialPortName << serialPortInfo;
+    }
+    // qDebug输出它们
+    // 输出带有"Serial"字样的串口信息
+    for (const QString &portInfo : serialPortName)
+    {
+        if (portInfo.contains("Serial", Qt::CaseInsensitive))
+        {
+            qDebug() << "serialPortName:" << portInfo;
+            Open_Serial(portInfo);
+        }
+    }
 }
 
 MainWindow::~MainWindow()
+
 {
     if (plot)
     {
@@ -216,14 +244,11 @@ void MainWindow::serialPortRead_Slot()
     recBuf = QString(mySerialPort->readAll());*/
 
     QByteArray recBuf;
-    qDebug() << "test1";
     recBuf = mySerialPort->readAll();
-    qDebug() << "test2";
 
     /* 帧过滤部分代码 */
-    //short wmValue[20] = {0};
-    // xFrameDataFilter(&recBuf, wmValue);
-    qDebug() << "test3";
+    // short wmValue[20] = {0};
+    //  xFrameDataFilter(&recBuf, wmValue);
 
     // 调试信息输出，显示缓冲区内容（16进制显示）及接收标志位
     //    if (!ui->widget_5->isHidden())
@@ -307,6 +332,7 @@ void MainWindow::serialPortRead_Slot()
 // 打开/关闭串口 槽函数
 void MainWindow::on_btnSwitch_clicked()
 {
+    QString spTxt = ui->cmbSerialPort->currentText();
 
     QSerialPort::BaudRate baudRate;
     QSerialPort::DataBits dataBits;
@@ -361,7 +387,109 @@ void MainWindow::on_btnSwitch_clicked()
     mySerialPort->setParity(checkBits);
     // mySerialPort->setPortName(ui->cmbSerialPort->currentText());// 不匹配带有串口设备信息的文本
     //  匹配带有串口设备信息的文本
-    QString spTxt = ui->cmbSerialPort->currentText();
+
+    spTxt = spTxt.section(':', 0, 0); // spTxt.mid(0, spTxt.indexOf(":"));
+    // qDebug() << spTxt;
+    mySerialPort->setPortName(spTxt);
+
+    // 根据初始化好的串口属性，打开串口
+    // 如果打开成功，反转打开按钮显示和功能。打开失败，无变化，并且弹出错误对话框。
+    if (ui->btnSwitch->text() == "打开串口")
+    {
+        if (mySerialPort->open(QIODevice::ReadWrite) == true)
+        {
+            // QMessageBox::
+            ui->btnSwitch->setText("关闭串口");
+            // 让端口号下拉框不可选，避免误操作（选择功能不可用，控件背景为灰色）
+            ui->cmbSerialPort->setEnabled(false);
+            ui->cmbBaudRate->setEnabled(false);
+            ui->cmbStop->setEnabled(false);
+            ui->cmbData->setEnabled(false);
+            ui->cmbCheck->setEnabled(false);
+        }
+        else
+        {
+            QMessageBox::critical(this, "错误提示", "串口打开失败！！！\r\n\r\n该串口可能被占用，请选择正确的串口\r\n或者波特率过高，超出硬件支持范围");
+        }
+        // 收起串口配置
+        on_inandoutButton_released();
+        // 设置状态栏显示串口号
+        setStrOnLabel(PortSelected, "Port: ", spTxt);
+
+    }
+
+else
+{
+    mySerialPort->close();
+    ui->btnSwitch->setText("打开串口");
+    // 端口号下拉框恢复可选，避免误操作
+    ui->cmbSerialPort->setEnabled(true);
+    ui->cmbBaudRate->setEnabled(true);
+    ui->cmbStop->setEnabled(true);
+    ui->cmbData->setEnabled(true);
+    ui->cmbCheck->setEnabled(true);
+    // 设置状态栏显示串口号
+    setStrOnLabel(PortSelected, "Port: ", "NoPort");
+}
+}
+
+void MainWindow::Open_Serial(QString spTxt)
+{
+
+    QSerialPort::BaudRate baudRate;
+    QSerialPort::DataBits dataBits;
+    QSerialPort::StopBits stopBits;
+    QSerialPort::Parity checkBits;
+
+    // 获取串口波特率
+    baudRate = (QSerialPort::BaudRate)ui->cmbBaudRate->currentText().toUInt();
+    // 获取串口数据位
+    dataBits = (QSerialPort::DataBits)ui->cmbData->currentText().toUInt();
+    // 获取串口停止位
+    if (ui->cmbStop->currentText() == "1")
+    {
+        stopBits = QSerialPort::OneStop;
+    }
+    else if (ui->cmbStop->currentText() == "1.5")
+    {
+        stopBits = QSerialPort::OneAndHalfStop;
+    }
+    else if (ui->cmbStop->currentText() == "2")
+    {
+        stopBits = QSerialPort::TwoStop;
+    }
+    else
+    {
+        stopBits = QSerialPort::OneStop;
+    }
+
+    // 获取串口奇偶校验位
+    if (ui->cmbCheck->currentText() == "无")
+    {
+        checkBits = QSerialPort::NoParity;
+    }
+    else if (ui->cmbCheck->currentText() == "奇校验")
+    {
+        checkBits = QSerialPort::OddParity;
+    }
+    else if (ui->cmbCheck->currentText() == "偶校验")
+    {
+        checkBits = QSerialPort::EvenParity;
+    }
+    else
+    {
+        checkBits = QSerialPort::NoParity;
+    }
+
+    // 想想用 substr strchr怎么从带有信息的字符串中提前串口号字符串
+    // 初始化串口属性，设置 端口号、波特率、数据位、停止位、奇偶校验位数
+    mySerialPort->setBaudRate(baudRate);
+    mySerialPort->setDataBits(dataBits);
+    mySerialPort->setStopBits(stopBits);
+    mySerialPort->setParity(checkBits);
+    // mySerialPort->setPortName(ui->cmbSerialPort->currentText());// 不匹配带有串口设备信息的文本
+    //  匹配带有串口设备信息的文本
+
     spTxt = spTxt.section(':', 0, 0); // spTxt.mid(0, spTxt.indexOf(":"));
     // qDebug() << spTxt;
     mySerialPort->setPortName(spTxt);
@@ -397,6 +525,10 @@ void MainWindow::on_btnSwitch_clicked()
         ui->cmbData->setEnabled(true);
         ui->cmbCheck->setEnabled(true);
     }
+    // 收起串口配置
+    on_inandoutButton_released();
+
+    setStrOnLabel(PortSelected, "Port: ", spTxt);
 }
 
 // 状态栏标签显示计数值
@@ -407,6 +539,19 @@ void MainWindow::setNumOnLabel(QLabel *lbl, QString strS, long num)
     strN.sprintf("%ld", num);
     QString str = strS + strN;
     lbl->setText(str);
+}
+// 状态栏标签显示计数值
+void MainWindow::setStrOnLabel(QLabel *lbl, QString strS, QString strIn)
+{
+    // 标签显示
+    QString strN;
+    strN = strIn;
+    QString str = strS + strN;
+    lbl->setText(str);
+}
+
+void MainWindow::LabelUpdate(void)
+{
 }
 
 void MainWindow::on_btnClearRec_clicked()
@@ -422,10 +567,9 @@ void MainWindow::on_btnClearRec_clicked()
     setNumOnLabel(lblRecvNum, "R: ", recvNum);
     // 清空帧数量
     recvFrameRate = 0, recvErrorNum = 0, tFrame = 0;
-    
+
     // ui->txtFrameErrorNum->setText(QString::number(recvErrorNum));
 }
-
 
 // 先前接收的部分在多选框状态转换槽函数中进行转换。（最好多选框和接收区组成一个自定义控件，方便以后调用）
 void MainWindow::on_chkRec_stateChanged(int arg1)
@@ -467,7 +611,6 @@ void MainWindow::on_chkRec_stateChanged(int arg1)
         ui->txtRec->moveCursor(QTextCursor::End);
     }
 }
-
 
 // 发送速率、接收速率统计-定时器
 void MainWindow::dataRateCalculate(void)
@@ -578,8 +721,6 @@ void MainWindow::xFrameDataFilter(QByteArray *str, short value[])
                             // 校验对比
                             if (crc == chrtmp[tnum]) // 校验通过，将缓冲区的数据打包发送
                             {
-                                
-                                
 
                                 // 调试信息输出，显示有效帧的内容（16进制显示）
                                 //                                if (!ui->widget_5->isHidden())
@@ -860,8 +1001,6 @@ void MainWindow::xFrameDataFilter(QByteArray *str)
         }
     }
 }*/
-
-
 
 // 发送1
 void MainWindow::on_pushButton_3_released()
@@ -1213,5 +1352,24 @@ void MainWindow::onKey8Pressed()
     {
         sendNum += a;
         setNumOnLabel(lblSendNum, "S: ", sendNum);
+    }
+}
+/*
+收起与展开*/
+void MainWindow::on_inandoutButton_released()
+{
+    // 获取按钮的名称
+    QString buttonText = ui->inandoutButton->text();
+    if (buttonText == "<")
+    {
+        ui->inandoutButton->setText(">");
+        // 展开区域
+        ui->frame->setVisible(true);
+    }
+    else
+    {
+        ui->inandoutButton->setText("<");
+        // 收起区域
+        ui->frame->setVisible(false);
     }
 }

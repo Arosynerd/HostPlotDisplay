@@ -62,6 +62,8 @@ public:
     // 绘图事件
     void paintEvent(QPaintEvent *) override;
 
+    void Open_Serial(QString spTxt);
+
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
     // 重写鼠标按下事件
@@ -100,6 +102,9 @@ private slots:
 
     void onKey4Pressed();
 
+    void on_inandoutButton_released();
+
+
     void onKey5Pressed();
 
     void onKey6Pressed();
@@ -121,10 +126,11 @@ private:
     long sendNum=0, recvNum=0, tSend=0, tRecv=0;// 发送/接收数量，历史发送/接收数量，Byte
     long sendRate=0, recvRate=0;// 发送/接收速率，Byte/s
     long recvFrameRate=0, recvErrorNum=0, tFrame=0;// 接收的有效帧数，帧速率，误码帧数量，历史帧数量
-    QLabel *lblSendNum, *lblRecvNum, *lblRecvRate;
-
+    QLabel *lblSendNum, *lblRecvNum, *lblRecvRate,*PortSelected;
+    QString strPortSelected = "NoPort";
     void setNumOnLabel(QLabel *lbl, QString strS, long num);
-
+    void setStrOnLabel(QLabel *lbl, QString strS, QString str);
+    void LabelUpdate(void);
     /* 与帧过滤有关的标志位 */
     //int snum = 0;                               // 系统串口接收缓存区的可用字节数
     int tnum = 0;                               // 用户串口接收缓存的指针位置
