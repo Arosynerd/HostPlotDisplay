@@ -22,6 +22,8 @@ public:
     void ShowPlot_WaveForm(QCustomPlot *customPlot, short value[]);
     void ShowPlot_WaveForm(QCustomPlot *customPlot, int value[]);
     void ShowPlot_WaveForm(QCustomPlot *customPlot, float value[]);
+    void setAutoX(QCustomPlot *pPlot,int xRange);
+    void setCurvesName(QCustomPlot *customPlot,QStringList lineNames);
 
 private slots:
     void TimeData_Update(void);
@@ -92,6 +94,7 @@ private:
     void curveSetScatterStyle(QCustomPlot *pPlot, QCPGraph *pCurve, int arg1);
 
     void setAutoTrackX(QCustomPlot *pPlot);
+
     void setManualSettingX(QCustomPlot *pPlot);
     void setAutoTrackY(QCustomPlot *pPlot);
 };

@@ -1158,7 +1158,7 @@ void MainWindow::on_pushButton_3_released()
         plot = new Plot;
 
         // 显示新的波形绘图窗口
-        plot->show();
+        plot->showMaximized();
         // 修改plot的标题
 
         int rowIndex = file_selected;
@@ -1167,19 +1167,24 @@ void MainWindow::on_pushButton_3_released()
         // QString plotTitle = "波形显示";
         plot->setWindowTitle(secondColumnData);
         float value[20] = {0};
-        for (int j = 0; j < group_index[selectedIndex].second; j++)
+        for (int j = 1; j <= group_index[selectedIndex].second; j++)
         {
             value[0] = logData[group_index[selectedIndex].first + j].currentDistance;
             value[1] = logData[group_index[selectedIndex].first + j].lineSeparation;
             value[2] = logData[group_index[selectedIndex].first + j].rudderAngle;
             value[3] = logData[group_index[selectedIndex].first + j].motorSpeedLeft;
             value[4] = logData[group_index[selectedIndex].first + j].motorSpeedRight;
+            
             // 输出一下
-            //  qDebug() << "currentDistance:" << value[0] << "lineSeparation:" << value[1] << "rudderAngle:" << value[2] << "motorSpeedLeft:" << value[3] << "motorSpeedRight:" << value[
-            //      4
-            //  ];
+            qDebug() << "currentDistance:" << value[0] << "lineSeparation:" << value[1] << "rudderAngle:" << value[2] << "motorSpeedLeft:" << value[3] << "motorSpeedRight:" << value[4];
             plot->ShowPlot_WaveForm(plot->pPlot1, value);
         }
+        plot->setAutoX(plot->pPlot1,group_index[selectedIndex].second + 10);
+
+
+        QStringList lineNames;
+        lineNames << "currentDistance" << "lineSeparation" << "rudderAngle" << "motorSpeedLeft" << "motorSpeedRight";
+        plot->setCurvesName(plot->pPlot1,lineNames);
     }
 }
 
@@ -1543,15 +1548,12 @@ void MainWindow::on_TestButton_released()
     qDebug() << "Second column content:" << secondColumnData;
     // QString plotTitle = "波形显示";
     plot->setWindowTitle(secondColumnData);
-    float value[20] = {0};
+    float value[20] = {1, 2, 3};
     for (int i = 0; i < 100; i++)
     {
         // 将 j 的类型改为 int，并修正迭代变量
         for (int j = 0; j < 3; j++)
-        {
             value[j] = j + 0.5;
-            qDebug() << "value[" << j << "] = " << value[j];
-            plot->ShowPlot_WaveForm(plot->pPlot1, value);
-        }
+        plot->ShowPlot_WaveForm(plot->pPlot1, value);
     }
 }
