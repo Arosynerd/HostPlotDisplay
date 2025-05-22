@@ -20,6 +20,8 @@ public:
 
     void ShowPlot_TimeDemo(QCustomPlot *customPlot, double num);
     void ShowPlot_WaveForm(QCustomPlot *customPlot, short value[]);
+    void ShowPlot_WaveForm(QCustomPlot *customPlot, int value[]);
+    void ShowPlot_WaveForm(QCustomPlot *customPlot, float value[]);
 
 private slots:
     void TimeData_Update(void);

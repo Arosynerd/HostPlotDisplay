@@ -47,6 +47,49 @@
 #define FILE6_SELECTED 5
 
 
+typedef struct GODEST_log_data_t {
+    int id;
+    int timestamp;
+    int currentMode;
+    
+    int phaseFlag;
+    int goDestSpeed;
+    int firstPhaseCount;
+    float originBearing;
+    float currentBearing;
+    float currentYaw;
+    float currentDistance;
+    float lineSeparation;
+    float bearingError;
+    float yawCurrentBearing;
+    float rudderAngle;
+    int motorSpeedLeft;
+    int motorSpeedRight;
+    float kp_yaw_first;
+    float ki_yaw_first;
+    float kd_yaw_first;
+    int integralLimit_yaw_first;
+    float kp_pos;
+    float ki_pos;
+    float kd_pos;
+    int integralLimit_pos;
+    float kp_yaw_third;
+    float ki_yaw_third;
+    float kd_yaw_third;
+    int integralLimit_yaw_third;
+    double latitude;
+    double longitude;
+    double speed;
+    float kp_angle;
+    float minYawDeviation;
+    float maxYawDeviation;
+    float yawDeviation;
+    float imuYaw;
+    float ddmYaw;
+    float gpsYaw;
+} GODEST_log_data_t;
+
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -104,6 +147,8 @@ private slots:
 
     void on_inandoutButton_released();
 
+    void on_TestButton_released();
+
 
     void onKey5Pressed();
 
@@ -157,47 +202,8 @@ private:
 
     QByteArray sendDataFrame;
 
-typedef struct GODEST_log_data_t {
-    int id;
-    int timestamp;
-    int currentMode;
+    GODEST_log_data_t logData[8192];//1024 * 8
     
-    int phaseFlag;
-    int goDestSpeed;
-    int firstPhaseCount;
-    float originBearing;
-    float currentBearing;
-    float currentYaw;
-    float currentDistance;
-    float lineSeparation;
-    float bearingError;
-    float yawCurrentBearing;
-    float rudderAngle;
-    int motorSpeedLeft;
-    int motorSpeedRight;
-    float kp_yaw_first;
-    float ki_yaw_first;
-    float kd_yaw_first;
-    int integralLimit_yaw_first;
-    float kp_pos;
-    float ki_pos;
-    float kd_pos;
-    int integralLimit_pos;
-    float kp_yaw_third;
-    float ki_yaw_third;
-    float kd_yaw_third;
-    int integralLimit_yaw_third;
-    double latitude;
-    double longitude;
-    double speed;
-    float kp_angle;
-    float minYawDeviation;
-    float maxYawDeviation;
-    float yawDeviation;
-    float imuYaw;
-    float ddmYaw;
-    float gpsYaw;
-} GODEST_log_data_t;
-
+    std::pair<int, int> group_index[100];
 };
 #endif // MAINWINDOW_H

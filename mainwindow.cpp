@@ -1001,11 +1001,12 @@ void MainWindow::xFrameDataFilter(QByteArray *str)
     }
 }*/
 
-// 发送1
+// 测试1
 void MainWindow::on_pushButton_3_released()
 {
-    
-    GODEST_log_data_t logData[2048];
+    int GroupCount = 0;
+    int group_count = 0;
+    int idx_index = 0; // 每组的起始点
     memset(logData, 0, sizeof(logData));
 
     qDebug() << "查找每两个\"EVENT: 201\"之间的内容";
@@ -1039,9 +1040,9 @@ void MainWindow::on_pushButton_3_released()
         }
         return;
     }
-
+    int idx = 0;
     // 输出每两个EVENT: 201之间的内容
-    for (int idx = 0; idx < eventIndices.size() - 1; ++idx)
+    for (; idx < eventIndices.size() - 1; ++idx)
     {
         int start = eventIndices[idx];
         int end = eventIndices[idx + 1];
@@ -1051,32 +1052,42 @@ void MainWindow::on_pushButton_3_released()
             for (int i = start + 1; i < end; ++i)
                 betweenLines << lines[i];
             qDebug() << QString("第%1对\"EVENT: 201\"之间的内容:").arg(idx + 1);
-            for (const QString &line : betweenLines) {
-                // 修改此处，使用 QString::SkipEmptyParts
+            int innerGroupCount = 0;
+            GroupCount = 0;
+            for (const QString &line : betweenLines)
+            {
                 QStringList items = line.split(' ', QString::SkipEmptyParts);
-                //    logData[0].id = items[0].toInt();
-                //      logData[0].timestamp = items[1].toInt();
-                //      logData[0].currentMode = items[2].toInt();
-                //      logData[0].phaseFlag = items[4].toInt();
-                //      logData[0].goDestSpeed = items[5].toInt();
-                //      logData[0].firstPhaseCount = items[6].toInt();
-                //      logData[0].originBearing = items[7].toFloat();
-                //      logData[0].currentBearing = items[8].toFloat();
-                //      logData[0].currentYaw = items[9].toFloat();
-                     logData[0].currentDistance = items[10].toFloat();
-//                     logData[0].lineSeparation = items[11].toFloat();
-//                     logData[0].bearingError = items[12].toFloat();
-//                     logData[0].yawCurrentBearing = items[13].toFloat();
-//                     logData[0].rudderAngle = items[14].toFloat();
-//                     logData[0].motorSpeedLeft = items[15].toInt();
-//                     logData[0].motorSpeedRight = items[16].toInt();
-
                 if (items.size() >= 11)
-                    qDebug() << items[10];
+                {
+                    innerGroupCount++;
+                    logData[idx_index + innerGroupCount].id = items[0].toInt();
+                    logData[idx_index + innerGroupCount].timestamp = items[1].toInt();
+                    logData[idx_index + innerGroupCount].currentMode = items[2].toInt();
+                    logData[idx_index + innerGroupCount].phaseFlag = items[4].toInt();
+                    logData[idx_index + innerGroupCount].goDestSpeed = items[5].toInt();
+                    logData[idx_index + innerGroupCount].firstPhaseCount = items[6].toInt();
+                    logData[idx_index + innerGroupCount].originBearing = items[7].toFloat();
+                    logData[idx_index + innerGroupCount].currentBearing = items[8].toFloat();
+                    logData[idx_index + innerGroupCount].currentYaw = items[9].toFloat();
+                    logData[idx_index + innerGroupCount].currentDistance = items[10].toFloat();
+                    logData[idx_index + innerGroupCount].lineSeparation = items[11].toFloat();
+                    logData[idx_index + innerGroupCount].bearingError = items[12].toFloat();
+                    logData[idx_index + innerGroupCount].yawCurrentBearing = items[13].toFloat();
+                    logData[idx_index + innerGroupCount].rudderAngle = items[14].toFloat();
+                    logData[idx_index + innerGroupCount].motorSpeedLeft = items[15].toInt();
+                    logData[idx_index + innerGroupCount].motorSpeedRight = items[16].toInt();
+                    qDebug() << "currentDistance:" << logData[idx_index + innerGroupCount].currentDistance << "lineSeparation:" << logData[idx_index + innerGroupCount].lineSeparation << "rudderAngle:" << logData[idx_index + innerGroupCount].rudderAngle << "motorSpeedLeft:" << logData[idx_index + innerGroupCount].motorSpeedLeft << "motorSpeedRight:" << logData[idx_index + innerGroupCount].motorSpeedRight;
+                    GroupCount++;
+                }
             }
+            group_index[group_count].first = idx_index;
+            group_index[group_count].second = innerGroupCount;
+            group_count++;
+            idx_index += (innerGroupCount + 10);
+            qDebug() << "innerGroupCount:" << innerGroupCount;
+            qDebug() << QString("第%1对\"EVENT: 201\"之间的内容的数量:").arg(GroupCount);
         }
     }
-
     // 如果EVENT: 201数量为奇数，输出最后一个到结尾
     if (eventIndices.size() % 2 == 1)
     {
@@ -1086,9 +1097,88 @@ void MainWindow::on_pushButton_3_released()
             QStringList betweenLines;
             for (int i = last + 1; i < lines.size(); ++i)
                 betweenLines << lines[i];
-            qDebug() << "最后一个\"EVENT: 201\"到结尾的内容:";
+            qDebug() << QString("第%1对\"EVENT: 201\"之间的内容:").arg(idx + 1);
+            int innerGroupCount = 0;
+
             for (const QString &line : betweenLines)
-                qDebug() << line;
+            {
+                QStringList items = line.split(' ', QString::SkipEmptyParts);
+                if (items.size() >= 11)
+                {
+                    innerGroupCount++;
+                    logData[idx_index + innerGroupCount].id = items[0].toInt();
+                    logData[idx_index + innerGroupCount].timestamp = items[1].toInt();
+                    logData[idx_index + innerGroupCount].currentMode = items[2].toInt();
+                    logData[idx_index + innerGroupCount].phaseFlag = items[4].toInt();
+                    logData[idx_index + innerGroupCount].goDestSpeed = items[5].toInt();
+                    logData[idx_index + innerGroupCount].firstPhaseCount = items[6].toInt();
+                    logData[idx_index + innerGroupCount].originBearing = items[7].toFloat();
+                    logData[idx_index + innerGroupCount].currentBearing = items[8].toFloat();
+                    logData[idx_index + innerGroupCount].currentYaw = items[9].toFloat();
+                    logData[idx_index + innerGroupCount].currentDistance = items[10].toFloat();
+                    logData[idx_index + innerGroupCount].lineSeparation = items[11].toFloat();
+                    logData[idx_index + innerGroupCount].bearingError = items[12].toFloat();
+                    logData[idx_index + innerGroupCount].yawCurrentBearing = items[13].toFloat();
+                    logData[idx_index + innerGroupCount].rudderAngle = items[14].toFloat();
+                    logData[idx_index + innerGroupCount].motorSpeedLeft = items[15].toInt();
+                    logData[idx_index + innerGroupCount].motorSpeedRight = items[16].toInt();
+                    qDebug() << "currentDistance:" << logData[idx_index + innerGroupCount].currentDistance << "lineSeparation:" << logData[idx_index + innerGroupCount].lineSeparation << "rudderAngle:" << logData[idx_index + innerGroupCount].rudderAngle << "motorSpeedLeft:" << logData[idx_index + innerGroupCount].motorSpeedLeft << "motorSpeedRight:" << logData[idx_index + innerGroupCount].motorSpeedRight;
+                    GroupCount++;
+                }
+            }
+            group_index[group_count].first = idx_index;
+            group_index[group_count].second = innerGroupCount;
+            qDebug() << QString("最后一组\"EVENT: 201\"到结尾的内容的数量: %1").arg(GroupCount);
+        }
+    }
+
+    for (int i = 0; i <= group_count; i++)
+    {
+        qDebug() << "group_index[" << i << "]:" << group_index[i].first << "," << group_index[i].second;
+    }
+    QStringList groupOptions;
+    for (int i = 0; i < group_count; ++i)
+    {
+        groupOptions << QString("第%1组").arg(i + 1);
+    }
+    bool ok = false;
+    QString selectedGroup = QInputDialog::getItem(this, "选择分组", "请选择一个分组：", groupOptions, 0, false, &ok);
+    if (ok && !selectedGroup.isEmpty())
+    {
+        int selectedIndex = groupOptions.indexOf(selectedGroup);
+        qDebug() << "用户选择了分组:" << selectedGroup << "，索引:" << selectedIndex;
+        // 这里可以根据 selectedIndex 进行后续处理
+        if (plot)
+        {
+            delete plot;
+            plot = nullptr;
+        }
+
+        // 创建一个新的 Plot 对象
+        plot = new Plot;
+
+        // 显示新的波形绘图窗口
+        plot->show();
+        // 修改plot的标题
+
+        int rowIndex = file_selected;
+        QString secondColumnData = ui->tableView->model()->index(rowIndex, 0).data().toString();
+        qDebug() << "Second column content:" << secondColumnData;
+        // QString plotTitle = "波形显示";
+        plot->setWindowTitle(secondColumnData);
+        float value[20] = {0};
+        for (int j = 0; j < group_index[selectedIndex].second; j++)
+        {
+            value[0] = logData[group_index[selectedIndex].first + j].currentDistance;
+            value[1] = logData[group_index[selectedIndex].first + j].lineSeparation;
+            value[2] = logData[group_index[selectedIndex].first + j].rudderAngle;
+            value[3] = logData[group_index[selectedIndex].first + j].motorSpeedLeft;
+            value[4] = logData[group_index[selectedIndex].first + j].motorSpeedRight;
+            // 输出一下
+            //  qDebug() << "currentDistance:" << value[0] << "lineSeparation:" << value[1] << "rudderAngle:" << value[2] << "motorSpeedLeft:" << value[3] << "motorSpeedRight:" << value[
+            //      4
+            //  ];
+            plot->ShowPlot_WaveForm(plot->pPlot1, value);
         }
     }
 }
@@ -1430,5 +1520,38 @@ void MainWindow::on_inandoutButton_released()
         ui->inandoutButton->setText("<");
         // 收起区域
         ui->frame->setVisible(false);
+    }
+}
+
+void MainWindow::on_TestButton_released()
+{
+    if (plot)
+    {
+        delete plot;
+        plot = nullptr;
+    }
+
+    // 创建一个新的 Plot 对象
+    plot = new Plot;
+
+    // 显示新的波形绘图窗口
+    plot->show();
+    // 修改plot的标题
+
+    int rowIndex = file_selected;
+    QString secondColumnData = ui->tableView->model()->index(rowIndex, 0).data().toString();
+    qDebug() << "Second column content:" << secondColumnData;
+    // QString plotTitle = "波形显示";
+    plot->setWindowTitle(secondColumnData);
+    float value[20] = {0};
+    for (int i = 0; i < 100; i++)
+    {
+        // 将 j 的类型改为 int，并修正迭代变量
+        for (int j = 0; j < 3; j++)
+        {
+            value[j] = j + 0.5;
+            qDebug() << "value[" << j << "] = " << value[j];
+            plot->ShowPlot_WaveForm(plot->pPlot1, value);
+        }
     }
 }

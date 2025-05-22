@@ -96,7 +96,8 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
     // 设置鼠标滚轮的缩放倍率，如果不设置默认为0.85，大于1反方向缩放
     //customPlot->axisRect()->setRangeZoomFactor(0.5);
     // 设置鼠标滚轮缩放的轴方向，仅设置垂直轴。垂直轴和水平轴全选使用：Qt::Vertical | Qt::Horizontal
-    customPlot->axisRect()->setRangeZoom(Qt::Horizontal);
+    customPlot->axisRect()->setRangeZoom(Qt::Vertical);
+    //customPlot->axisRect()->setRangeZoom(Qt::Horizontal);
 }
 
 // 绘图图表的设置控件初始化，主要用于关联控件的信号槽
@@ -299,6 +300,70 @@ void Plot::ShowPlot_WaveForm(QCustomPlot *customPlot, short value[])
         frameCount = 0;
     }
 
+}
+
+// 曲线更新绘图，波形数据绘图（int型）
+void Plot::ShowPlot_WaveForm(QCustomPlot *customPlot, int value[])
+{
+    cnt++;
+    for(int i=0; i<20; i++){
+        pTxtValueCurve[i]->setText(QString::number(value[i]));
+        pCurve[i]->addData(cnt, value[i]);
+    }
+    if(ui->chkTrackX->checkState()){
+        setAutoTrackX(customPlot);
+    }
+    if(ui->chkAdjustY->checkState()){
+        setAutoTrackY(customPlot);
+    }
+    customPlot->replot(QCustomPlot::rpQueuedReplot);
+    static QTime time(QTime::currentTime());
+    double key = time.elapsed()/1000.0;
+    static double lastFpsKey;
+    static int frameCount;
+    ++frameCount;
+    if (key-lastFpsKey > 1)
+    {
+        ui->statusbar->showMessage(
+            QString("%1 FPS, Total Data points: %2")
+            .arg(frameCount/(key-lastFpsKey), 0, 'f', 0)
+            .arg(customPlot->graph(0)->data()->size()+customPlot->graph(1)->data()->size())
+            , 0);
+        lastFpsKey = key;
+        frameCount = 0;
+    }
+}
+
+// 曲线更新绘图，波形数据绘图（float型）
+void Plot::ShowPlot_WaveForm(QCustomPlot *customPlot, float value[])
+{
+    cnt++;
+    for(int i=0; i<20; i++){
+        pTxtValueCurve[i]->setText(QString::number(value[i]));
+        pCurve[i]->addData(cnt, value[i]);
+    }
+    if(ui->chkTrackX->checkState()){
+        setAutoTrackX(customPlot);
+    }
+    if(ui->chkAdjustY->checkState()){
+        setAutoTrackY(customPlot);
+    }
+    customPlot->replot(QCustomPlot::rpQueuedReplot);
+    static QTime time(QTime::currentTime());
+    double key = time.elapsed()/1000.0;
+    static double lastFpsKey;
+    static int frameCount;
+    ++frameCount;
+    if (key-lastFpsKey > 1)
+    {
+        ui->statusbar->showMessage(
+            QString("%1 FPS, Total Data points: %2")
+            .arg(frameCount/(key-lastFpsKey), 0, 'f', 0)
+            .arg(customPlot->graph(0)->data()->size()+customPlot->graph(1)->data()->size())
+            , 0);
+        lastFpsKey = key;
+        frameCount = 0;
+    }
 }
 
 /* 功能：隐藏/显示曲线n
