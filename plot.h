@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "qcustomplot.h"
+#include <QVector>
 
 namespace Ui {
 class Plot;
@@ -18,13 +19,24 @@ public:
     // 绘图控件的指针
     QCustomPlot *pPlot1;
 
+    // 新增鼠标原点那些
+    QCPItemTracer *tracer;
+    QVector<QCPItemTracer*> tracers;
+    QCPItemText *tracerLabel;
+    QCPItemStraightLine *vLine = nullptr; // 竖线
+
     void ShowPlot_TimeDemo(QCustomPlot *customPlot, double num);
     void ShowPlot_WaveForm(QCustomPlot *customPlot, short value[]);
     void ShowPlot_WaveForm(QCustomPlot *customPlot, int value[]);
     void ShowPlot_WaveForm(QCustomPlot *customPlot, float value[]);
     void setAutoX(QCustomPlot *pPlot,int xRange);
-    void setCurvesName(QCustomPlot *customPlot,QStringList lineNames);
+    void setCurvesName(QStringList lineNames);
+    void addCurvesName(QStringList lineNames);
 
+
+public slots:
+    void mouseMove1(QMouseEvent *e);
+    void mouseMove2(QMouseEvent *e);
 private slots:
     void TimeData_Update(void);
 

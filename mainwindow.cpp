@@ -2,6 +2,11 @@
 #include "ui_mainwindow.h"
 #include <QDebug>
 #include "test.h"
+
+
+QStringList CurveLineNames;
+
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
@@ -1076,7 +1081,7 @@ void MainWindow::on_pushButton_3_released()
                     logData[idx_index + innerGroupCount].rudderAngle = items[14].toFloat();
                     logData[idx_index + innerGroupCount].motorSpeedLeft = items[15].toInt();
                     logData[idx_index + innerGroupCount].motorSpeedRight = items[16].toInt();
-                    qDebug() << "currentDistance:" << logData[idx_index + innerGroupCount].currentDistance << "lineSeparation:" << logData[idx_index + innerGroupCount].lineSeparation << "rudderAngle:" << logData[idx_index + innerGroupCount].rudderAngle << "motorSpeedLeft:" << logData[idx_index + innerGroupCount].motorSpeedLeft << "motorSpeedRight:" << logData[idx_index + innerGroupCount].motorSpeedRight;
+                    //qDebug() << "currentDistance:" << logData[idx_index + innerGroupCount].currentDistance << "lineSeparation:" << logData[idx_index + innerGroupCount].lineSeparation << "rudderAngle:" << logData[idx_index + innerGroupCount].rudderAngle << "motorSpeedLeft:" << logData[idx_index + innerGroupCount].motorSpeedLeft << "motorSpeedRight:" << logData[idx_index + innerGroupCount].motorSpeedRight;
                     GroupCount++;
                 }
             }
@@ -1122,7 +1127,7 @@ void MainWindow::on_pushButton_3_released()
                     logData[idx_index + innerGroupCount].rudderAngle = items[14].toFloat();
                     logData[idx_index + innerGroupCount].motorSpeedLeft = items[15].toInt();
                     logData[idx_index + innerGroupCount].motorSpeedRight = items[16].toInt();
-                    qDebug() << "currentDistance:" << logData[idx_index + innerGroupCount].currentDistance << "lineSeparation:" << logData[idx_index + innerGroupCount].lineSeparation << "rudderAngle:" << logData[idx_index + innerGroupCount].rudderAngle << "motorSpeedLeft:" << logData[idx_index + innerGroupCount].motorSpeedLeft << "motorSpeedRight:" << logData[idx_index + innerGroupCount].motorSpeedRight;
+                    //qDebug() << "currentDistance:" << logData[idx_index + innerGroupCount].currentDistance << "lineSeparation:" << logData[idx_index + innerGroupCount].lineSeparation << "rudderAngle:" << logData[idx_index + innerGroupCount].rudderAngle << "motorSpeedLeft:" << logData[idx_index + innerGroupCount].motorSpeedLeft << "motorSpeedRight:" << logData[idx_index + innerGroupCount].motorSpeedRight;
                     GroupCount++;
                 }
             }
@@ -1176,15 +1181,14 @@ void MainWindow::on_pushButton_3_released()
             value[4] = logData[group_index[selectedIndex].first + j].motorSpeedRight;
             
             // 输出一下
-            qDebug() << "currentDistance:" << value[0] << "lineSeparation:" << value[1] << "rudderAngle:" << value[2] << "motorSpeedLeft:" << value[3] << "motorSpeedRight:" << value[4];
+            //qDebug() << "currentDistance:" << value[0] << "lineSeparation:" << value[1] << "rudderAngle:" << value[2] << "motorSpeedLeft:" << value[3] << "motorSpeedRight:" << value[4];
             plot->ShowPlot_WaveForm(plot->pPlot1, value);
         }
         plot->setAutoX(plot->pPlot1,group_index[selectedIndex].second + 10);
 
 
-        QStringList lineNames;
-        lineNames << "currentDistance" << "lineSeparation" << "rudderAngle" << "motorSpeedLeft" << "motorSpeedRight";
-        plot->setCurvesName(plot->pPlot1,lineNames);
+        CurveLineNames << "currentDistance" << "lineSeparation" << "rudderAngle" << "motorSpeedLeft" << "motorSpeedRight";
+        plot->setCurvesName(CurveLineNames);
     }
 }
 
