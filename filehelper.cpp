@@ -1,6 +1,6 @@
 #include "filehelper.h"
-#include <QFile>
-#include <QFileInfo>
+#include <QDateTime>
+#include <QTextStream>
 
 bool FileHelper::exists(const QString &filePath)
 {
@@ -36,4 +36,30 @@ bool FileHelper::remove(const QString &filePath)
 {
     QFile file(filePath);
     return file.remove();
+}
+
+QStringList FileHelper::findAllTxtFiles()
+{
+    QDir directory(QCoreApplication::applicationDirPath());
+    return directory.entryList(QStringList() << "*.txt", QDir::Files);
+}
+
+bool FileHelper::removeTxtFile(const QString &fileName)
+{
+    QDir dir(QCoreApplication::applicationDirPath());
+    return dir.remove(fileName);
+}
+
+QString FileHelper::saveTxtFile(const QString &content)
+{
+    QString fileName = QCoreApplication::applicationDirPath() + "/" + QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss") + ".txt";
+    QFile file(fileName);
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QTextStream out(&file);
+        out << content;
+        file.close();
+        return fileName;
+    }
+    return QString();
 }

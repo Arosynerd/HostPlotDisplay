@@ -21,7 +21,8 @@
 #include "new_data_parser.h"
 //错误提示
 #include "ploterror.h"
-
+//文件方法
+#include "filehelper.h"
 // 接收缓冲区大小，单位字节
 #define BufferSize      50
 // 最大帧长度，单位字节

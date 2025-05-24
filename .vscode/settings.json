@@ -61,7 +61,13 @@
         "thread": "cpp",
         "cinttypes": "cpp",
         "typeinfo": "cpp",
-        "qserialportinfo": "cpp"
+        "qserialportinfo": "cpp",
+        "qdir": "cpp",
+        "qheaderview": "cpp",
+        "qtableview": "cpp",
+        "qstandarditem": "cpp",
+        "qcoreapplication": "cpp",
+        "qfile": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

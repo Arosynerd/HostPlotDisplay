@@ -19,6 +19,7 @@ RC_ICONS = debug_32px_1103189_easyicon.net.ico
 
 SOURCES += \
     Service/test.cpp \
+    filehelper.cpp \
     main.cpp \
     mainwindow.cpp \
     mycombobox.cpp \

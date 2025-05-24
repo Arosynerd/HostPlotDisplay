@@ -18,8 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
     model->setColumnCount(1); // 修改列数为1
     model->setHeaderData(0, Qt::Horizontal, "名称");
 
-    QDir directory(QCoreApplication::applicationDirPath());
-    QStringList txtFiles = directory.entryList(QStringList() << "*.txt", QDir::Files);
+    QStringList txtFiles = FileHelper::findAllTxtFiles();
     for (int i = 0; i < txtFiles.size(); ++i)
     {
         QList<QStandardItem *> row;
@@ -154,7 +153,6 @@ void MainWindow::serialPortRead_SlotForPlot(QByteArray recBuf)
 {
     /* 帧过滤部分代码 */
     short wmValue[20] = {0};
-    xFrameDataFilter(&recBuf, wmValue);
 
     //}
 
@@ -594,182 +592,6 @@ void MainWindow::on_pushButton_clicked()
         serialPortRead_SlotForPlot(sendDataFrame);
     }
 }
-
-// 帧过滤
-// 适用于有帧头、功能字、有效字段长度、校验位的接收，无帧尾
-void MainWindow::xFrameDataFilter(QByteArray *str, short value[])
-{
-    int num = str->size();
-    qDebug() << "The size of the QByteArray is:" << num;
-    if (num)
-    {
-        for (int i = 0; i < num; i++)
-        {
-            chrtmp[tnum] = str->at(i); // 从接收缓存区读取一个字节
-            if (f_h_flag == 1)         // 有帧头。判断功能字、有效字段长度，接收消息
-            {
-                if (f_fun_word) // 有帧头，有功能字
-                {
-                    if (f_length) // 有帧头，有功能字，有有效字节长度
-                    {
-                        if ((tnum - 4) < f_length) // 有帧头，有功能字，未超出有效字节长度+校验位，接收数据
-                        {
-                            tnum++;
-                        }
-                        else // 有帧头，有功能字，超出有效字节长度。判断校验位
-                        {
-                            // 累加和校验计算
-                            unsigned char crc = 0;
-                            for (i = 0; i < tnum; i++)
-                            {
-                                crc += chrtmp[i];
-                            }
-
-                            // 校验对比
-                            if (crc == chrtmp[tnum]) // 校验通过，将缓冲区的数据打包发送
-                            {
-
-                                // 根据功能字进行功能解析，自动根据帧长度解析为对应的short值。
-                                if (f_fun_word == FunWord_WF)
-                                {
-                                    for (int i = 0; i < (f_length / 2); i++)
-                                    {
-                                        value[i] = ((short)chrtmp[i * 2 + 4] << 8) | chrtmp[i * 2 + 4 + 1];
-                                    }
-                                }
-
-                                // 显示波形（在这里显示可以处理多帧粘包，避免多帧粘包只显示一帧的情况）
-                                // 将解析出的short数组，传入波形图，进行绘图
-                                if (!plot->isHidden())
-                                {
-                                    plot->ShowPlot_WaveForm(plot->pPlot1, value);
-                                }
-                                // qDebug() << "test4, i:" << i;
-                            }
-                            else
-                            {
-                                ++recvErrorNum; // 误码帧数量计数
-                            }
-
-                            // 清0重新接收
-                            tnum = 0;
-                            // 清空标志位
-                            f_h1_flag = 0;
-                            f_h_flag = 0;
-                            f_fun_word = 0;
-                            f_length = 0;
-                        }
-                        // 把上面下面的判断标志位 == 1去掉
-
-                    } // 有帧头，有功能字，判断是否是有效字节长度
-                    else
-                    {
-                        if (chrtmp[tnum] <= ValidByteLength)
-                        {
-                            f_length = chrtmp[tnum]; // 记录当前帧的有效字节长度
-                            tnum++;
-                        }
-                        else
-                        {
-                            // 清0重新接收
-                            tnum = 0;
-                            // 清空标志位
-                            f_h1_flag = 0;
-                            f_h_flag = 0;
-                            f_fun_word = 0;
-                        }
-                    }
-                }
-                else // 有帧头，无功能字，判断是否为有效功能字
-                {
-                    if ((chrtmp[tnum] == FunWord_WF) || chrtmp[tnum] == FunWord_SM)
-                    {
-                        f_fun_word = chrtmp[tnum]; // 记录功能字
-                        tnum++;
-                    }
-                    else
-                    {
-                        // 清0重新接收
-                        tnum = 0;
-                        // 清空标志位
-                        f_h1_flag = 0;
-                        f_h_flag = 0;
-                    }
-                }
-            }
-            else // 没有接收到帧头
-            {
-                if (f_h1_flag == 1) // 没有帧头，有帧头1。下一步判断是否为第2个字节
-                {
-                    if (chrtmp[tnum] == Frame_Header2) // 如果为帧头的第2个字节，接收到帧头标志位标志位置1，tnum自增
-                    {
-                        f_h_flag = 1;
-                        tnum++;
-                    }
-                    else
-                    {
-                        // 这里再添加一个判断，出现 3A 3A 3B xx的情况，如果没有这个判断会重新计数，导致丢帧
-                        if (chrtmp[tnum] == Frame_Header1)
-                        {
-                            f_h1_flag = 1;
-                            tnum = 1;
-                        }
-                        else
-                        {
-                            // 重新计数，但如果出现 3A 3A 3B xx的情况，会导致丢帧，要加上上面的判断
-                            f_h1_flag = 0;
-                            tnum = 0;
-                        }
-                    }
-                }
-                else // 没有帧头，没有有帧头1。下一步判断，是否为帧头的第1个字节
-                {
-                    if (chrtmp[tnum] == Frame_Header1) // 如果为帧头的第1个字节，标志位置1，tnum自增
-                    {
-                        f_h1_flag = 1;
-                        tnum++;
-                    }
-                    else // 否则，标志位清0，tnum清0
-                    {
-                        tnum = 0;
-                    }
-                }
-            }
-
-            // 2.判断多长的数据没有换行符，如果超过2000，会人为向数据接收区添加换行，来保证CPU占用率不会过高，不会导致卡顿
-            //   但由于是先插入换行，后插入接收到的数据，所以每一箩数据并不是2000
-            static int xx = 0;
-            if (chrtmp[tnum] != 0x0A)
-            {
-                ++xx;
-                if (xx > 2000)
-                {
-                    ui->txtRec->appendPlainText("");
-                    ui->txtRec->appendPlainText("");
-                    xx = 0;
-                }
-            }
-            else
-            {
-                xx = 0;
-            }
-
-            // 3.超过数据帧最大长度的不要，最多同时显示20条曲线。
-            //   大于MaxFrameLength个字节的帧不接收
-            if (tnum > (MaxFrameLength - 1))
-            {
-                tnum = 0;
-                f_h1_flag = 0;
-                f_h_flag = 0;
-                f_t1_flag = 0;
-                // f_fun_word = 0;
-                // f_length = 0;
-                continue;
-            }
-        }
-        qDebug() << "testtest";
-    }
-}
 #define testdd
 // 测试1
 void MainWindow::on_pushButton_3_released()
@@ -850,26 +672,9 @@ void MainWindow::on_pushButton_3_released()
 // 保存
 void MainWindow::on_pushButton_4_released()
 {
-    // QByteArray sendData = "2"; // 发送固定字符串 "0"
-
-    // // 如发送成功，会返回发送的字节长度。失败，返回-1。
-    // int a = mySerialPort->write(sendData);
-    // // 发送字节计数并显示
-    // if(a > 0)
-    // {
-    //     // 发送字节计数
-    //     sendNum += a;
-    //     // 状态栏显示计数值
-    //     setNumOnLabel(lblSendNum, "S: ", sendNum);
-    // }
-    QString fileName = QCoreApplication::applicationDirPath() + "/" + QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss") + ".txt";
-    QFile file(fileName);
-    if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+    QString fileName = FileHelper::saveTxtFile(ui->txtRec->toPlainText());
+    if (!fileName.isEmpty())
     {
-        QTextStream out(&file);
-        // out << ui->textEdit->toPlainText();
-        out << ui->txtRec->toPlainText();
-        file.close();
         QMessageBox::information(this, "提示", "文件已保存为: " + fileName);
     }
     else
@@ -882,8 +687,7 @@ void MainWindow::on_pushButton_4_released()
     model->setColumnCount(1); // 修改列数为1
     model->setHeaderData(0, Qt::Horizontal, "名称");
 
-    QDir directory(QCoreApplication::applicationDirPath());
-    QStringList txtFiles = directory.entryList(QStringList() << "*.txt", QDir::Files);
+    QStringList txtFiles = FileHelper::findAllTxtFiles();
     for (int i = 0; i < txtFiles.size(); ++i)
     {
         QList<QStandardItem *> row;
@@ -1009,8 +813,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
                 QAbstractItemModel *model = ui->tableView->model();
                 QModelIndex index = model->index(file_selected, 0);
                 QString fileName = model->data(index).toString();
-                QDir dir(QCoreApplication::applicationDirPath());
-                if (dir.remove(fileName))
+                if (FileHelper::removeTxtFile(fileName))
                 {
                     qDebug() << "文件删除成功:" << fileName;
                 }
@@ -1022,7 +825,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
                 QStandardItemModel *newModel = new QStandardItemModel(this);
                 newModel->setColumnCount(1);
                 newModel->setHeaderData(0, Qt::Horizontal, "名称");
-                QStringList txtFiles = dir.entryList(QStringList() << "*.txt", QDir::Files);
+                QStringList txtFiles = FileHelper::findAllTxtFiles();
                 for (int i = 0; i < txtFiles.size(); ++i)
                 {
                     QList<QStandardItem *> row;
@@ -1187,14 +990,10 @@ void MainWindow::on_inandoutButton_released()
 
 void MainWindow::on_TestButton_released()
 {
-    PlotError error(PlotError::KnownError, "数据格式不正确，请检查输入！");
-    // 弹窗提示
-    PlotError::showErrorDialog(this, error);
-    // 调试输出
-    PlotError::debugError(error);
-
-    // 构造一个未知错误
-    PlotError unknownError(PlotError::UnknownError, "发生了未知错误！");
-    PlotError::showErrorDialog(this, unknownError);
-    PlotError::debugError(unknownError);
+    QStringList txtFiles = FileHelper::findAllTxtFiles();
+    qDebug() << "本目录下的txt文件：";
+    for (const QString &fileName : txtFiles)
+    {
+        qDebug() << fileName;
+    }
 }
