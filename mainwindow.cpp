@@ -3,9 +3,7 @@
 #include <QDebug>
 #include "test.h"
 
-
 QStringList CurveLineNames;
-
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -13,7 +11,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     setWindowTitle("Qt Serial Debugger");
 
-    //
     CurveLineNames << "currentDistance" << "lineSeparation" << "rudderAngle" << "motorSpeedLeft" << "motorSpeedRight";
 
     // 查找当前目录下的txt文件并导入表格
@@ -155,43 +152,10 @@ void MainWindow::paintEvent(QPaintEvent *)
 // 串口接收显示，槽函数
 void MainWindow::serialPortRead_SlotForPlot(QByteArray recBuf)
 {
-    /*QString recBuf;
-    recBuf = QString(mySerialPort->readAll());*/
-
-    // QByteArray recBuf;
-    //  recBuf = mySerialPort->readAll();
-    //  //test
-    //  recBuf = QByteArray::fromHex(ui->txtRec->toPlainText().remove(" ").toUtf8());
-    //  qDebug() << "Received Data:" << recBuf;
-    // test
     /* 帧过滤部分代码 */
     short wmValue[20] = {0};
     xFrameDataFilter(&recBuf, wmValue);
 
-    // 调试信息输出，显示缓冲区内容（16进制显示）及接收标志位
-    // if(!ui->widget_5->isHidden()){
-    //     QByteArray str1;
-    //     //for(int i=0; i<(tnum + 1); i++)
-    //     for(int i=0; i<BufferSize; i++)
-    //     {
-    //         str1.append(chrtmp[i]);
-    //     }
-    //     //ui->txtFrameTemp->setPlainText(str1.toHex().toUpper());
-    //     str1 = str1.toHex().toUpper();
-    //     QString str2;
-    //     for(int i = 0; i<str1.length (); i+=2)
-    //     {
-    //         str2 += str1.mid (i,2);
-    //         str2 += " ";
-    //     }
-    //     ui->txtFrameBuffer->setPlainText(str2);
-    //     // 显示标志位
-    //     ui->txtFrameTnum->setText(QString::number(tnum));
-    //     ui->txtFrameH1->setText(QString::number(f_h1_flag));
-    //     ui->txtFrameH->setText(QString::number(f_h_flag));
-    //     ui->txtFrameFun->setText(QString::number(f_fun_word));
-    //     ui->txtFrameLen->setText(QString::number(f_length));
-    //     ui->txtFrameErrorNum->setText(QString::number(recvErrorNum));
     //}
 
     // 接收字节计数
@@ -224,66 +188,12 @@ void MainWindow::serialPortRead_SlotForPlot(QByteArray recBuf)
 
     // 移动光标到文本结尾
     ui->txtRec->moveCursor(QTextCursor::End);
-
-    // 将文本追加到末尾显示，会导致插入的文本换行
-    /*ui->txtRec->appendPlainText(recBuf);*/
-
-    /*// 在当前位置插入文本，不会发生换行。如果没有移动光标到文件结尾，会导致文件超出当前界面显示范围，界面也不会向下滚动。
-    ui->txtRec->insertPlainText(recBuf);
-    ui->txtRec->moveCursor(QTextCursor::End);*/
-
-    // 利用一个QString去获取消息框文本，再将新接收到的消息添加到QString尾部，但感觉效率会比当前位置插入低。也不会发生换行
-    /*QString txtBuf;
-    txtBuf = ui->txtRec->toPlainText();
-    txtBuf += recBuf;
-    ui->txtRec->setPlainText(txtBuf);
-    ui->txtRec->moveCursor(QTextCursor::End);*/
-
-    // 利用一个QString去缓存接收到的所有消息，效率会比上面高一点。但清空接收的时候，要将QString一并清空。
-    /*static QString txtBuf;
-    txtBuf += recBuf;
-    ui->txtRec->setPlainText(txtBuf);
-    ui->txtRec->moveCursor(QTextCursor::End);*/
 }
 
 void MainWindow::serialPortRead_Slot()
 {
-    /*QString recBuf;
-    recBuf = QString(mySerialPort->readAll());*/
-
     QByteArray recBuf;
     recBuf = mySerialPort->readAll();
-
-    /* 帧过滤部分代码 */
-    // short wmValue[20] = {0};
-    //  xFrameDataFilter(&recBuf, wmValue);
-
-    // 调试信息输出，显示缓冲区内容（16进制显示）及接收标志位
-    //    if (!ui->widget_5->isHidden())
-    //    {
-    //        QByteArray str1;
-    //        // for(int i=0; i<(tnum + 1); i++)
-    //        for (int i = 0; i < BufferSize; i++)
-    //        {
-    //            str1.append(chrtmp[i]);
-    //        }
-    //        // ui->txtFrameTemp->setPlainText(str1.toHex().toUpper());
-    //        str1 = str1.toHex().toUpper();
-    //        QString str2;
-    //        for (int i = 0; i < str1.length(); i += 2)
-    //        {
-    //            str2 += str1.mid(i, 2);
-    //            str2 += " ";
-    //        }
-    //        //ui->txtFrameBuffer->setPlainText(str2);
-    //        // 显示标志位
-    //        ui->txtFrameTnum->setText(QString::number(tnum));
-    //        ui->txtFrameH1->setText(QString::number(f_h1_flag));
-    //        ui->txtFrameH->setText(QString::number(f_h_flag));
-    //        ui->txtFrameFun->setText(QString::number(f_fun_word));
-    //        ui->txtFrameLen->setText(QString::number(f_length));
-    //        ui->txtFrameErrorNum->setText(QString::number(recvErrorNum));
-    //    }
 
     // 接收字节计数
     recvNum += recBuf.size();
@@ -685,16 +595,6 @@ void MainWindow::on_pushButton_clicked()
     }
 }
 
-/*
-void MainWindow::xFrameDataFilter(QByteArray *str)
-{
-    int num = str->size();
-    if(num)
-    {
-
-    }
-}*/
-
 // 帧过滤
 // 适用于有帧头、功能字、有效字段长度、校验位的接收，无帧尾
 void MainWindow::xFrameDataFilter(QByteArray *str, short value[])
@@ -728,25 +628,6 @@ void MainWindow::xFrameDataFilter(QByteArray *str, short value[])
                             // 校验对比
                             if (crc == chrtmp[tnum]) // 校验通过，将缓冲区的数据打包发送
                             {
-
-                                // 调试信息输出，显示有效帧的内容（16进制显示）
-                                //                                if (!ui->widget_5->isHidden())
-                                //                                {
-                                //                                    QByteArray str1;
-                                //                                    for (int i = 0; i < (tnum + 1); i++)
-                                //                                    {
-                                //                                        str1.append(chrtmp[i]);
-                                //                                    }
-                                //                                    // ui->txtFrameEffective->appendPlainText(str1.toHex().toUpper());
-                                //                                    str1 = str1.toHex().toUpper();
-                                //                                    QString str2;
-                                //                                    for (int i = 0; i < str1.length(); i += 2)
-                                //                                    {
-                                //                                        str2 += str1.mid(i, 2);
-                                //                                        str2 += " ";
-                                //                                    }
-                                //                                    ui->txtFrameEffective->appendPlainText(str2);
-                                //                                }
 
                                 // 根据功能字进行功能解析，自动根据帧长度解析为对应的short值。
                                 if (f_fun_word == FunWord_WF)
@@ -889,126 +770,7 @@ void MainWindow::xFrameDataFilter(QByteArray *str, short value[])
         qDebug() << "testtest";
     }
 }
-
-/*
-// 适用于有帧头帧尾、无功能字和有效字段长度的接收
-void MainWindow::xFrameDataFilter(QByteArray *str)
-{
-    int num = str->size();
-    if(num)
-    {
-        for(int i=0; i<num; i++)
-        {
-            chrtmp[tnum] = str->at(i);  		// 从接收缓存区读取一个字节
-            if (f_h_flag == 1)  // 有帧头，判断帧尾，接收消息
-            {
-                if (f_t1_flag == 1) //有帧头，有帧尾1
-                {
-                    if (chrtmp[tnum] == Frame_Tail2)
-                    {
-                        tnum ++;
-
-                        // 接收到一帧有效帧
-                        // 用户处理代码 //
-                        // 根据接收到的数量，合成帧字段
-                        // 调试信息输出，显示有效帧的内容（16进制显示）
-                        if(!ui->widget_5->isHidden()){
-                            QByteArray str1;
-                            for(int i=0; i<tnum; i++)
-                            {
-                                str1.append(chrtmp[i]);
-                            }
-                            //ui->txtFrameEffective->appendPlainText(str1.toHex().toUpper());
-                            str1 = str1.toHex().toUpper();
-                            QString str2;
-                            for(int i = 0; i<str1.length (); i+=2)
-                            {
-                                str2 += str1.mid (i,2);
-                                str2 += " ";
-                            }
-                            ui->txtFrameEffective->appendPlainText(str2);
-                        }
-
-                        //  处理完用户代码，重新接收计数 //
-                        tnum = 0;
-                        // 清空标志位，之前一直忘了
-                        f_h1_flag = 0;
-                        f_h_flag = 0;
-                        f_t1_flag = 0;
-
-                        // 将接收到符合帧定义的帧，原路发送回去 //
-                        //return str1;
-                        //ui->lineEdit->setText(str1.toHex().toUpper());
-
-                    }
-                    else
-                    {
-                        f_t1_flag = 0;
-                        tnum ++;
-                    }
-                }
-                else						// 有帧头，无帧尾1
-                {
-                    if (chrtmp[tnum] == Frame_Tail1)
-                    {
-                        f_t1_flag = 1;
-                        tnum ++;
-                    }
-                    else					// 接收消息包中间内容
-                    {
-                        tnum ++;
-                    }
-                }
-            }
-            else						// 没有接收到帧头
-            {
-                if (f_h1_flag == 1)			        //没有帧头，有帧头1。下一步判断是否为第2个字节
-                {
-                    if (chrtmp[tnum] == Frame_Header2)          // 如果为帧头的第2个字节，接收到帧头标志位标志位置1，tnum自增
-                    {
-                        f_h_flag = 1;
-                        tnum ++;
-                    }
-                    else
-                    {
-                        // 这里再添加一个判断，出现 3A 3A 3B xx的情况，如果没有这个判断会重新计数，导致丢帧
-                        if(chrtmp[tnum] == Frame_Header1){
-                            f_h1_flag = 1;
-                            tnum = 1;
-                        }else{
-                            // 重新计数，但如果出现 3A 3A 3B xx的情况，会导致丢帧，要加上上面的判断
-                            f_h1_flag = 0;
-                            tnum = 0;
-                        }
-                    }
-                }
-                else						//没有帧头，没有有帧头1。下一步判断，是否为帧头的第1个字节
-                {
-                    if (chrtmp[tnum] == Frame_Header1)  // 如果为帧头的第1个字节，标志位置1，tnum自增
-                    {
-                        f_h1_flag = 1;
-                        tnum ++;
-                    }
-                    else                                // 否则，标志位清0，tnum清0
-                    {
-                        tnum = 0;
-                    }
-                }
-            }
-
-            // 大于MaxFrameLength个字节的帧不接收
-            if (tnum > (MaxFrameLength - 1) )
-            {
-                tnum = 0;
-                f_h1_flag = 0;
-                f_h_flag = 0;
-                f_t1_flag = 0;
-                continue;
-            }
-        }
-    }
-}*/
-
+#define testdd
 // 测试1
 void MainWindow::on_pushButton_3_released()
 {
@@ -1017,128 +779,9 @@ void MainWindow::on_pushButton_3_released()
     int idx_index = 0; // 每组的起始点
     memset(logData, 0, sizeof(logData));
 
-    qDebug() << "查找每两个\"EVENT: 201\"之间的内容";
     QString plainText = ui->txtRec->toPlainText();
-    QStringList lines = plainText.split('\n');
 
-    QList<int> eventIndices;
-    for (int i = 0; i < lines.size(); ++i)
-    {
-        if (lines[i].contains("EVENT: 201", Qt::CaseInsensitive))
-        {
-            eventIndices << i;
-        }
-    }
-
-    if (eventIndices.size() < 2)
-    {
-        if (eventIndices.size() == 1)
-        {
-            // 只有一个EVENT: 201，输出它到结尾
-            QStringList betweenLines;
-            for (int i = eventIndices[0] + 1; i < lines.size(); ++i)
-                betweenLines << lines[i];
-            qDebug() << "最后一个\"EVENT: 201\"到结尾的内容:";
-            for (const QString &line : betweenLines)
-                qDebug() << line;
-        }
-        else
-        {
-            qDebug() << "未找到\"EVENT: 201\"或只有一个";
-        }
-        return;
-    }
-    int idx = 0;
-    // 输出每两个EVENT: 201之间的内容
-    for (; idx < eventIndices.size() - 1; ++idx)
-    {
-        int start = eventIndices[idx];
-        int end = eventIndices[idx + 1];
-        if (end > start + 1)
-        {
-            QStringList betweenLines;
-            for (int i = start + 1; i < end; ++i)
-                betweenLines << lines[i];
-            qDebug() << QString("第%1对\"EVENT: 201\"之间的内容:").arg(idx + 1);
-            int innerGroupCount = 0;
-            GroupCount = 0;
-            for (const QString &line : betweenLines)
-            {
-                QStringList items = line.split(' ', QString::SkipEmptyParts);
-                if (items.size() >= 11)
-                {
-                    innerGroupCount++;
-                    logData[idx_index + innerGroupCount].id = items[0].toInt();
-                    logData[idx_index + innerGroupCount].timestamp = items[1].toInt();
-                    logData[idx_index + innerGroupCount].currentMode = items[2].toInt();
-                    logData[idx_index + innerGroupCount].phaseFlag = items[4].toInt();
-                    logData[idx_index + innerGroupCount].goDestSpeed = items[5].toInt();
-                    logData[idx_index + innerGroupCount].firstPhaseCount = items[6].toInt();
-                    logData[idx_index + innerGroupCount].originBearing = items[7].toFloat();
-                    logData[idx_index + innerGroupCount].currentBearing = items[8].toFloat();
-                    logData[idx_index + innerGroupCount].currentYaw = items[9].toFloat();
-                    logData[idx_index + innerGroupCount].currentDistance = items[10].toFloat();
-                    logData[idx_index + innerGroupCount].lineSeparation = items[11].toFloat();
-                    logData[idx_index + innerGroupCount].bearingError = items[12].toFloat();
-                    logData[idx_index + innerGroupCount].yawCurrentBearing = items[13].toFloat();
-                    logData[idx_index + innerGroupCount].rudderAngle = items[14].toFloat();
-                    logData[idx_index + innerGroupCount].motorSpeedLeft = items[15].toInt();
-                    logData[idx_index + innerGroupCount].motorSpeedRight = items[16].toInt();
-                    //qDebug() << "currentDistance:" << logData[idx_index + innerGroupCount].currentDistance << "lineSeparation:" << logData[idx_index + innerGroupCount].lineSeparation << "rudderAngle:" << logData[idx_index + innerGroupCount].rudderAngle << "motorSpeedLeft:" << logData[idx_index + innerGroupCount].motorSpeedLeft << "motorSpeedRight:" << logData[idx_index + innerGroupCount].motorSpeedRight;
-                    GroupCount++;
-                }
-            }
-            group_index[group_count].first = idx_index;
-            group_index[group_count].second = innerGroupCount;
-            group_count++;
-            idx_index += (innerGroupCount + 10);
-            qDebug() << "innerGroupCount:" << innerGroupCount;
-            qDebug() << QString("第%1对\"EVENT: 201\"之间的内容的数量:").arg(GroupCount);
-        }
-    }
-    // 如果EVENT: 201数量为奇数，输出最后一个到结尾
-    if (eventIndices.size() % 2 == 1)
-    {
-        int last = eventIndices.last();
-        if (last + 1 < lines.size())
-        {
-            QStringList betweenLines;
-            for (int i = last + 1; i < lines.size(); ++i)
-                betweenLines << lines[i];
-            qDebug() << QString("第%1对\"EVENT: 201\"之间的内容:").arg(idx + 1);
-            int innerGroupCount = 0;
-
-            for (const QString &line : betweenLines)
-            {
-                QStringList items = line.split(' ', QString::SkipEmptyParts);
-                if (items.size() >= 11)
-                {
-                    innerGroupCount++;
-                    logData[idx_index + innerGroupCount].id = items[0].toInt();
-                    logData[idx_index + innerGroupCount].timestamp = items[1].toInt();
-                    logData[idx_index + innerGroupCount].currentMode = items[2].toInt();
-                    logData[idx_index + innerGroupCount].phaseFlag = items[4].toInt();
-                    logData[idx_index + innerGroupCount].goDestSpeed = items[5].toInt();
-                    logData[idx_index + innerGroupCount].firstPhaseCount = items[6].toInt();
-                    logData[idx_index + innerGroupCount].originBearing = items[7].toFloat();
-                    logData[idx_index + innerGroupCount].currentBearing = items[8].toFloat();
-                    logData[idx_index + innerGroupCount].currentYaw = items[9].toFloat();
-                    logData[idx_index + innerGroupCount].currentDistance = items[10].toFloat();
-                    logData[idx_index + innerGroupCount].lineSeparation = items[11].toFloat();
-                    logData[idx_index + innerGroupCount].bearingError = items[12].toFloat();
-                    logData[idx_index + innerGroupCount].yawCurrentBearing = items[13].toFloat();
-                    logData[idx_index + innerGroupCount].rudderAngle = items[14].toFloat();
-                    logData[idx_index + innerGroupCount].motorSpeedLeft = items[15].toInt();
-                    logData[idx_index + innerGroupCount].motorSpeedRight = items[16].toInt();
-                    //qDebug() << "currentDistance:" << logData[idx_index + innerGroupCount].currentDistance << "lineSeparation:" << logData[idx_index + innerGroupCount].lineSeparation << "rudderAngle:" << logData[idx_index + innerGroupCount].rudderAngle << "motorSpeedLeft:" << logData[idx_index + innerGroupCount].motorSpeedLeft << "motorSpeedRight:" << logData[idx_index + innerGroupCount].motorSpeedRight;
-                    GroupCount++;
-                }
-            }
-            group_index[group_count].first = idx_index;
-            group_index[group_count].second = innerGroupCount;
-            qDebug() << QString("最后一组\"EVENT: 201\"到结尾的内容的数量: %1").arg(GroupCount);
-        }
-    }
+    dataParser->parseData(plainText, group_index, logData, GroupCount, group_count, idx_index);
 
     for (int i = 0; i <= group_count; i++)
     {
@@ -1149,51 +792,56 @@ void MainWindow::on_pushButton_3_released()
     {
         groupOptions << QString("第%1组").arg(i + 1);
     }
-    bool ok = false;
-    QString selectedGroup = QInputDialog::getItem(this, "选择分组", "请选择一个分组：", groupOptions, 0, false, &ok);
-    if (ok && !selectedGroup.isEmpty())
+    if (groupOptions.isEmpty())
     {
-        int selectedIndex = groupOptions.indexOf(selectedGroup);
-        qDebug() << "用户选择了分组:" << selectedGroup << "，索引:" << selectedIndex;
-
-        
-
-        // 这里可以根据 selectedIndex 进行后续处理
-        if (plot)
+        PlotError error(PlotError::KnownError, "没有找到有效数据，请检查数据格式或者数据解析方式是否正确");
+        PlotError::showErrorDialog(this, error);
+    }
+    else
+    {
+        bool ok = false;
+        QString selectedGroup = QInputDialog::getItem(this, "选择分组", "请选择一个分组：", groupOptions, 0, false, &ok);
+        if (ok && !selectedGroup.isEmpty())
         {
-            delete plot;
-            plot = nullptr;
+            int selectedIndex = groupOptions.indexOf(selectedGroup);
+            qDebug() << "用户选择了分组:" << selectedGroup << "，索引:" << selectedIndex;
+
+            // 这里可以根据 selectedIndex 进行后续处理
+            if (plot)
+            {
+                delete plot;
+                plot = nullptr;
+            }
+
+            // 创建一个新的 Plot 对象
+            plot = new Plot;
+
+            // 显示新的波形绘图窗口
+            plot->showMaximized();
+            // 修改plot的标题
+
+            int rowIndex = file_selected;
+            QString secondColumnData = ui->tableView->model()->index(rowIndex, 0).data().toString();
+            qDebug() << "Second column content:" << secondColumnData;
+            // QString plotTitle = "波形显示";
+            plot->setWindowTitle(secondColumnData);
+            float value[20] = {0};
+            for (int j = 1; j <= group_index[selectedIndex].second; j++)
+            {
+                value[0] = logData[group_index[selectedIndex].first + j].currentDistance;
+                value[1] = logData[group_index[selectedIndex].first + j].lineSeparation;
+                value[2] = logData[group_index[selectedIndex].first + j].rudderAngle;
+                value[3] = logData[group_index[selectedIndex].first + j].motorSpeedLeft;
+                value[4] = logData[group_index[selectedIndex].first + j].motorSpeedRight;
+
+                // 输出一下
+                // qDebug() << "currentDistance:" << value[0] << "lineSeparation:" << value[1] << "rudderAngle:" << value[2] << "motorSpeedLeft:" << value[3] << "motorSpeedRight:" << value[4];
+                plot->ShowPlot_WaveForm(plot->pPlot1, value);
+            }
+            plot->setAutoX(plot->pPlot1, group_index[selectedIndex].second + 10);
+
+            plot->setCurvesName(CurveLineNames);
         }
-
-        // 创建一个新的 Plot 对象
-        plot = new Plot;
-
-        // 显示新的波形绘图窗口
-        plot->showMaximized();
-        // 修改plot的标题
-
-        int rowIndex = file_selected;
-        QString secondColumnData = ui->tableView->model()->index(rowIndex, 0).data().toString();
-        qDebug() << "Second column content:" << secondColumnData;
-        // QString plotTitle = "波形显示";
-        plot->setWindowTitle(secondColumnData);
-        float value[20] = {0};
-        for (int j = 1; j <= group_index[selectedIndex].second; j++)
-        {
-            value[0] = logData[group_index[selectedIndex].first + j].currentDistance;
-            value[1] = logData[group_index[selectedIndex].first + j].lineSeparation;
-            value[2] = logData[group_index[selectedIndex].first + j].rudderAngle;
-            value[3] = logData[group_index[selectedIndex].first + j].motorSpeedLeft;
-            value[4] = logData[group_index[selectedIndex].first + j].motorSpeedRight;
-            
-            // 输出一下
-            //qDebug() << "currentDistance:" << value[0] << "lineSeparation:" << value[1] << "rudderAngle:" << value[2] << "motorSpeedLeft:" << value[3] << "motorSpeedRight:" << value[4];
-            plot->ShowPlot_WaveForm(plot->pPlot1, value);
-        }
-        plot->setAutoX(plot->pPlot1,group_index[selectedIndex].second + 10);
-
-
-        plot->setCurvesName(CurveLineNames);
     }
 }
 
@@ -1539,30 +1187,14 @@ void MainWindow::on_inandoutButton_released()
 
 void MainWindow::on_TestButton_released()
 {
-    if (plot)
-    {
-        delete plot;
-        plot = nullptr;
-    }
+    PlotError error(PlotError::KnownError, "数据格式不正确，请检查输入！");
+    // 弹窗提示
+    PlotError::showErrorDialog(this, error);
+    // 调试输出
+    PlotError::debugError(error);
 
-    // 创建一个新的 Plot 对象
-    plot = new Plot;
-
-    // 显示新的波形绘图窗口
-    plot->show();
-    // 修改plot的标题
-
-    int rowIndex = file_selected;
-    QString secondColumnData = ui->tableView->model()->index(rowIndex, 0).data().toString();
-    qDebug() << "Second column content:" << secondColumnData;
-    // QString plotTitle = "波形显示";
-    plot->setWindowTitle(secondColumnData);
-    float value[20] = {1, 2, 3};
-    for (int i = 0; i < 100; i++)
-    {
-        // 将 j 的类型改为 int，并修正迭代变量
-        for (int j = 0; j < 3; j++)
-            value[j] = j + 0.5;
-        plot->ShowPlot_WaveForm(plot->pPlot1, value);
-    }
+    // 构造一个未知错误
+    PlotError unknownError(PlotError::UnknownError, "发生了未知错误！");
+    PlotError::showErrorDialog(this, unknownError);
+    PlotError::debugError(unknownError);
 }

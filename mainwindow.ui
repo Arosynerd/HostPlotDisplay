@@ -26,7 +26,24 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout_4">
+   <layout class="QGridLayout" name="gridLayout_4" columnstretch="2,7">
+    <item row="0" column="0">
+     <layout class="QVBoxLayout" name="verticalLayout_6">
+      <item>
+       <widget class="QTableView" name="tableView">
+        <property name="maximumSize">
+         <size>
+          <width>200</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="editTriggers">
+         <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::EditKeyPressed</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
     <item row="0" column="1">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
@@ -6033,8 +6050,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>98</width>
-                   <height>28</height>
+                   <width>100</width>
+                   <height>30</height>
                   </rect>
                  </property>
                  <attribute name="icon">
@@ -6405,19 +6422,6 @@
       </widget>
      </widget>
     </item>
-    <item row="0" column="0" rowspan="2">
-     <widget class="QTableView" name="tableView">
-      <property name="maximumSize">
-       <size>
-        <width>200</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="editTriggers">
-       <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::EditKeyPressed</set>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -6447,15 +6451,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>myComboBox</class>
-   <extends>QComboBox</extends>
-   <header>mycombobox.h</header>
-  </customwidget>
-  <customwidget>
    <class>QCustomPlot</class>
    <extends>QWidget</extends>
    <header location="global">qcustomplot.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>myComboBox</class>
+   <extends>QComboBox</extends>
+   <header>mycombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources>
