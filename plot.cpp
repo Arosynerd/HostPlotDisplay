@@ -2,6 +2,7 @@
 #include "ui_plot.h"
 #include "new_data_parser.h"
 #include <stdio.h>
+#include <QFontMetrics>
 QStringList CurveLineNamesInChinese;
 Plot::Plot(QWidget *parent) : QMainWindow(parent),
                               ui(new Ui::Plot)
@@ -119,6 +120,8 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
     // 设置图例框为透明
     customPlot->legend->setBrush(Qt::NoBrush);
     customPlot->legend->setBorderPen(Qt::NoPen);
+    customPlot->legend->setMinimumSize(300, 0); // 设置最小宽度
+    customPlot->legend->setMaximumSize(300, 16777215); // 设置最大宽度
     // 只显示前10条图例，并缩小图例框面积，不显示的曲线不占用空间
     int legendItemCount = 0;
     for (int i = 0; i < customPlot->graphCount(); ++i)
@@ -1013,9 +1016,43 @@ void Plot::mouseMove2(QMouseEvent *e)
         if (i < Cvlls.size())
         {
             if (Cvlls[i] == "currentDistance")
-                Cvlls[i].append(QString("总距离10米,剩余%1米%2\n").arg(QString::number(yValue, 'f', 2)).arg(snapInfo));
+            Cvlls[i].append(QString("总距离10米,剩余%1米%2\n").arg(QString::number(yValue, 'f', 2)).arg(snapInfo));
             else
-                Cvlls[i].append(QString("x = %1, y = %2%3\n").arg(QString::number(xValue, 'f', 2)).arg(QString::number(yValue, 'f', 2)).arg(snapInfo));
+            Cvlls[i].append(QString("y = %1%2\n").arg(QString::number(yValue, 'f', 2)).arg(snapInfo));
+        }
+    }
+    // 找到所有字符串中"y"的位置的最大值
+    int maxYPos = 0;
+    for (const QString &str : Cvlls) {
+        int yPos = str.indexOf("y");
+        if (yPos > maxYPos)
+            maxYPos = yPos;
+    }
+    // 对齐每个字符串的"y"
+    for (int i = 0; i < Cvlls.size(); ++i) {
+        int yPos = Cvlls[i].indexOf("y");
+        if (yPos >= 0 && yPos < maxYPos) {
+            Cvlls[i].insert(yPos, QString(maxYPos - yPos, ' '));
+        }
+    }
+    // 使用 QFontMetrics 计算像素宽度对齐“y”
+    QFontMetrics fm(pPlot1->legend->font());
+    int maxYWidth = 0;
+    for (const QString &str : Cvlls) {
+        int yPos = str.indexOf("y");
+        if (yPos > 0) {
+            int width = fm.horizontalAdvance(str.left(yPos));
+            if (width > maxYWidth)
+                maxYWidth = width;
+        }
+    }
+    for (int i = 0; i < Cvlls.size(); ++i) {
+        int yPos = Cvlls[i].indexOf("y");
+        if (yPos > 0) {
+            int width = fm.horizontalAdvance(Cvlls[i].left(yPos));
+            int spaceWidth = fm.horizontalAdvance(" ");
+            int needSpaces = (maxYWidth - width + spaceWidth - 1) / spaceWidth;
+            Cvlls[i].insert(yPos, QString(needSpaces, ' '));
         }
     }
     setCurvesName(Cvlls);

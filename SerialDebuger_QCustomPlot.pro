@@ -24,6 +24,7 @@ SOURCES += \
     mycombobox.cpp \
     new_data_parser.cpp \
     plot.cpp \
+    ploterror.cpp \
     qcustomplot.cpp
 
 HEADERS += \
