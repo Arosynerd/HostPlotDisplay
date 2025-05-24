@@ -46,7 +46,6 @@
 #define FILE5_SELECTED 4
 #define FILE6_SELECTED 5
 
-
 typedef struct GODEST_log_data_t {
     int id;
     int timestamp;

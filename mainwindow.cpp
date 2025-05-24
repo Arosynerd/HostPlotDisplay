@@ -13,6 +13,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     setWindowTitle("Qt Serial Debugger");
 
+    //
+    CurveLineNames << "currentDistance" << "lineSeparation" << "rudderAngle" << "motorSpeedLeft" << "motorSpeedRight";
+
     // 查找当前目录下的txt文件并导入表格
     QStandardItemModel *model = new QStandardItemModel(this);
     model->setColumnCount(1); // 修改列数为1
@@ -1152,6 +1155,9 @@ void MainWindow::on_pushButton_3_released()
     {
         int selectedIndex = groupOptions.indexOf(selectedGroup);
         qDebug() << "用户选择了分组:" << selectedGroup << "，索引:" << selectedIndex;
+
+        
+
         // 这里可以根据 selectedIndex 进行后续处理
         if (plot)
         {
@@ -1187,7 +1193,6 @@ void MainWindow::on_pushButton_3_released()
         plot->setAutoX(plot->pPlot1,group_index[selectedIndex].second + 10);
 
 
-        CurveLineNames << "currentDistance" << "lineSeparation" << "rudderAngle" << "motorSpeedLeft" << "motorSpeedRight";
         plot->setCurvesName(CurveLineNames);
     }
 }

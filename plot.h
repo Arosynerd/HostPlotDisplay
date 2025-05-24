@@ -5,6 +5,10 @@
 #include "qcustomplot.h"
 #include <QVector>
 
+//数据解析类
+#include "new_data_parser.h"
+extern QStringList CurveLineNames;
+
 namespace Ui {
 class Plot;
 }
@@ -75,7 +79,10 @@ private:
     QTimer *timer;
     // 绘图控件中曲线的指针
     QCPGraph *pCurve[20];
+    // 数据解析对象指针
+    DataParser *parsefp = NULL;// 数据解析类
     // 绘图框X轴显示的坐标点数
+
     int pointOriginX=0;
     int pointOriginY=0;
     int pointCountX=0;

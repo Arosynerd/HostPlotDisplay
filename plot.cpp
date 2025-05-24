@@ -1,7 +1,8 @@
 #include "plot.h"
 #include "ui_plot.h"
+#include "new_data_parser.h"
 #include <stdio.h>
-extern QStringList CurveLineNames;
+QStringList CurveLineNamesInChinese;
 Plot::Plot(QWidget *parent) : QMainWindow(parent),
                               ui(new Ui::Plot)
 {
@@ -28,8 +29,6 @@ Plot::Plot(QWidget *parent) : QMainWindow(parent),
     ui->txtPointOriginX->setEnabled(false);
     // 图表重绘后，刷新原点坐标和范围
     connect(pPlot1, SIGNAL(afterReplot()), this, SLOT(repPlotCoordinate()));
-
-    
 }
 
 Plot::~Plot()
@@ -37,25 +36,26 @@ Plot::~Plot()
     qDebug() << "~Plot";
 
     // 停止定时器
-    if (timer && timer->isActive()) {
+    if (timer && timer->isActive())
+    {
         timer->stop();
     }
     delete timer;
     timer = nullptr;
 
     // 清空绘图数据
-    if (pPlot1) {
-        for (int i = 0; i < 20; i++) {
-            if (pCurve[i]) {
+    if (pPlot1)
+    {
+        for (int i = 0; i < 20; i++)
+        {
+            if (pCurve[i])
+            {
                 pCurve[i]->data().data()->clear();
             }
         }
         pPlot1->clearGraphs();
         pPlot1->replot(QCustomPlot::rpQueuedReplot);
     }
-
-    // 清空曲线名称列表
-    CurveLineNames.clear();
 
     // 初始化计数器
     cnt = 0;
@@ -66,7 +66,7 @@ Plot::~Plot()
 // 绘图图表初始化
 void Plot::QPlot_init(QCustomPlot *customPlot)
 {
-    qDebug() << "QPlot_init" ;
+    qDebug() << "QPlot_init";
     // 添加曲线名称
     QStringList lineNames; // 设置图例的文本
     lineNames << "bbq" << "波形2" << "波形3" << "波形4" << "波形5" << "波形6" << "波形7" << "波形8" << "波形9" << "波形10"
@@ -121,17 +121,20 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
     customPlot->legend->setBorderPen(Qt::NoPen);
     // 只显示前10条图例，并缩小图例框面积，不显示的曲线不占用空间
     int legendItemCount = 0;
-    for (int i = 0; i < customPlot->graphCount(); ++i) {
-        if (i < 5) {
+    for (int i = 0; i < customPlot->graphCount(); ++i)
+    {
+        if (i < 5)
+        {
             customPlot->graph(i)->setVisible(true);
             customPlot->legend->item(i)->setVisible(true);
             ++legendItemCount;
-        } else {
+        }
+        else
+        {
             customPlot->graph(i)->setVisible(true); // 曲线本身可见性不变
             customPlot->legend->item(i)->setVisible(false);
         }
     }
-
 
     // 设置波形曲线的复选框字体颜色
     // ui->chkVisibleCurve1->setStyleSheet("QCheckBox{color:rgb(255,0,0)}");//设定前景颜色,就是字体颜色
@@ -144,15 +147,17 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
     customPlot->axisRect()->setRangeZoom(Qt::Vertical);
     // customPlot->axisRect()->setRangeZoom(Qt::Horizontal);
 
-    //游标说明
-    tracerLabel = new QCPItemText(customPlot); //生成游标说明
-    tracerLabel->setLayer("overlay");//设置图层为overlay，因为需要频繁刷新
-    tracerLabel->setPen(QPen(Qt::black));//设置游标说明颜色
-    tracerLabel->setPositionAlignment(Qt::AlignLeft | Qt::AlignTop);//左上
-    tracerLabel->position->setCoords(10, 10); // 固定在左上角
+    // 游标说明
+    tracerLabel = new QCPItemText(customPlot);                       // 生成游标说明
+    tracerLabel->setLayer("overlay");                                // 设置图层为overlay，因为需要频繁刷新
+    tracerLabel->setPen(Qt::NoPen);                            // 设置游标说明颜色为透明
+    tracerLabel->setPositionAlignment(Qt::AlignLeft | Qt::AlignTop); // 左上
+    tracerLabel->position->setCoords(10, 10);                        // 固定在左上角
+    tracerLabel->setText("");
 
-      // 生成每条曲线的tracer
-    for (int i = 0; i < customPlot->graphCount(); ++i) {
+    // 生成每条曲线的tracer
+    for (int i = 0; i < customPlot->graphCount(); ++i)
+    {
         QCPItemTracer *t = new QCPItemTracer(customPlot);
         t->setGraph(customPlot->graph(i));
         t->setStyle(QCPItemTracer::tsCircle);
@@ -163,31 +168,44 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
         tracers.append(t);
     }
 
-     // 生成竖线
+    // 生成竖线
     vLine = new QCPItemStraightLine(customPlot);
     vLine->setPen(QPen(Qt::blue, 1, Qt::DashLine));
     vLine->point1->setCoords(0, 0);
     vLine->point2->setCoords(0, 1);
 
-    //信号-槽连接语句
-    connect(customPlot, SIGNAL(mouseMove(QMouseEvent*)), this, SLOT(mouseMove2(QMouseEvent*)));
+    // 信号-槽连接语句
+    connect(customPlot, SIGNAL(mouseMove(QMouseEvent *)), this, SLOT(mouseMove2(QMouseEvent *)));
+
+    // 生成对象dataParser
+    parsefp = new DataParser();
+
+    if (CurveLineNames.size() > 0)
+    {
+        // 中文名称设置
+        for (int i = 0; i < CurveLineNames.size(); i++)
+        {
+            CurveLineNamesInChinese << parsefp->parseData(CurveLineNames.at(i));
+        }
+    }
+    else{
+        qDebug() << "CurveLineNames.size() = 0";
+    }
 }
-
-
-
-
 
 /*
     功能：设置曲线名称，说明作用
     参数：
         lineNames：曲线名称列表
 */
-void Plot::setCurvesName(QStringList lineNames){
+void Plot::setCurvesName(QStringList lineNames)
+{
     QStringList DefaultlineNames; // 设置图例的文本
     DefaultlineNames << "bbq" << "波形2" << "波形3" << "波形4" << "波形5" << "波形6" << "波形7" << "波形8" << "波形9" << "波形10"
-              << "波形11" << "波形12" << "波形13" << "波形14" << "波形15" << "波形16" << "波形17" << "波形18" << "波形19" << "波形20";
-    
-    for (int i = 0; i < lineNames.size() && i < 20; ++i) {
+                     << "波形11" << "波形12" << "波形13" << "波形14" << "波形15" << "波形16" << "波形17" << "波形18" << "波形19" << "波形20";
+
+    for (int i = 0; i < lineNames.size() && i < 20; ++i)
+    {
         DefaultlineNames[i] = lineNames[i];
     }
     lineNames = DefaultlineNames;
@@ -197,7 +215,7 @@ void Plot::setCurvesName(QStringList lineNames){
     {
         pCurve[i]->setName(lineNames.at(i));
     }
-    //侧栏名称修改
+    // 侧栏名称修改
     ui->chkVisibleCurve1->setText(lineNames.at(0));
     ui->chkVisibleCurve2->setText(lineNames.at(1));
     ui->chkVisibleCurve3->setText(lineNames.at(2));
@@ -205,47 +223,25 @@ void Plot::setCurvesName(QStringList lineNames){
     ui->chkVisibleCurve5->setText(lineNames.at(4));
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-void Plot::addCurvesName(QStringList addlineNames){
-    //获取侧栏当前值
+void Plot::addCurvesName(QStringList addlineNames)
+{
+    // 获取侧栏当前值
     QStringList CurrenlineNames;
     CurrenlineNames << ui->chkVisibleCurve1->text() << ui->chkVisibleCurve2->text() << ui->chkVisibleCurve3->text() << ui->chkVisibleCurve4->text() << ui->chkVisibleCurve5->text();
 
     // 遍历 CurrenlineNames 并追加 addlineNames 对应位置的文本
-    for (int i = 0; i < CurrenlineNames.size() && i < addlineNames.size(); ++i) {
+    for (int i = 0; i < CurrenlineNames.size() && i < addlineNames.size(); ++i)
+    {
         CurrenlineNames[i].append(addlineNames[i]);
     }
 
-    //侧栏名称修改
+    // 侧栏名称修改
     ui->chkVisibleCurve1->setText(CurrenlineNames.at(0));
     ui->chkVisibleCurve2->setText(CurrenlineNames.at(1));
     ui->chkVisibleCurve3->setText(CurrenlineNames.at(2));
     ui->chkVisibleCurve4->setText(CurrenlineNames.at(3));
     ui->chkVisibleCurve5->setText(CurrenlineNames.at(4));
 }
-
-
-
-
-
 
 // 绘图图表的设置控件初始化，主要用于关联控件的信号槽
 void Plot::QPlot_widget_init(void)
@@ -759,7 +755,7 @@ void Plot::setAutoTrackX(QCustomPlot *pPlot)
 }
 
 // 设置曲线x轴自适应
-void Plot::setAutoX(QCustomPlot *pPlot,int xRange)
+void Plot::setAutoX(QCustomPlot *pPlot, int xRange)
 {
     pointCountX = xRange;
     if (pCurve[0]->dataCount() < pointCountX)
@@ -937,19 +933,18 @@ void Plot::on_txtMainScaleNumY_returnPressed()
 
 void Plot::mouseMove1(QMouseEvent *e)
 {
-    //获得鼠标位置处对应的横坐标数据x
+    // 获得鼠标位置处对应的横坐标数据x
     double x = pPlot1->xAxis->pixelToCoord(e->pos().x());
-    //double y = cmPlot->yAxis->pixelToCoord(e->pos().y());
+    // double y = cmPlot->yAxis->pixelToCoord(e->pos().y());
     double xValue, yValue;
 
-    xValue = x;//xValue就是游标的横坐标
-    yValue = x*x;//yValue就是游标的纵坐标，这里直接根据产生数据的函数获得
+    xValue = x;     // xValue就是游标的横坐标
+    yValue = x * x; // yValue就是游标的纵坐标，这里直接根据产生数据的函数获得
 
-    tracer->position->setCoords(xValue, yValue);//设置游标位置
-    tracerLabel->setText(QString("x = %1, y = %2").arg(xValue).arg(yValue));//设置游标说明内容
-    pPlot1->replot();//绘制器一定要重绘，否则看不到游标位置更新情况
+    tracer->position->setCoords(xValue, yValue);                             // 设置游标位置
+    tracerLabel->setText(QString("x = %1, y = %2").arg(xValue).arg(yValue)); // 设置游标说明内容
+    pPlot1->replot();                                                        // 绘制器一定要重绘，否则看不到游标位置更新情况
 }
-
 
 void Plot::mouseMove2(QMouseEvent *e)
 {
@@ -958,28 +953,35 @@ void Plot::mouseMove2(QMouseEvent *e)
     double vLineX = mouseX;
     QString labelText;
     double snapThreshold = 0.5; // 吸附判据，x距离小于此值就吸附
-    int searchRange = 5; // 峰值搜索范围（x方向±5）
-     QStringList Cvlls = CurveLineNames;
+    int searchRange = 5;        // 峰值搜索范围（x方向±5）
+    QStringList Cvlls = CurveLineNamesInChinese;
     for (int i = 0; i < pPlot1->graphCount(); ++i)
     {
         QCPGraph *graph = pPlot1->graph(i);
-        if (!graph) continue;
+        if (!graph)
+            continue;
         // 获取数据
         auto data = graph->data();
-        if (data->isEmpty()) continue;
+        if (data->isEmpty())
+            continue;
         // 在鼠标x附近±searchRange内找最大y值点和最小y值点
         double maxY = -1e100;
         double maxX = mouseX;
         double minY = 1e100;
         double minX = mouseX;
-        for (auto it = data->constBegin(); it != data->constEnd(); ++it) {
-            if (it->key < mouseX - searchRange) continue;
-            if (it->key > mouseX + searchRange) break;
-            if (it->value > maxY) {
+        for (auto it = data->constBegin(); it != data->constEnd(); ++it)
+        {
+            if (it->key < mouseX - searchRange)
+                continue;
+            if (it->key > mouseX + searchRange)
+                break;
+            if (it->value > maxY)
+            {
                 maxY = it->value;
                 maxX = it->key;
             }
-            if (it->value < minY) {
+            if (it->value < minY)
+            {
                 minY = it->value;
                 minX = it->key;
             }
@@ -987,11 +989,14 @@ void Plot::mouseMove2(QMouseEvent *e)
         // 判断是否吸附到峰值或谷值
         double tracerX = mouseX;
         QString snapInfo;
-        if (fabs(mouseX - maxX) < snapThreshold && fabs(mouseX - minX) >= fabs(mouseX - maxX)) {
+        if (fabs(mouseX - maxX) < snapThreshold && fabs(mouseX - minX) >= fabs(mouseX - maxX))
+        {
             tracerX = maxX;
             vLineX = maxX; // 竖线吸附到峰值
             snapInfo = " (吸附峰值)";
-        } else if (fabs(mouseX - minX) < snapThreshold) {
+        }
+        else if (fabs(mouseX - minX) < snapThreshold)
+        {
             tracerX = minX;
             vLineX = minX; // 竖线吸附到谷值
             snapInfo = " (吸附谷值)";
@@ -1003,19 +1008,20 @@ void Plot::mouseMove2(QMouseEvent *e)
         double xValue = tracers[i]->position->key();
         double yValue = tracers[i]->position->value();
 
+        // CurveLineNames
 
-        //CurveLineNames
-
-        if(i < Cvlls.size()){
-            if (Cvlls[i] == "currentDistance")Cvlls[i].append(QString("总距离10米,剩余%1米%2\n").arg(yValue).arg(snapInfo));
-            else Cvlls[i].append(QString("x = %1, y = %2%3\n").arg(xValue).arg(yValue).arg(snapInfo));
+        if (i < Cvlls.size())
+        {
+            if (Cvlls[i] == "currentDistance")
+                Cvlls[i].append(QString("总距离10米,剩余%1米%2\n").arg(QString::number(yValue, 'f', 2)).arg(snapInfo));
+            else
+                Cvlls[i].append(QString("x = %1, y = %2%3\n").arg(QString::number(xValue, 'f', 2)).arg(QString::number(yValue, 'f', 2)).arg(snapInfo));
         }
     }
     setCurvesName(Cvlls);
     // 竖线吸附到最近的峰值
     vLine->point1->setCoords(vLineX, pPlot1->yAxis->range().lower);
     vLine->point2->setCoords(vLineX, pPlot1->yAxis->range().upper);
-    //tracerLabel->setText(labelText.trimmed());
     tracerLabel->setTextAlignment(Qt::AlignLeft | Qt::AlignTop);
     pPlot1->replot();
 }
