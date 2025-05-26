@@ -72,10 +72,13 @@ private slots:
     void on_txtMainScaleNumX_returnPressed();
 
     void on_txtMainScaleNumY_returnPressed();
-    //void on_pushButton_released();
 
 
     
+
+    void on_x_checkBox_stateChanged(int arg1);
+
+    void on_pushButton_released();
 
 private:
     Ui::Plot *ui;

@@ -5655,22 +5655,6 @@
                <bool>true</bool>
               </property>
              </widget>
-             <widget class="QCheckBox" name="chkDrawDemo">
-              <property name="geometry">
-               <rect>
-                <x>10</x>
-                <y>400</y>
-                <width>101</width>
-                <height>16</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>绘图演示-曲线</string>
-              </property>
-              <property name="checked">
-               <bool>false</bool>
-              </property>
-             </widget>
              <widget class="QWidget" name="layoutWidget">
               <property name="geometry">
                <rect>
@@ -5798,6 +5782,19 @@
               </property>
               <property name="text">
                <string>测试按钮</string>
+              </property>
+             </widget>
+             <widget class="QCheckBox" name="x_checkBox">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>430</y>
+                <width>73</width>
+                <height>18</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>x轴缩放</string>
               </property>
              </widget>
             </widget>

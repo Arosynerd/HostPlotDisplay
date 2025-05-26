@@ -3,6 +3,7 @@
 #include "new_data_parser.h"
 #include <stdio.h>
 #include <QFontMetrics>
+
 QStringList CurveLineNamesInChinese;
 Plot::Plot(QWidget *parent) : QMainWindow(parent),
                               ui(new Ui::Plot)
@@ -1187,3 +1188,38 @@ void Plot::stageDistinguish(void)
         pPlot1->replot(QCustomPlot::rpQueuedReplot);
     }
 }
+
+void Plot::on_x_checkBox_stateChanged(int arg1)
+{
+    qDebug() << "x_checkBox state changed:" << arg1;
+    if (arg1)
+    {
+        // 显示x轴
+        pPlot1->xAxis->setVisible(true);
+    }
+    else
+    {
+        // 隐藏x轴
+        pPlot1->xAxis->setVisible(false);
+    }
+}
+
+
+void Plot::on_pushButton_released()
+{
+     // 获取按钮的名称
+    QString buttonText = ui->pushButton->text();
+    if (buttonText == "<")
+    {
+        ui->pushButton->setText(">");
+        // 展开区域
+        ui->frame_2->setVisible(true);
+    }
+    else
+    {
+        ui->pushButton->setText("<");
+        // 收起区域
+        ui->frame_2->setVisible(false);
+    }
+}
+
