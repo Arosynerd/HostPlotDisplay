@@ -126,6 +126,8 @@ private:
 
     void setManualSettingX(QCustomPlot *pPlot);
     void setAutoTrackY(QCustomPlot *pPlot);
+
+    void showDashboard(QCustomPlot *customPlot);
 };
 
 #endif // PLOT_H

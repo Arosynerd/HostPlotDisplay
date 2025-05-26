@@ -14,9 +14,9 @@
 typedef struct GODEST_log_data_t {
     int id;
     int timestamp;
-    int currentMode;
+    int currentMode;//
     int phaseFlag;
-    int goDestSpeed;
+    int goDestSpeed;// 基础油门
     int firstPhaseCount;
     float originBearing;
     float currentBearing;

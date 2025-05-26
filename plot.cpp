@@ -69,8 +69,8 @@ Plot::~Plot()
 void Plot::QPlot_init(QCustomPlot *customPlot)
 {
     qDebug() << "QPlot_init";
-    // 添加曲线名称
-    QStringList lineNames; // 设置图例的文本
+    // 添加曲线名称、设置图例的文本
+    QStringList lineNames;
     lineNames << "bbq" << "波形2" << "波形3" << "波形4" << "波形5" << "波形6" << "波形7" << "波形8" << "波形9" << "波形10"
               << "波形11" << "波形12" << "波形13" << "波形14" << "波形15" << "波形16" << "波形17" << "波形18" << "波形19" << "波形20";
     // 曲线初始颜色
@@ -84,32 +84,50 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
         pCurve[i] = customPlot->addGraph();
         pCurve[i]->setPen(QPen(QColor(initColor[i])));
         pCurve[i]->setName(lineNames.at(i));
+        // 设置为平滑曲线
+        pCurve[i]->setLineStyle(QCPGraph::lsLine);
+        pCurve[i]->setScatterStyle(QCPScatterStyle::ssNone);
+        pCurve[i]->setAdaptiveSampling(false); // 关闭自适应采样，保证平滑
+        pCurve[i]->setAntialiased(true);       // 抗锯齿
     }
+
+    // 设置y轴2，与y轴共享x轴，添加曲线1到y轴2
     customPlot->yAxis2->setVisible(true);
     pCurve[1]->setValueAxis(customPlot->yAxis2);
     customPlot->yAxis2->setLabel("线距");
     // 保证yAxis2的0刻度与yAxis对齐，并随左轴拖动同步移动
     connect(customPlot->yAxis, QOverload<const QCPRange &>::of(&QCPAxis::rangeChanged),
-        [customPlot](const QCPRange &leftRange){
-            double leftSpan = leftRange.upper - leftRange.lower;
-            double leftCenter = (leftRange.upper + leftRange.lower) / 16.0;
-            double newRightLower = leftCenter - leftSpan/16;
-            double newRightUpper = leftCenter + leftSpan/16;
-            customPlot->yAxis2->setRange(newRightLower, newRightUpper);
-        });
+            [customPlot](const QCPRange &leftRange)
+            {
+                double leftSpan = leftRange.upper - leftRange.lower;
+                double leftCenter = (leftRange.upper + leftRange.lower) / 16.0;
+                double newRightLower = leftCenter - leftSpan / 16;
+                double newRightUpper = leftCenter + leftSpan / 16;
+                customPlot->yAxis2->setRange(newRightLower, newRightUpper);
+            });
     // 初始化时也对齐一次
     QCPRange leftRange = customPlot->yAxis->range();
     double leftSpan = leftRange.upper - leftRange.lower;
     double leftCenter = (leftRange.upper + leftRange.lower) / 16.0;
-    double newRightLower = leftCenter - leftSpan/16;
-    double newRightUpper = leftCenter + leftSpan/16;
+    double newRightLower = leftCenter - leftSpan / 16;
+    double newRightUpper = leftCenter + leftSpan / 16;
     customPlot->yAxis2->setRange(newRightLower, newRightUpper);
-   
-    //设置粗细
+
+    QSharedPointer<QCPAxisTickerFixed> fixedTicker(new QCPAxisTickerFixed);
+
+    // 设置y轴2的主刻度间隔为1
+    fixedTicker->setTickStep(1);
+    fixedTicker->setScaleStrategy(QCPAxisTickerFixed::ssNone);
+    customPlot->yAxis2->setTicker(fixedTicker);
+
+    // 曲线设置粗细
     QPen pen;
-    for (int i = 0; i < 6; i++){
-        if(i == 3 || i == 4);
-        else continue;
+    for (int i = 0; i < 6; i++)
+    {
+        if (i == 3 || i == 4)
+            ;
+        else
+            continue;
         pen = pCurve[i]->pen();
         pen.setWidth(3);
         pCurve[i]->setPen(pen);
@@ -117,21 +135,10 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
 
     curveSetScatterStyle(pPlot1, pCurve[1], 5);
 
-
-
-
-
-
-
     // 设置背景颜色
     customPlot->setBackground(QColor(255, 255, 255));
     // 设置背景选择框颜色
     ui->btnColourBack->setStyleSheet(QString("border:0px solid;background-color: %1;").arg(QColor(255, 255, 255).name()));
-
-    // 曲线选择框颜色，与曲线同步颜色。这样写太复杂了，用控件指针数组在下面写过了，记得要在addGraph()之后才有效。
-    // ui->btnColourCurve1->setStyleSheet("border:0px solid;background-color:rgb(0,146,152)");
-    // ui->btnColourCurve1->setStyleSheet(QString("border:0px solid;background-color: %1;").arg(initColor[0].name()));
-    // ui->btnColourCurve20->setStyleSheet(QString("border:0px solid;background-color: %1;").arg(pCurve[]->pen().color().name()));
 
     // 设置坐标轴名称
     customPlot->xAxis->setLabel("TimeStamp");
@@ -143,17 +150,13 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
     customPlot->xAxis->setRange(0, pointCountX);
     customPlot->yAxis->setRange(pointCountY / 2 * -1, pointCountY / 2);
 
-    // customPlot->axisRect()->setupFullAxesBox();//四边安装轴并显示
-    // customPlot->xAxis->ticker()->setTickOrigin(1);//改变刻度原点为1
-    // customPlot->xAxis->setNumberFormat("gbc");//g灵活的格式,b漂亮的指数形式，c乘号改成×
-    // customPlot->xAxis->setNumberPrecision(1);//精度1
     customPlot->xAxis->ticker()->setTickCount(ui->txtMainScaleNumX->text().toUInt()); // 11个主刻度
     customPlot->yAxis->ticker()->setTickCount(ui->txtMainScaleNumY->text().toUInt()); // 11个主刻度
     customPlot->xAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssReadability);  // 可读性优于设置
     customPlot->yAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssReadability);  // 可读性优于设置
 
     // 显示图表的图例
-    // 只显示前10条图例，如果大于10条的话，并缩小图例框面积
+    // 只显示前10条图例，如果大于10条的话，
     customPlot->legend->setVisible(true);
     // 设置图例框为透明
     customPlot->legend->setBrush(Qt::NoBrush);
@@ -184,9 +187,6 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
             customPlot->legend->item(i)->setVisible(false);
         }
     }
-
-    // 设置波形曲线的复选框字体颜色
-    // ui->chkVisibleCurve1->setStyleSheet("QCheckBox{color:rgb(255,0,0)}");//设定前景颜色,就是字体颜色
 
     // 允许用户用鼠标拖动轴范围，以鼠标为中心滚轮缩放，点击选择图形:
     customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
@@ -927,6 +927,42 @@ void Plot::on_txtPointOriginY_returnPressed()
     pPlot1->replot(QCustomPlot::rpQueuedReplot);
 }
 
+void Plot::showDashboard(QCustomPlot *customPlot)
+{
+    // 显示图表的图例
+    // 只显示前10条图例，如果大于10条的话，
+    customPlot->legend->setVisible(true);
+    // 设置图例框为透明
+    customPlot->legend->setBrush(Qt::NoBrush);
+    customPlot->legend->setBorderPen(Qt::NoPen);
+    customPlot->legend->setMinimumSize(300, 0);        // 设置最小宽度
+    customPlot->legend->setMaximumSize(300, 16777215); // 设置最大宽度
+    // 只显示前10条图例，并缩小图例框面积，不显示的曲线不占用空间
+    int legendItemCount = 0;
+    for (int i = 0; i < customPlot->graphCount(); ++i)
+    {
+        if (i < 5)
+        {
+            customPlot->graph(i)->setVisible(true);
+            customPlot->legend->item(i)->setVisible(true);
+            // 第一条曲线图例字体加大加粗
+            if (i == 0)
+            {
+                QFont font = customPlot->legend->item(i)->font();
+                font.setPointSize(font.pointSize() + 4); // 字号加大
+                font.setBold(true);                      // 加粗
+                customPlot->legend->item(i)->setFont(font);
+            }
+            ++legendItemCount;
+        }
+        else
+        {
+            customPlot->graph(i)->setVisible(true); // 曲线本身可见性不变
+            customPlot->legend->item(i)->setVisible(false);
+        }
+    }
+}
+
 // 每次图表重绘后，都会更新当前显示的原点坐标与范围。与上次不同时才会更新显示，解决有曲线数据时无法输入y的参数的问题
 void Plot::repPlotCoordinate()
 {
@@ -1196,7 +1232,6 @@ void Plot::on_x_checkBox_stateChanged(int arg1)
     {
         // 显示x轴
         pPlot1->axisRect()->setRangeZoom(Qt::Horizontal);
-        
     }
     else
     {
@@ -1205,10 +1240,9 @@ void Plot::on_x_checkBox_stateChanged(int arg1)
     }
 }
 
-
 void Plot::on_pushButton_released()
 {
-     // 获取按钮的名称
+    // 获取按钮的名称
     QString buttonText = ui->pushButton->text();
     if (buttonText == "<")
     {
@@ -1223,4 +1257,3 @@ void Plot::on_pushButton_released()
         ui->frame_2->setVisible(false);
     }
 }
-

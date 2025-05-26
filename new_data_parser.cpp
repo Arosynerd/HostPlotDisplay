@@ -37,31 +37,31 @@ QString DataParser::parseData(const QString &rawData)
     }
     else if (rawData == "currentMode")
     {
-        return "当前模式";
+        return "返航模式";
     }
     else if (rawData == "phaseFlag")
     {
-        return "阶段标志";
+        return "第几阶段";// 第一阶段，第二阶段，第三阶段
     }
     else if (rawData == "goDestSpeed")
     {
-        return "目标速度";
+        return "基础油门";
     }
     else if (rawData == "firstPhaseCount")
     {
-        return "第一阶段计数";
+        return "第一阶段次数";
     }
     else if (rawData == "originBearing")
     {
-        return "起始航向";
+        return "起始方位";
     }
     else if (rawData == "currentBearing")
     {
-        return "当前航向";
+        return "当前方位";
     }
     else if (rawData == "currentYaw")
     {
-        return "当前偏航角";
+        return "当前航向角";
     }
     else if (rawData == "currentDistance")
     {
@@ -77,67 +77,67 @@ QString DataParser::parseData(const QString &rawData)
     }
     else if (rawData == "yawCurrentBearing")
     {
-        return "偏航-当前航向";
+        return "当前航向与方位偏差";
     }
     else if (rawData == "rudderAngle")
     {
-        return "舵角";
+        return "控制量";
     }
     else if (rawData == "motorSpeedLeft")
     {
-        return "左电机速度";
+        return "左电机油门";
     }
     else if (rawData == "motorSpeedRight")
     {
-        return "右电机速度";
+        return "右电机油门";
     }
     else if (rawData == "kp_yaw_first")
     {
-        return "第一阶段偏航KP";
+        return "第一阶段Kp";
     }
     else if (rawData == "ki_yaw_first")
     {
-        return "第一阶段偏航KI";
+        return "第一阶段Ki";
     }
     else if (rawData == "kd_yaw_first")
     {
-        return "第一阶段偏航KD";
+        return "第一阶段Kd";
     }
     else if (rawData == "integralLimit_yaw_first")
     {
-        return "第一阶段偏航积分限幅";
+        return "第一阶段积分限幅";
     }
     else if (rawData == "kp_pos")
     {
-        return "位置KP";
+        return "第二阶段Kp";
     }
     else if (rawData == "ki_pos")
     {
-        return "位置KI";
+        return "第二阶段Ki";
     }
     else if (rawData == "kd_pos")
     {
-        return "位置KD";
+        return "第三阶段Kd";
     }
     else if (rawData == "integralLimit_pos")
     {
-        return "位置积分限幅";
+        return "第二阶段积分限幅";
     }
     else if (rawData == "kp_yaw_third")
     {
-        return "第三阶段偏航KP";
+        return "第三阶段Kp";
     }
     else if (rawData == "ki_yaw_third")
     {
-        return "第三阶段偏航KI";
+        return "第三阶段Ki";
     }
     else if (rawData == "kd_yaw_third")
     {
-        return "第三阶段偏航KD";
+        return "第三阶段Kd";
     }
     else if (rawData == "integralLimit_yaw_third")
     {
-        return "第三阶段偏航积分限幅";
+        return "第三阶段积分限幅";
     }
     else if (rawData == "latitude")
     {
@@ -153,31 +153,31 @@ QString DataParser::parseData(const QString &rawData)
     }
     else if (rawData == "kp_angle")
     {
-        return "角度KP";
+        return "航向角Kp";
     }
     else if (rawData == "minYawDeviation")
     {
-        return "最小偏航偏差";
+        return "最小航向角差";
     }
     else if (rawData == "maxYawDeviation")
     {
-        return "最大偏航偏差";
+        return "最大航向角差";
     }
     else if (rawData == "yawDeviation")
     {
-        return "偏航偏差";
+        return "航向角差";
     }
     else if (rawData == "imuYaw")
     {
-        return "IMU偏航角";
+        return "IMU航向角";
     }
     else if (rawData == "ddmYaw")
     {
-        return "DDM偏航角";
+        return "DDM航向角";
     }
     else if (rawData == "gpsYaw")
     {
-        return "GPS偏航角";
+        return "GPS航向角";
     }
     else
     {
