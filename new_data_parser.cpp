@@ -256,7 +256,7 @@ void DataParser::parseData(const QString &plainText, std::pair<int, int> group_i
                     logData[idx_index + innerGroupCount].rudderAngle = items[14].toFloat();
                     logData[idx_index + innerGroupCount].motorSpeedLeft = items[15].toInt();
                     logData[idx_index + innerGroupCount].motorSpeedRight = items[16].toInt();
-                    qDebug() << "phaseFlag" << logData[idx_index + innerGroupCount].phaseFlag << "currentDistance:" << logData[idx_index + innerGroupCount].currentDistance << "lineSeparation:" << logData[idx_index + innerGroupCount].lineSeparation << "rudderAngle:" << logData[idx_index + innerGroupCount].rudderAngle << "motorSpeedLeft:" << logData[idx_index + innerGroupCount].motorSpeedLeft << "motorSpeedRight:" << logData[idx_index + innerGroupCount].motorSpeedRight;
+                    //qDebug() << "phaseFlag" << logData[idx_index + innerGroupCount].phaseFlag << "currentDistance:" << logData[idx_index + innerGroupCount].currentDistance << "lineSeparation:" << logData[idx_index + innerGroupCount].lineSeparation << "rudderAngle:" << logData[idx_index + innerGroupCount].rudderAngle << "motorSpeedLeft:" << logData[idx_index + innerGroupCount].motorSpeedLeft << "motorSpeedRight:" << logData[idx_index + innerGroupCount].motorSpeedRight;
                     GroupCount++;
                 }
             }

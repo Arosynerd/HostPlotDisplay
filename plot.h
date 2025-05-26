@@ -7,6 +7,8 @@
 
 //数据解析类
 #include "new_data_parser.h"
+//报错类
+#include "ploterror.h"
 extern QStringList CurveLineNames;
 
 namespace Ui {
@@ -36,7 +38,8 @@ public:
     void setAutoX(QCustomPlot *pPlot,int xRange);
     void setCurvesName(QStringList lineNames);
     void addCurvesName(QStringList lineNames);
-
+    void hideCurve(int index);
+    void stageDistinguish(void);
 
 public slots:
     void mouseMove1(QMouseEvent *e);
@@ -67,8 +70,6 @@ private slots:
     void on_btnClearGraphs_clicked();
 
     void on_txtMainScaleNumX_returnPressed();
-
-    void on_plottest_button_released();
 
     void on_txtMainScaleNumY_returnPressed();
 

@@ -84,6 +84,23 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
         pCurve[i]->setPen(QPen(QColor(initColor[i])));
         pCurve[i]->setName(lineNames.at(i));
     }
+    //设置粗细
+    QPen pen;
+    for (int i = 0; i < 6; i++){
+        if(i == 1 || i == 3 || i == 4);
+        else continue;
+        pen = pCurve[i]->pen();
+        pen.setWidth(3);
+        pCurve[i]->setPen(pen);
+    }
+
+    curveSetScatterStyle(pPlot1, pCurve[1], 5);
+
+
+
+
+
+
 
     // 设置背景颜色
     customPlot->setBackground(QColor(255, 255, 255));
@@ -120,16 +137,24 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
     // 设置图例框为透明
     customPlot->legend->setBrush(Qt::NoBrush);
     customPlot->legend->setBorderPen(Qt::NoPen);
-    customPlot->legend->setMinimumSize(300, 0); // 设置最小宽度
+    customPlot->legend->setMinimumSize(300, 0);        // 设置最小宽度
     customPlot->legend->setMaximumSize(300, 16777215); // 设置最大宽度
     // 只显示前10条图例，并缩小图例框面积，不显示的曲线不占用空间
     int legendItemCount = 0;
     for (int i = 0; i < customPlot->graphCount(); ++i)
     {
-        if (i < 6)
+        if (i < 5)
         {
             customPlot->graph(i)->setVisible(true);
             customPlot->legend->item(i)->setVisible(true);
+            // 第一条曲线图例字体加大加粗
+            if (i == 0)
+            {
+                QFont font = customPlot->legend->item(i)->font();
+                font.setPointSize(font.pointSize() + 4); // 字号加大
+                font.setBold(true);                      // 加粗
+                customPlot->legend->item(i)->setFont(font);
+            }
             ++legendItemCount;
         }
         else
@@ -153,7 +178,7 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
     // 游标说明
     tracerLabel = new QCPItemText(customPlot);                       // 生成游标说明
     tracerLabel->setLayer("overlay");                                // 设置图层为overlay，因为需要频繁刷新
-    tracerLabel->setPen(Qt::NoPen);                            // 设置游标说明颜色为透明
+    tracerLabel->setPen(Qt::NoPen);                                  // 设置游标说明颜色为透明
     tracerLabel->setPositionAlignment(Qt::AlignLeft | Qt::AlignTop); // 左上
     tracerLabel->position->setCoords(10, 10);                        // 固定在左上角
     tracerLabel->setText("");
@@ -191,7 +216,8 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
             CurveLineNamesInChinese << parsefp->parseData(CurveLineNames.at(i));
         }
     }
-    else{
+    else
+    {
         qDebug() << "CurveLineNames.size() = 0";
     }
 }
@@ -1017,39 +1043,46 @@ void Plot::mouseMove2(QMouseEvent *e)
         if (i < Cvlls.size())
         {
             if (Cvlls[i] == "currentDistance")
-            Cvlls[i].append(QString("总距离10米,剩余%1米%2\n").arg(QString::number(yValue, 'f', 2)).arg(snapInfo));
+                Cvlls[i].append(QString("总距离10米,剩余%1米%2\n").arg(QString::number(yValue, 'f', 2)).arg(snapInfo));
             else
-            Cvlls[i].append(QString("y = %1%2\n").arg(QString::number(yValue, 'f', 2)).arg(snapInfo));
+                Cvlls[i].append(QString("y = %1%2\n").arg(QString::number(yValue, 'f', 2)).arg(snapInfo));
         }
     }
     // 找到所有字符串中"y"的位置的最大值
     int maxYPos = 0;
-    for (const QString &str : Cvlls) {
+    for (const QString &str : Cvlls)
+    {
         int yPos = str.indexOf("y");
         if (yPos > maxYPos)
             maxYPos = yPos;
     }
     // 对齐每个字符串的"y"
-    for (int i = 0; i < Cvlls.size(); ++i) {
+    for (int i = 0; i < Cvlls.size(); ++i)
+    {
         int yPos = Cvlls[i].indexOf("y");
-        if (yPos >= 0 && yPos < maxYPos) {
+        if (yPos >= 0 && yPos < maxYPos)
+        {
             Cvlls[i].insert(yPos, QString(maxYPos - yPos, ' '));
         }
     }
     // 使用 QFontMetrics 计算像素宽度对齐“y”
     QFontMetrics fm(pPlot1->legend->font());
     int maxYWidth = 0;
-    for (const QString &str : Cvlls) {
+    for (const QString &str : Cvlls)
+    {
         int yPos = str.indexOf("y");
-        if (yPos > 0) {
+        if (yPos > 0)
+        {
             int width = fm.horizontalAdvance(str.left(yPos));
             if (width > maxYWidth)
                 maxYWidth = width;
         }
     }
-    for (int i = 0; i < Cvlls.size(); ++i) {
+    for (int i = 0; i < Cvlls.size(); ++i)
+    {
         int yPos = Cvlls[i].indexOf("y");
-        if (yPos > 0) {
+        if (yPos > 0)
+        {
             int width = fm.horizontalAdvance(Cvlls[i].left(yPos));
             int spaceWidth = fm.horizontalAdvance(" ");
             int needSpaces = (maxYWidth - width + spaceWidth - 1) / spaceWidth;
@@ -1064,17 +1097,34 @@ void Plot::mouseMove2(QMouseEvent *e)
     pPlot1->replot();
 }
 
-void Plot::on_plottest_button_released()
+void Plot::hideCurve(int index)
 {
-    if (pPlot1->graphCount() >= 6) {
+    if (index < pPlot1->graphCount())
+    {
+        curveSetVisible(pPlot1, pCurve[index], 0);
+    }
+    else
+    {
+        QString errorMsg = QString("曲线索引超出范围，最大索引为：%1").arg(pPlot1->graphCount() - 1);
+        PlotError error(PlotError::KnownError, errorMsg);
+        PlotError::showErrorDialog(this, error);
+    }
+}
+
+void Plot::stageDistinguish(void)
+{
+    if (pPlot1->graphCount() >= 6)
+    {
         QCPGraph *curve6 = pPlot1->graph(5);
 
         // 获取曲线数据
         auto data = curve6->data();
-        if (!data->isEmpty()) {
+        if (!data->isEmpty())
+        {
             // 遍历数据，查找y=1,2,3对应的x范围
             QVector<double> x1, x2, x3;
-            for (auto it = data->constBegin(); it != data->constEnd(); ++it) {
+            for (auto it = data->constBegin(); it != data->constEnd(); ++it)
+            {
                 if (qFuzzyCompare(it->value + 1, 2.0)) // y==1
                     x1.append(it->key);
                 else if (qFuzzyCompare(it->value, 2)) // y==2
@@ -1083,7 +1133,8 @@ void Plot::on_plottest_button_released()
                     x3.append(it->key);
             }
             // 在x范围内画不同颜色的矩形
-            if (!x1.isEmpty()) {
+            if (!x1.isEmpty())
+            {
                 QCPItemRect *rect1 = new QCPItemRect(pPlot1);
                 rect1->topLeft->setType(QCPItemPosition::ptPlotCoords);
                 rect1->bottomRight->setType(QCPItemPosition::ptPlotCoords);
@@ -1092,7 +1143,8 @@ void Plot::on_plottest_button_released()
                 rect1->setBrush(QBrush(QColor(255, 0, 0, 10))); // 红色
                 rect1->setPen(Qt::NoPen);
             }
-            if (!x2.isEmpty()) {
+            if (!x2.isEmpty())
+            {
                 QCPItemRect *rect2 = new QCPItemRect(pPlot1);
                 rect2->topLeft->setType(QCPItemPosition::ptPlotCoords);
                 rect2->bottomRight->setType(QCPItemPosition::ptPlotCoords);
@@ -1101,7 +1153,8 @@ void Plot::on_plottest_button_released()
                 rect2->setBrush(QBrush(QColor(0, 255, 0, 10))); // 绿色
                 rect2->setPen(Qt::NoPen);
             }
-            if (!x3.isEmpty()) {
+            if (!x3.isEmpty())
+            {
                 QCPItemRect *rect3 = new QCPItemRect(pPlot1);
                 rect3->topLeft->setType(QCPItemPosition::ptPlotCoords);
                 rect3->bottomRight->setType(QCPItemPosition::ptPlotCoords);
@@ -1114,4 +1167,3 @@ void Plot::on_plottest_button_released()
         pPlot1->replot(QCustomPlot::rpQueuedReplot);
     }
 }
-

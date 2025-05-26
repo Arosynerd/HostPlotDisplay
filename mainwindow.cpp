@@ -663,7 +663,14 @@ void MainWindow::on_pushButton_clicked()
             }
             plot->setAutoX(plot->pPlot1, group_index[selectedIndex].second + 10);
 
+            //主动隐藏阶段曲线
+            plot->hideCurve(5);
+            plot->hideCurve(0);//距离线
+
             plot->setCurvesName(CurveLineNames);
+
+            //阶段区分
+            plot->stageDistinguish();
         }
     }
 }
