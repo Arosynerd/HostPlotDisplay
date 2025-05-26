@@ -1195,12 +1195,13 @@ void Plot::on_x_checkBox_stateChanged(int arg1)
     if (arg1)
     {
         // 显示x轴
-        pPlot1->xAxis->setVisible(true);
+        pPlot1->axisRect()->setRangeZoom(Qt::Horizontal);
+        
     }
     else
     {
         // 隐藏x轴
-        pPlot1->xAxis->setVisible(false);
+        pPlot1->axisRect()->setRangeZoom(Qt::Vertical);
     }
 }
 
