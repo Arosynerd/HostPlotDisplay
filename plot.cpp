@@ -84,10 +84,30 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
         pCurve[i]->setPen(QPen(QColor(initColor[i])));
         pCurve[i]->setName(lineNames.at(i));
     }
+    customPlot->yAxis2->setVisible(true);
+    pCurve[1]->setValueAxis(customPlot->yAxis2);
+    customPlot->yAxis2->setLabel("线距");
+    // 保证yAxis2的0刻度与yAxis对齐，并随左轴拖动同步移动
+    connect(customPlot->yAxis, QOverload<const QCPRange &>::of(&QCPAxis::rangeChanged),
+        [customPlot](const QCPRange &leftRange){
+            double leftSpan = leftRange.upper - leftRange.lower;
+            double leftCenter = (leftRange.upper + leftRange.lower) / 16.0;
+            double newRightLower = leftCenter - leftSpan/16;
+            double newRightUpper = leftCenter + leftSpan/16;
+            customPlot->yAxis2->setRange(newRightLower, newRightUpper);
+        });
+    // 初始化时也对齐一次
+    QCPRange leftRange = customPlot->yAxis->range();
+    double leftSpan = leftRange.upper - leftRange.lower;
+    double leftCenter = (leftRange.upper + leftRange.lower) / 16.0;
+    double newRightLower = leftCenter - leftSpan/16;
+    double newRightUpper = leftCenter + leftSpan/16;
+    customPlot->yAxis2->setRange(newRightLower, newRightUpper);
+   
     //设置粗细
     QPen pen;
     for (int i = 0; i < 6; i++){
-        if(i == 1 || i == 3 || i == 4);
+        if(i == 3 || i == 4);
         else continue;
         pen = pCurve[i]->pen();
         pen.setWidth(3);

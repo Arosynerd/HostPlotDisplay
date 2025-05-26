@@ -72,6 +72,8 @@ private slots:
     void on_txtMainScaleNumX_returnPressed();
 
     void on_txtMainScaleNumY_returnPressed();
+    //void on_pushButton_released();
+
 
     
 
