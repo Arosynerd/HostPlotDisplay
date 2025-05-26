@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     setWindowTitle("Qt Serial Debugger");
 
-    CurveLineNames << "currentDistance" << "lineSeparation" << "rudderAngle" << "motorSpeedLeft" << "motorSpeedRight";
+    CurveLineNames << "currentDistance" << "lineSeparation" << "rudderAngle" << "motorSpeedLeft" << "motorSpeedRight"<<"phaseFlag";
 
     // 查找当前目录下的txt文件并导入表格
     QStandardItemModel *model = new QStandardItemModel(this);
@@ -594,7 +594,7 @@ void MainWindow::on_pushButton_clicked()
 }
 #define testdd
 // 测试1
-void MainWindow::on_pushButton_3_released()
+    void MainWindow::on_pushButton_3_released()
 {
     int GroupCount = 0;
     int group_count = 0;
@@ -655,6 +655,7 @@ void MainWindow::on_pushButton_3_released()
                 value[2] = logData[group_index[selectedIndex].first + j].rudderAngle;
                 value[3] = logData[group_index[selectedIndex].first + j].motorSpeedLeft;
                 value[4] = logData[group_index[selectedIndex].first + j].motorSpeedRight;
+                value[5] = logData[group_index[selectedIndex].first + j].phaseFlag;
 
                 // 输出一下
                 // qDebug() << "currentDistance:" << value[0] << "lineSeparation:" << value[1] << "rudderAngle:" << value[2] << "motorSpeedLeft:" << value[3] << "motorSpeedRight:" << value[4];

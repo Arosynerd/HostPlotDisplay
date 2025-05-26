@@ -126,7 +126,7 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
     int legendItemCount = 0;
     for (int i = 0; i < customPlot->graphCount(); ++i)
     {
-        if (i < 5)
+        if (i < 6)
         {
             customPlot->graph(i)->setVisible(true);
             customPlot->legend->item(i)->setVisible(true);
@@ -224,6 +224,7 @@ void Plot::setCurvesName(QStringList lineNames)
     ui->chkVisibleCurve3->setText(lineNames.at(2));
     ui->chkVisibleCurve4->setText(lineNames.at(3));
     ui->chkVisibleCurve5->setText(lineNames.at(4));
+    ui->chkVisibleCurve6->setText(lineNames.at(5));
 }
 
 void Plot::addCurvesName(QStringList addlineNames)
@@ -1062,3 +1063,55 @@ void Plot::mouseMove2(QMouseEvent *e)
     tracerLabel->setTextAlignment(Qt::AlignLeft | Qt::AlignTop);
     pPlot1->replot();
 }
+
+void Plot::on_plottest_button_released()
+{
+    if (pPlot1->graphCount() >= 6) {
+        QCPGraph *curve6 = pPlot1->graph(5);
+
+        // 获取曲线数据
+        auto data = curve6->data();
+        if (!data->isEmpty()) {
+            // 遍历数据，查找y=1,2,3对应的x范围
+            QVector<double> x1, x2, x3;
+            for (auto it = data->constBegin(); it != data->constEnd(); ++it) {
+                if (qFuzzyCompare(it->value + 1, 2.0)) // y==1
+                    x1.append(it->key);
+                else if (qFuzzyCompare(it->value, 2)) // y==2
+                    x2.append(it->key);
+                else if (qFuzzyCompare(it->value, 3)) // y==3
+                    x3.append(it->key);
+            }
+            // 在x范围内画不同颜色的矩形
+            if (!x1.isEmpty()) {
+                QCPItemRect *rect1 = new QCPItemRect(pPlot1);
+                rect1->topLeft->setType(QCPItemPosition::ptPlotCoords);
+                rect1->bottomRight->setType(QCPItemPosition::ptPlotCoords);
+                rect1->topLeft->setCoords(x1.first(), pPlot1->yAxis->range().upper);
+                rect1->bottomRight->setCoords(x1.last(), pPlot1->yAxis->range().lower);
+                rect1->setBrush(QBrush(QColor(255, 0, 0, 10))); // 红色
+                rect1->setPen(Qt::NoPen);
+            }
+            if (!x2.isEmpty()) {
+                QCPItemRect *rect2 = new QCPItemRect(pPlot1);
+                rect2->topLeft->setType(QCPItemPosition::ptPlotCoords);
+                rect2->bottomRight->setType(QCPItemPosition::ptPlotCoords);
+                rect2->topLeft->setCoords(x2.first(), pPlot1->yAxis->range().upper);
+                rect2->bottomRight->setCoords(x2.last(), pPlot1->yAxis->range().lower);
+                rect2->setBrush(QBrush(QColor(0, 255, 0, 10))); // 绿色
+                rect2->setPen(Qt::NoPen);
+            }
+            if (!x3.isEmpty()) {
+                QCPItemRect *rect3 = new QCPItemRect(pPlot1);
+                rect3->topLeft->setType(QCPItemPosition::ptPlotCoords);
+                rect3->bottomRight->setType(QCPItemPosition::ptPlotCoords);
+                rect3->topLeft->setCoords(x3.first(), pPlot1->yAxis->range().upper);
+                rect3->bottomRight->setCoords(x3.last(), pPlot1->yAxis->range().lower);
+                rect3->setBrush(QBrush(QColor(0, 0, 255, 10))); // 蓝色
+                rect3->setPen(Qt::NoPen);
+            }
+        }
+        pPlot1->replot(QCustomPlot::rpQueuedReplot);
+    }
+}
+

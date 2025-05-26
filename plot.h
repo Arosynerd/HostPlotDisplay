@@ -68,7 +68,11 @@ private slots:
 
     void on_txtMainScaleNumX_returnPressed();
 
+    void on_plottest_button_released();
+
     void on_txtMainScaleNumY_returnPressed();
+
+    
 
 private:
     Ui::Plot *ui;

@@ -93,7 +93,7 @@
              <number>0</number>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>1</number>
             </property>
             <property name="tabSpacing">
              <number>0</number>
@@ -5772,6 +5772,19 @@
               </property>
               <property name="text">
                <string>11</string>
+              </property>
+             </widget>
+             <widget class="QPushButton" name="plottest_button">
+              <property name="geometry">
+               <rect>
+                <x>10</x>
+                <y>80</y>
+                <width>80</width>
+                <height>20</height>
+               </rect>
+              </property>
+              <property name="text">
+               <string>测试按钮</string>
               </property>
              </widget>
             </widget>
