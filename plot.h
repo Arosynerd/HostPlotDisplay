@@ -42,7 +42,6 @@ public:
     void stageDistinguish(void);
 
 public slots:
-    void mouseMove1(QMouseEvent *e);
     void mouseMove2(QMouseEvent *e);
 private slots:
     void TimeData_Update(void);

@@ -155,38 +155,7 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
     customPlot->xAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssReadability);  // 可读性优于设置
     customPlot->yAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssReadability);  // 可读性优于设置
 
-    // 显示图表的图例
-    // 只显示前10条图例，如果大于10条的话，
-    customPlot->legend->setVisible(true);
-    // 设置图例框为透明
-    customPlot->legend->setBrush(Qt::NoBrush);
-    customPlot->legend->setBorderPen(Qt::NoPen);
-    customPlot->legend->setMinimumSize(300, 0);        // 设置最小宽度
-    customPlot->legend->setMaximumSize(300, 16777215); // 设置最大宽度
-    // 只显示前10条图例，并缩小图例框面积，不显示的曲线不占用空间
-    int legendItemCount = 0;
-    for (int i = 0; i < customPlot->graphCount(); ++i)
-    {
-        if (i < 5)
-        {
-            customPlot->graph(i)->setVisible(true);
-            customPlot->legend->item(i)->setVisible(true);
-            // 第一条曲线图例字体加大加粗
-            if (i == 0)
-            {
-                QFont font = customPlot->legend->item(i)->font();
-                font.setPointSize(font.pointSize() + 4); // 字号加大
-                font.setBold(true);                      // 加粗
-                customPlot->legend->item(i)->setFont(font);
-            }
-            ++legendItemCount;
-        }
-        else
-        {
-            customPlot->graph(i)->setVisible(true); // 曲线本身可见性不变
-            customPlot->legend->item(i)->setVisible(false);
-        }
-    }
+    showDashboard(customPlot);
 
     // 允许用户用鼠标拖动轴范围，以鼠标为中心滚轮缩放，点击选择图形:
     customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
@@ -195,14 +164,9 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
     // 设置鼠标滚轮缩放的轴方向，仅设置垂直轴。垂直轴和水平轴全选使用：Qt::Vertical | Qt::Horizontal
     customPlot->axisRect()->setRangeZoom(Qt::Vertical);
     // customPlot->axisRect()->setRangeZoom(Qt::Horizontal);
-
-    // 游标说明
-    tracerLabel = new QCPItemText(customPlot);                       // 生成游标说明
-    tracerLabel->setLayer("overlay");                                // 设置图层为overlay，因为需要频繁刷新
-    tracerLabel->setPen(Qt::NoPen);                                  // 设置游标说明颜色为透明
-    tracerLabel->setPositionAlignment(Qt::AlignLeft | Qt::AlignTop); // 左上
-    tracerLabel->position->setCoords(10, 10);                        // 固定在左上角
-    tracerLabel->setText("");
+    /*
+    游标的设置
+    */
 
     // 生成每条曲线的tracer
     for (int i = 0; i < customPlot->graphCount(); ++i)
@@ -226,21 +190,9 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
     // 信号-槽连接语句
     connect(customPlot, SIGNAL(mouseMove(QMouseEvent *)), this, SLOT(mouseMove2(QMouseEvent *)));
 
-    // 生成对象dataParser
-    parsefp = new DataParser();
+   
 
-    if (CurveLineNames.size() > 0)
-    {
-        // 中文名称设置
-        for (int i = 0; i < CurveLineNames.size(); i++)
-        {
-            CurveLineNamesInChinese << parsefp->parseData(CurveLineNames.at(i));
-        }
-    }
-    else
-    {
-        qDebug() << "CurveLineNames.size() = 0";
-    }
+    
 }
 
 /*
@@ -929,6 +881,23 @@ void Plot::on_txtPointOriginY_returnPressed()
 
 void Plot::showDashboard(QCustomPlot *customPlot)
 {
+     // 生成对象dataParser
+    DataParser parsefp;
+
+    if (CurveLineNames.size() > 0)
+    {
+        // 中文名称设置
+        for (int i = 0; i < CurveLineNames.size(); i++)
+        {
+            CurveLineNamesInChinese << parsefp.parseData(CurveLineNames.at(i));
+        }
+    }
+    else
+    {
+        PlotError error(PlotError::KnownError, "数据为空！");
+        PlotError::debugError(error);
+    }
+
     // 显示图表的图例
     // 只显示前10条图例，如果大于10条的话，
     customPlot->legend->setVisible(true);
@@ -1018,20 +987,7 @@ void Plot::on_txtMainScaleNumY_returnPressed()
     pPlot1->replot(QCustomPlot::rpQueuedReplot);
 }
 
-void Plot::mouseMove1(QMouseEvent *e)
-{
-    // 获得鼠标位置处对应的横坐标数据x
-    double x = pPlot1->xAxis->pixelToCoord(e->pos().x());
-    // double y = cmPlot->yAxis->pixelToCoord(e->pos().y());
-    double xValue, yValue;
 
-    xValue = x;     // xValue就是游标的横坐标
-    yValue = x * x; // yValue就是游标的纵坐标，这里直接根据产生数据的函数获得
-
-    tracer->position->setCoords(xValue, yValue);                             // 设置游标位置
-    tracerLabel->setText(QString("x = %1, y = %2").arg(xValue).arg(yValue)); // 设置游标说明内容
-    pPlot1->replot();                                                        // 绘制器一定要重绘，否则看不到游标位置更新情况
-}
 
 void Plot::mouseMove2(QMouseEvent *e)
 {
@@ -1150,7 +1106,7 @@ void Plot::mouseMove2(QMouseEvent *e)
     // 竖线吸附到最近的峰值
     vLine->point1->setCoords(vLineX, pPlot1->yAxis->range().lower);
     vLine->point2->setCoords(vLineX, pPlot1->yAxis->range().upper);
-    tracerLabel->setTextAlignment(Qt::AlignLeft | Qt::AlignTop);
+    //tracerLabel->setTextAlignment(Qt::AlignLeft | Qt::AlignTop);
     pPlot1->replot();
 }
 
