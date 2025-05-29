@@ -3,6 +3,10 @@
 #include <QString>
 #include <QMessageBox>
 
+#define ERR 0//错误
+#define OK 1//正常
+
+
 class PlotError
 {
 public:

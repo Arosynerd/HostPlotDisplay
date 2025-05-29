@@ -2927,14 +2927,14 @@ void QCPSelectionRect::endSelection(QMouseEvent *event)
   rect interaction is active. The default implementation allows to \ref cancel the interaction by
   hitting the escape key.
 */
-void QCPSelectionRect::keyPressEvent(QKeyEvent *event)
-{
-  if (event->key() == Qt::Key_Escape && mActive)
-  {
-    mActive = false;
-    emit canceled(mRect, event);
-  }
-}
+// void QCPSelectionRect::keyPressEvent(QKeyEvent *event)
+// {
+//   if (event->key() == Qt::Key_Escape && mActive)
+//   {
+//     mActive = false;
+//     emit canceled(mRect, event);
+//   }
+// }
 
 /* inherits documentation from base class */
 void QCPSelectionRect::applyDefaultAntialiasingHint(QCPPainter *painter) const

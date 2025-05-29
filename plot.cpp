@@ -3,11 +3,17 @@
 #include "new_data_parser.h"
 #include <stdio.h>
 #include <QFontMetrics>
+#include <QStandardItemModel>
 
 QStringList CurveLineNamesInChinese;
-Plot::Plot(QWidget *parent) : QMainWindow(parent),
-                              ui(new Ui::Plot)
+Plot::Plot(GODEST_log_data_t *logDataPtr, std::pair<int, int> group_index[100], QWidget *parent)
+    : QMainWindow(parent),
+      logDataPtr(logDataPtr),
+      ui(new Ui::Plot)
 {
+    // 将 group_index 拷贝到成员变量
+    this->plot_group_index = group_index;
+
     ui->setupUi(this);
     setWindowTitle("Plot");
 
@@ -71,7 +77,7 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
     qDebug() << "QPlot_init";
     // 添加曲线名称、设置图例的文本
     QStringList lineNames;
-    lineNames << "bbq" << "波形2" << "波形3" << "波形4" << "波形5" << "波形6" << "波形7" << "波形8" << "波形9" << "波形10"
+    lineNames << "bbq" << "波形2" << "波形3" << "波形4" << "波形5" << "波形6" << "速度" << "波形8" << "波形9" << "波形10"
               << "波形11" << "波形12" << "波形13" << "波形14" << "波形15" << "波形16" << "波形17" << "波形18" << "波形19" << "波形20";
     // 曲线初始颜色
     QColor initColor[20] = {QColor(0, 146, 152), QColor(162, 0, 124), QColor(241, 175, 0), QColor(27, 79, 147), QColor(229, 70, 70),
@@ -91,9 +97,13 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
         pCurve[i]->setAntialiased(true);       // 抗锯齿
     }
 
+    // 属于右侧轴的曲线使用实心圆表示，作为区分。
+    curveSetScatterStyle(pPlot1, pCurve[1], 5);
+    curveSetScatterStyle(pPlot1, pCurve[6], 5);
     // 设置y轴2，与y轴共享x轴，添加曲线1到y轴2
     customPlot->yAxis2->setVisible(true);
     pCurve[1]->setValueAxis(customPlot->yAxis2);
+    pCurve[6]->setValueAxis(customPlot->yAxis2);
     customPlot->yAxis2->setLabel("线距");
     // 保证yAxis2的0刻度与yAxis对齐，并随左轴拖动同步移动
     connect(customPlot->yAxis, QOverload<const QCPRange &>::of(&QCPAxis::rangeChanged),
@@ -133,8 +143,6 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
         pCurve[i]->setPen(pen);
     }
 
-    curveSetScatterStyle(pPlot1, pCurve[1], 5);
-
     // 设置背景颜色
     customPlot->setBackground(QColor(255, 255, 255));
     // 设置背景选择框颜色
@@ -155,6 +163,7 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
     customPlot->xAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssReadability);  // 可读性优于设置
     customPlot->yAxis->ticker()->setTickStepStrategy(QCPAxisTicker::tssReadability);  // 可读性优于设置
 
+    // 图例显示
     showDashboard(customPlot);
 
     // 允许用户用鼠标拖动轴范围，以鼠标为中心滚轮缩放，点击选择图形:
@@ -189,10 +198,6 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
 
     // 信号-槽连接语句
     connect(customPlot, SIGNAL(mouseMove(QMouseEvent *)), this, SLOT(mouseMove2(QMouseEvent *)));
-
-   
-
-    
 }
 
 /*
@@ -203,7 +208,7 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
 void Plot::setCurvesName(QStringList lineNames)
 {
     QStringList DefaultlineNames; // 设置图例的文本
-    DefaultlineNames << "bbq" << "波形2" << "波形3" << "波形4" << "波形5" << "波形6" << "波形7" << "波形8" << "波形9" << "波形10"
+    DefaultlineNames << "bbq" << "波形2" << "波形3" << "波形4" << "波形5" << "波形6" << "速度" << "速度" << "速度" << "速度"
                      << "波形11" << "波形12" << "波形13" << "波形14" << "波形15" << "波形16" << "波形17" << "波形18" << "波形19" << "波形20";
 
     for (int i = 0; i < lineNames.size() && i < 20; ++i)
@@ -218,12 +223,46 @@ void Plot::setCurvesName(QStringList lineNames)
         pCurve[i]->setName(lineNames.at(i));
     }
     // 侧栏名称修改
+
     ui->chkVisibleCurve1->setText(lineNames.at(0));
     ui->chkVisibleCurve2->setText(lineNames.at(1));
     ui->chkVisibleCurve3->setText(lineNames.at(2));
     ui->chkVisibleCurve4->setText(lineNames.at(3));
     ui->chkVisibleCurve5->setText(lineNames.at(4));
     ui->chkVisibleCurve6->setText(lineNames.at(5));
+    ui->chkVisibleCurve7->setText(lineNames.at(6));
+    ui->chkVisibleCurve8->setText(lineNames.at(7));
+    ui->chkVisibleCurve9->setText(lineNames.at(8));
+    ui->chkVisibleCurve10->setText(lineNames.at(9));
+    ui->chkVisibleCurve11->setText(lineNames.at(10));
+    ui->chkVisibleCurve12->setText(lineNames.at(11));
+    ui->chkVisibleCurve13->setText(lineNames.at(12));
+    ui->chkVisibleCurve14->setText(lineNames.at(13));
+    ui->chkVisibleCurve15->setText(lineNames.at(14));
+    ui->chkVisibleCurve16->setText(lineNames.at(15));
+    ui->chkVisibleCurve17->setText(lineNames.at(16));
+    ui->chkVisibleCurve18->setText(lineNames.at(17));
+    ui->chkVisibleCurve19->setText(lineNames.at(18));
+    ui->chkVisibleCurve20->setText(lineNames.at(19));
+}
+
+void Plot::setCurveslegendName(QStringList lineNames)
+{
+    QStringList DefaultlineNames; // 设置图例的文本
+    DefaultlineNames << "bbq" << "波形2" << "波形3" << "波形4" << "波形5" << "波形6" << "速度" << "速度" << "速度" << "速度"
+                     << "波形11" << "波形12" << "波形13" << "波形14" << "波形15" << "波形16" << "波形17" << "波形18" << "波形19" << "波形20";
+
+    for (int i = 0; i < lineNames.size() && i < 20; ++i)
+    {
+        DefaultlineNames[i] = lineNames[i];
+    }
+    lineNames = DefaultlineNames;
+
+    // 图表添加20条曲线，并设置初始颜色，和图例名称
+    for (int i = 0; i < 20; i++)
+    {
+        pCurve[i]->setName(lineNames.at(i));
+    }
 }
 
 void Plot::addCurvesName(QStringList addlineNames)
@@ -881,7 +920,7 @@ void Plot::on_txtPointOriginY_returnPressed()
 
 void Plot::showDashboard(QCustomPlot *customPlot)
 {
-     // 生成对象dataParser
+    // 生成对象dataParser
     DataParser parsefp;
 
     if (CurveLineNames.size() > 0)
@@ -930,6 +969,53 @@ void Plot::showDashboard(QCustomPlot *customPlot)
             customPlot->legend->item(i)->setVisible(false);
         }
     }
+    TopLegendFlash();
+}
+
+void Plot::TopLegendFlash(void)
+{
+    QString temp;
+    QStringList templist; // 对齐使用
+    DataParser d;
+    if (allCurvesInfoText)
+    {
+        pPlot1->removeItem(allCurvesInfoText);
+        allCurvesInfoText = nullptr;
+    }
+    QString info;
+    int maxIndex = pPlot1->graphCount();
+    int indexWidth = QString::number(maxIndex).length(); // 序号最大宽度
+    for (int i = 0; i < maxIndex; ++i)
+    {
+        QCPGraph *graph = pPlot1->graph(i);
+        if (!graph)
+            continue;
+        temp = d.removeSpaces(graph->name());
+
+        // 序号左对齐，内容左对齐，宽度可根据实际调整
+        // info += QString("%1. ").arg(i + 1, indexWidth, 10, QChar(' ')) + temp;
+        templist << temp;
+    }
+    QFont infoFont(font().family(), 10, QFont::Bold);
+    d.alignString(templist, infoFont); // 按y对齐
+    for (int i = 0; i < templist.size(); ++i)
+    {
+        if (i + 1 < 10)
+            info += QString(" %1. ").arg(i + 1) + templist.at(i);
+        else
+            info += QString("%1. ").arg(i + 1) + templist.at(i);
+    }
+    allCurvesInfoText = new QCPItemText(pPlot1);
+    allCurvesInfoText->setPositionAlignment(Qt::AlignTop | Qt::AlignHCenter);
+    allCurvesInfoText->position->setType(QCPItemPosition::ptAxisRectRatio);
+    allCurvesInfoText->position->setCoords(0.5, 0); // 顶部居中
+    allCurvesInfoText->setText(info);
+
+    allCurvesInfoText->setFont(infoFont);
+    allCurvesInfoText->setPen(QPen(Qt::black));
+    // 关键：设置文本左对齐
+    allCurvesInfoText->setTextAlignment(Qt::AlignLeft | Qt::AlignTop);
+   
 }
 
 // 每次图表重绘后，都会更新当前显示的原点坐标与范围。与上次不同时才会更新显示，解决有曲线数据时无法输入y的参数的问题
@@ -986,8 +1072,6 @@ void Plot::on_txtMainScaleNumY_returnPressed()
     pPlot1->yAxis->ticker()->setTickCount(ui->txtMainScaleNumY->text().toUInt());
     pPlot1->replot(QCustomPlot::rpQueuedReplot);
 }
-
-
 
 void Plot::mouseMove2(QMouseEvent *e)
 {
@@ -1048,7 +1132,7 @@ void Plot::mouseMove2(QMouseEvent *e)
         tracers[i]->setInterpolating(true);
         tracers[i]->updatePosition();
         tracers[i]->setVisible(true);
-        double xValue = tracers[i]->position->key();
+        // double xValue = tracers[i]->position->key();
         double yValue = tracers[i]->position->value();
 
         // CurveLineNames
@@ -1062,51 +1146,17 @@ void Plot::mouseMove2(QMouseEvent *e)
         }
     }
     // 找到所有字符串中"y"的位置的最大值
-    int maxYPos = 0;
-    for (const QString &str : Cvlls)
-    {
-        int yPos = str.indexOf("y");
-        if (yPos > maxYPos)
-            maxYPos = yPos;
-    }
-    // 对齐每个字符串的"y"
-    for (int i = 0; i < Cvlls.size(); ++i)
-    {
-        int yPos = Cvlls[i].indexOf("y");
-        if (yPos >= 0 && yPos < maxYPos)
-        {
-            Cvlls[i].insert(yPos, QString(maxYPos - yPos, ' '));
-        }
-    }
-    // 使用 QFontMetrics 计算像素宽度对齐“y”
-    QFontMetrics fm(pPlot1->legend->font());
-    int maxYWidth = 0;
-    for (const QString &str : Cvlls)
-    {
-        int yPos = str.indexOf("y");
-        if (yPos > 0)
-        {
-            int width = fm.horizontalAdvance(str.left(yPos));
-            if (width > maxYWidth)
-                maxYWidth = width;
-        }
-    }
-    for (int i = 0; i < Cvlls.size(); ++i)
-    {
-        int yPos = Cvlls[i].indexOf("y");
-        if (yPos > 0)
-        {
-            int width = fm.horizontalAdvance(Cvlls[i].left(yPos));
-            int spaceWidth = fm.horizontalAdvance(" ");
-            int needSpaces = (maxYWidth - width + spaceWidth - 1) / spaceWidth;
-            Cvlls[i].insert(yPos, QString(needSpaces, ' '));
-        }
-    }
-    setCurvesName(Cvlls);
+    DataParser d;
+    d.alignString(Cvlls, pPlot1->legend->font()); // 对齐y
+    // setCurvesName(Cvlls);
+    setCurveslegendName(Cvlls);
     // 竖线吸附到最近的峰值
     vLine->point1->setCoords(vLineX, pPlot1->yAxis->range().lower);
     vLine->point2->setCoords(vLineX, pPlot1->yAxis->range().upper);
-    //tracerLabel->setTextAlignment(Qt::AlignLeft | Qt::AlignTop);
+    // tracerLabel->setTextAlignment(Qt::AlignLeft | Qt::AlignTop);
+
+    TopLegendFlash(); // 更新图例信息
+
     pPlot1->replot();
 }
 
@@ -1115,6 +1165,7 @@ void Plot::hideCurve(int index)
     if (index < pPlot1->graphCount())
     {
         curveSetVisible(pPlot1, pCurve[index], 0);
+        pChkVisibleCurve[index]->setChecked(false);
     }
     else
     {
@@ -1135,7 +1186,7 @@ void Plot::stageDistinguish(void)
         if (!data->isEmpty())
         {
             // 遍历数据，查找y=1,2,3对应的x范围
-            QVector<double> x1, x2, x3;
+            QVector<int> x1, x2, x3;
             for (auto it = data->constBegin(); it != data->constEnd(); ++it)
             {
                 if (qFuzzyCompare(it->value + 1, 2.0)) // y==1
@@ -1145,6 +1196,16 @@ void Plot::stageDistinguish(void)
                 else if (qFuzzyCompare(it->value, 3)) // y==3
                     x3.append(it->key);
             }
+            DataParser d;
+            std::vector<int> x11 = x1.toStdVector();
+            std::vector<int> x22 = x2.toStdVector();
+            std::vector<int> x33 = x3.toStdVector();
+            d.CreatePhaseRange(x11, range1);
+            d.CreatePhaseRange(x22, range2);
+            d.CreatePhaseRange(x33, range3);
+            qDebug() << "range1:" << range1;
+            qDebug() << "range2:" << range2;
+            qDebug() << "range3:" << range3;
             // 在x范围内画不同颜色的矩形
             if (!x1.isEmpty())
             {
@@ -1181,21 +1242,6 @@ void Plot::stageDistinguish(void)
     }
 }
 
-void Plot::on_x_checkBox_stateChanged(int arg1)
-{
-    qDebug() << "x_checkBox state changed:" << arg1;
-    if (arg1)
-    {
-        // 显示x轴
-        pPlot1->axisRect()->setRangeZoom(Qt::Horizontal);
-    }
-    else
-    {
-        // 隐藏x轴
-        pPlot1->axisRect()->setRangeZoom(Qt::Vertical);
-    }
-}
-
 void Plot::on_pushButton_released()
 {
     // 获取按钮的名称
@@ -1212,4 +1258,122 @@ void Plot::on_pushButton_released()
         // 收起区域
         ui->frame_2->setVisible(false);
     }
+}
+
+void Plot::on_tabWidget_currentChanged(int index)
+{
+    if (index == 1)
+    {
+        // 随便导入表信息测试一下
+        // if (ui->gps_table) {
+
+        //     // 创建一个标准模型
+        //     QStandardItemModel *model = new QStandardItemModel(2, 3, this);
+        //     model->setHorizontalHeaderLabels(QStringList() << "经度" << "纬度" << "时间");
+        //     model->setItem(0, 0, new QStandardItem("120.123456"));
+        //     model->setItem(0, 1, new QStandardItem("30.654321"));
+        //     model->setItem(0, 2, new QStandardItem("2024-06-01 12:00:00"));
+        //     model->setItem(1, 0, new QStandardItem("120.654321"));
+        //     model->setItem(1, 1, new QStandardItem("30.123456"));
+        //     model->setItem(1, 2, new QStandardItem("2024-06-01 12:01:00"));
+        //     ui->gps_table->setModel(model);
+        // }
+        testLogDataPtr();
+        if (selectedIndex != -1)
+        {
+            showGroupToTable();
+        }
+    }
+}
+
+// 测试函数：读取logDataPtr并输出部分内容
+void Plot::testLogDataPtr()
+{
+    int i = 0;
+    while (plot_group_index[i].first != 0 || plot_group_index[i].second != 0)
+    {
+        qDebug() << "plot_group_index[" << i << "]:" << plot_group_index[i].first << " " << plot_group_index[i].second;
+        i++;
+    }
+    qDebug() << "一共" << i << "组";
+}
+void Plot::setSelectedGroup(int index)
+{
+    selectedIndex = index;
+}
+
+void Plot::showGroupToTable()
+{
+    if (!logDataPtr || !plot_group_index || selectedIndex < 0)
+        return;
+    int start = plot_group_index[selectedIndex].first + 1; //
+    int count = plot_group_index[selectedIndex].second;
+    if (count <= 0)
+        return;
+
+    QStandardItemModel *model = new QStandardItemModel(count, 3, this);
+    model->setHorizontalHeaderLabels(QStringList() << "时间戳" << "经度" << "纬度");
+
+    for (int i = 0; i < count; ++i)
+    {
+
+        int idx = start + i;
+
+        qDebug() << "====================";
+        qDebug() << "timestamp" << logDataPtr[idx].timestamp << "longitude" << logDataPtr[idx].longitude << "latitude" << logDataPtr[idx].latitude;
+
+        model->setItem(i, 0, new QStandardItem(QString::number(logDataPtr[idx].timestamp)));
+        model->setItem(i, 1, new QStandardItem(QString::number(logDataPtr[idx].longitude, 'f', DECIMAL_COUNT_FOR_JW))); // 保留6位小数
+        model->setItem(i, 2, new QStandardItem(QString::number(logDataPtr[idx].latitude, 'f', DECIMAL_COUNT_FOR_JW)));
+    }
+    if (ui->gps_table)
+    {
+        ui->gps_table->setModel(model);
+        ui->gps_table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    }
+}
+
+void Plot::on_plottest_button_released()
+{
+}
+
+void Plot::setPid(int index, float kp, float ki, float kd, float integralLimit)
+{
+    QString str;
+    str = QString("kp: %1 ki: %2 kd: %3 integralLimit: %4").arg(kp).arg(ki).arg(kd).arg(integralLimit);
+    qDebug() << str;
+    switch (index)
+    {
+    case 0:
+        ui->first_pid->setText(str);
+        break;
+    case 1:
+        ui->second_pid->setText(str);
+        break;
+    case 2:
+        ui->third_pid->setText(str);
+        break;
+    default:
+        break;
+    }
+}
+
+void Plot::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Control && !event->isAutoRepeat())
+    {
+        // Ctrl键按下，设置状态
+        pPlot1->axisRect()->setRangeZoom(Qt::Horizontal); // 水平方向缩放
+    }
+    QMainWindow::keyPressEvent(event); // 传递事件
+}
+
+void Plot::keyReleaseEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Control && !event->isAutoRepeat())
+    {
+        // Ctrl键松开，恢复状态
+        pPlot1->axisRect()->setRangeZoom(Qt::Vertical); // 竖直方向缩放
+    }
+    QMainWindow::keyReleaseEvent(event); // 传递事件
 }

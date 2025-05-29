@@ -67,7 +67,8 @@
         "qtableview": "cpp",
         "qstandarditem": "cpp",
         "qcoreapplication": "cpp",
-        "qfile": "cpp"
+        "qfile": "cpp",
+        "qfontmetrics": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

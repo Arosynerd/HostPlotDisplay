@@ -121,7 +121,7 @@
               <item row="1" column="0">
                <widget class="QPushButton" name="pushButton_3">
                 <property name="text">
-                 <string>测试按钮</string>
+                 <string>查看波形</string>
                 </property>
                </widget>
               </item>
@@ -135,7 +135,7 @@
               <item row="1" column="1">
                <widget class="QPushButton" name="pushButton">
                 <property name="text">
-                 <string>显示波形界面</string>
+                 <string>null</string>
                 </property>
                </widget>
               </item>

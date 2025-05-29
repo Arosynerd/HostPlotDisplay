@@ -4,12 +4,19 @@
 #include <QMainWindow>
 #include "qcustomplot.h"
 #include <QVector>
-
+#include <QKeyEvent>
 //数据解析类
 #include "new_data_parser.h"
 //报错类
 #include "ploterror.h"
 extern QStringList CurveLineNames;
+
+
+// 小数点保留位名称
+#define DECIMAL_COUNT_FOR_JW 6
+
+
+
 
 namespace Ui {
 class Plot;
@@ -20,7 +27,7 @@ class Plot : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit Plot(QWidget *parent = nullptr);
+    explicit Plot(GODEST_log_data_t* logDataPtr, std::pair<int, int> group_index[100],QWidget *parent = nullptr);
     ~Plot();
     // 绘图控件的指针
     QCustomPlot *pPlot1;
@@ -30,6 +37,20 @@ public:
     QVector<QCPItemTracer*> tracers;
     QCPItemText *tracerLabel;
     QCPItemStraightLine *vLine = nullptr; // 竖线
+
+    GODEST_log_data_t* logDataPtr;
+    std::pair<int, int>* plot_group_index; //修改为指针类型
+    /*
+    闭区间，
+    三个阶段的x轴范围
+    */
+    std::pair<int,int> range1;
+    std::pair<int,int> range2;
+    std::pair<int,int> range3;
+    
+    int selectedIndex = -1;
+
+    QCPItemText *allCurvesInfoText = nullptr;
 
     void ShowPlot_TimeDemo(QCustomPlot *customPlot, double num);
     void ShowPlot_WaveForm(QCustomPlot *customPlot, short value[]);
@@ -41,6 +62,14 @@ public:
     void hideCurve(int index);
     void stageDistinguish(void);
 
+    void testLogDataPtr();
+    void setSelectedGroup(int index);
+    void showGroupToTable();
+    void setPid(int index, float kp, float ki, float kd, float integralLimit);
+    void setCurveslegendName(QStringList lineNames);
+protected:
+    void keyPressEvent(QKeyEvent *event) override;
+    void keyReleaseEvent(QKeyEvent *event) override;
 public slots:
     void mouseMove2(QMouseEvent *e);
 private slots:
@@ -72,12 +101,11 @@ private slots:
 
     void on_txtMainScaleNumY_returnPressed();
 
-
-    
-
-    void on_x_checkBox_stateChanged(int arg1);
+    void on_tabWidget_currentChanged(int index);
 
     void on_pushButton_released();
+
+    void on_plottest_button_released();
 
 private:
     Ui::Plot *ui;
@@ -127,6 +155,8 @@ private:
     void setAutoTrackY(QCustomPlot *pPlot);
 
     void showDashboard(QCustomPlot *customPlot);
+
+    void TopLegendFlash(void);
 };
 
 #endif // PLOT_H

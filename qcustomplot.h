@@ -1135,7 +1135,7 @@ protected:
   virtual void startSelection(QMouseEvent *event);
   virtual void moveSelection(QMouseEvent *event);
   virtual void endSelection(QMouseEvent *event);
-  virtual void keyPressEvent(QKeyEvent *event);
+  //virtual void keyPressEvent(QKeyEvent *event);
   
   // reimplemented virtual methods
   virtual void applyDefaultAntialiasingHint(QCPPainter *painter) const Q_DECL_OVERRIDE;

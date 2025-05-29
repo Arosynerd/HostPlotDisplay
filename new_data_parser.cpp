@@ -11,6 +11,7 @@
 DataParser::DataParser()
 {
     // 构造函数初始化
+    qDebug() << "DataParser initialized";
 }
 
 // 解析数据的具体实现
@@ -41,7 +42,7 @@ QString DataParser::parseData(const QString &rawData)
     }
     else if (rawData == "phaseFlag")
     {
-        return "第几阶段";// 第一阶段，第二阶段，第三阶段
+        return "第几阶段"; // 第一阶段，第二阶段，第三阶段
     }
     else if (rawData == "goDestSpeed")
     {
@@ -241,7 +242,7 @@ void DataParser::parseData(const QString &plainText, std::pair<int, int> group_i
                 {
                     innerGroupCount++;
                     logData[idx_index + innerGroupCount].id = items[0].toInt();
-                    logData[idx_index + innerGroupCount].timestamp = items[1].toInt();
+                    logData[idx_index + innerGroupCount].timestamp = items[1].remove(":").toInt();
                     logData[idx_index + innerGroupCount].currentMode = items[2].toInt();
                     logData[idx_index + innerGroupCount].phaseFlag = items[4].toInt();
                     logData[idx_index + innerGroupCount].goDestSpeed = items[5].toInt();
@@ -256,7 +257,27 @@ void DataParser::parseData(const QString &plainText, std::pair<int, int> group_i
                     logData[idx_index + innerGroupCount].rudderAngle = items[14].toFloat();
                     logData[idx_index + innerGroupCount].motorSpeedLeft = items[15].toInt();
                     logData[idx_index + innerGroupCount].motorSpeedRight = items[16].toInt();
-                    //qDebug() << "phaseFlag" << logData[idx_index + innerGroupCount].phaseFlag << "currentDistance:" << logData[idx_index + innerGroupCount].currentDistance << "lineSeparation:" << logData[idx_index + innerGroupCount].lineSeparation << "rudderAngle:" << logData[idx_index + innerGroupCount].rudderAngle << "motorSpeedLeft:" << logData[idx_index + innerGroupCount].motorSpeedLeft << "motorSpeedRight:" << logData[idx_index + innerGroupCount].motorSpeedRight;
+                    //第一阶段pid
+                    logData[idx_index + innerGroupCount].kp_yaw_first = items[17].toFloat();
+                    logData[idx_index + innerGroupCount].ki_yaw_first = items[18].toFloat();
+                    logData[idx_index + innerGroupCount].kd_yaw_first = items[19].toFloat();
+                    logData[idx_index + innerGroupCount].integralLimit_yaw_first = items[20].toInt();
+                    //第二阶段pid
+                    logData[idx_index + innerGroupCount].kp_pos = items[21].toFloat();
+                    logData[idx_index + innerGroupCount].ki_pos = items[22].toFloat();
+                    logData[idx_index + innerGroupCount].kd_pos = items[23].toFloat();
+                    logData[idx_index + innerGroupCount].integralLimit_pos = items[24].toInt();
+                    //第三阶段pid
+                    logData[idx_index + innerGroupCount].kp_yaw_third = items[25].toFloat();
+                    logData[idx_index + innerGroupCount].ki_yaw_third = items[26].toFloat();
+                    logData[idx_index + innerGroupCount].kd_yaw_third = items[27].toFloat();
+                    logData[idx_index + innerGroupCount].integralLimit_yaw_third = items[28].toInt();
+                    //GPS and Speed
+
+                    logData[idx_index + innerGroupCount].latitude = items[29].toDouble();
+                    logData[idx_index + innerGroupCount].longitude = items[30].toDouble();
+                    logData[idx_index + innerGroupCount].speed = items[31].toDouble();
+                    // qDebug() << "phaseFlag" << logData[idx_index + innerGroupCount].phaseFlag << "currentDistance:" << logData[idx_index + innerGroupCount].currentDistance << "lineSeparation:" << logData[idx_index + innerGroupCount].lineSeparation << "rudderAngle:" << logData[idx_index + innerGroupCount].rudderAngle << "motorSpeedLeft:" << logData[idx_index + innerGroupCount].motorSpeedLeft << "motorSpeedRight:" << logData[idx_index + innerGroupCount].motorSpeedRight;
                     GroupCount++;
                 }
             }
@@ -287,7 +308,7 @@ void DataParser::parseData(const QString &plainText, std::pair<int, int> group_i
                 {
                     innerGroupCount++;
                     logData[idx_index + innerGroupCount].id = items[0].toInt();
-                    logData[idx_index + innerGroupCount].timestamp = items[1].toInt();
+                    logData[idx_index + innerGroupCount].timestamp = items[1].remove(":").toInt();
                     logData[idx_index + innerGroupCount].currentMode = items[2].toInt();
                     logData[idx_index + innerGroupCount].phaseFlag = items[4].toInt();
                     logData[idx_index + innerGroupCount].goDestSpeed = items[5].toInt();
@@ -302,8 +323,31 @@ void DataParser::parseData(const QString &plainText, std::pair<int, int> group_i
                     logData[idx_index + innerGroupCount].rudderAngle = items[14].toFloat();
                     logData[idx_index + innerGroupCount].motorSpeedLeft = items[15].toInt();
                     logData[idx_index + innerGroupCount].motorSpeedRight = items[16].toInt();
-                    qDebug() << "phaseFlag" << logData[idx_index + innerGroupCount].phaseFlag << "currentDistance:" << logData[idx_index + innerGroupCount].currentDistance << "lineSeparation:" << logData[idx_index + innerGroupCount].lineSeparation << "rudderAngle:" << logData[idx_index + innerGroupCount].rudderAngle << "motorSpeedLeft:" << logData[idx_index + innerGroupCount].motorSpeedLeft << "motorSpeedRight:" << logData[idx_index + innerGroupCount].motorSpeedRight;
+                    //第一阶段pid
+                    logData[idx_index + innerGroupCount].kp_yaw_first = items[17].toFloat();
+                    logData[idx_index + innerGroupCount].ki_yaw_first = items[18].toFloat();
+                    logData[idx_index + innerGroupCount].kd_yaw_first = items[19].toFloat();
+                    logData[idx_index + innerGroupCount].integralLimit_yaw_first = items[20].toInt();
+                    //第二阶段pid
+                    logData[idx_index + innerGroupCount].kp_pos = items[21].toFloat();
+                    logData[idx_index + innerGroupCount].ki_pos = items[22].toFloat();
+                    logData[idx_index + innerGroupCount].kd_pos = items[23].toFloat();
+                    logData[idx_index + innerGroupCount].integralLimit_pos = items[24].toInt();
+                    //第三阶段pid
+                    logData[idx_index + innerGroupCount].kp_yaw_third = items[25].toFloat();
+                    logData[idx_index + innerGroupCount].ki_yaw_third = items[26].toFloat();
+                    logData[idx_index + innerGroupCount].kd_yaw_third = items[27].toFloat();
+                    logData[idx_index + innerGroupCount].integralLimit_yaw_third = items[28].toInt();
+                    //GPS and Speed
+                    logData[idx_index + innerGroupCount].latitude = items[17].toDouble();
+                    logData[idx_index + innerGroupCount].longitude = items[18].toDouble();
+                    logData[idx_index + innerGroupCount].speed = items[19].toDouble();
 
+                    qDebug() << "first phase pid" << logData[idx_index + innerGroupCount].kp_yaw_first << logData[idx_index + innerGroupCount].ki_yaw_first << logData[idx_index + innerGroupCount].kd_yaw_first << logData[idx_index + innerGroupCount].integralLimit_yaw_first;
+                    qDebug() << "second phase pid" << logData[idx_index + innerGroupCount].kp_pos << logData[idx_index + innerGroupCount].ki_pos << logData[idx_index + innerGroupCount].kd_pos << logData[idx_index + innerGroupCount].integralLimit_pos;
+                    qDebug() << "third phase pid" << logData[idx_index + innerGroupCount].kp_yaw_third << logData[idx_index + innerGroupCount].ki_yaw_third << logData[idx_index + innerGroupCount].kd_yaw_third << logData[idx_index + innerGroupCount].integralLimit_yaw_third;
+                    qDebug() << "timestamp_origin" << items[1] << "timestamp" << logData[idx_index + innerGroupCount].timestamp;
+                    qDebug() << "==================================";
                     GroupCount++;
                 }
             }
@@ -316,6 +360,99 @@ void DataParser::parseData(const QString &plainText, std::pair<int, int> group_i
 void DataParser::test(void)
 {
     qDebug() << "DataParser test";
+}
+
+
+
+
+/*
+参数：
+    vec: 输入的整数向量
+    &result: 输出的整数对，包含最小值和最大值
+返回值：
+    无
+说明：
+    用于存储一个阶段的始终点，便于后面计算pid值
+*/
+void DataParser::CreatePhaseRange(const std::vector<int>& vec, std::pair<int, int>& result)
+{
+    if (vec.empty()) {
+        result = std::make_pair(0, 0);
+        return;
+    }
+    int start = 0, end = 0;
+    int maxLen = 1, currLen = 1;
+    int minVal = vec[0], maxVal = vec[0];
+    for (size_t i = 1; i < vec.size(); ++i) {
+        if (vec[i] == vec[i - 1] + 1) {
+            currLen++;
+            if (currLen > maxLen) {
+                maxLen = currLen;
+                start = i - currLen + 1;
+                end = i;
+            }
+        } else {
+            currLen = 1;
+        }
+    }
+    minVal = vec[start];
+    maxVal = vec[end];
+    result = std::make_pair(minVal, maxVal);
+}
+/*
+
+*/
+void DataParser::alignString(QStringList& okstr,QFont font)
+{
+    int maxYPos = 0;
+    for (const QString &str : okstr)
+    {
+        int yPos = str.indexOf("y");
+        if (yPos > maxYPos)
+            maxYPos = yPos;
+    }
+    // 对齐每个字符串的"y"
+    for (int i = 0; i < okstr.size(); ++i)
+    {
+        int yPos = okstr[i].indexOf("y");
+        if (yPos >= 0 && yPos < maxYPos)
+        {
+            okstr[i].insert(yPos, QString(maxYPos - yPos, ' '));
+        }
+    }
+    // 使用 QFontMetrics 计算像素宽度对齐“y”
+    QFontMetrics fm(font);
+    int maxYWidth = 0;
+    for (const QString &str : okstr)
+    {
+        int yPos = str.indexOf("y");
+        if (yPos > 0)
+        {
+            int width = fm.horizontalAdvance(str.left(yPos));
+            if (width > maxYWidth)
+                maxYWidth = width;
+        }
+    }
+    for (int i = 0; i < okstr.size(); ++i)
+    {
+        int yPos = okstr[i].indexOf("y");
+        if (yPos > 0)
+        {
+            int width = fm.horizontalAdvance(okstr[i].left(yPos));
+            int spaceWidth = fm.horizontalAdvance(" ");
+            int needSpaces = (maxYWidth - width + spaceWidth - 1) / spaceWidth;
+            okstr[i].insert(yPos, QString(needSpaces, ' '));
+        }
+    }
+    // for(int i = 0; i < okstr.size(); i++){
+    //     qDebug() << "start:" << okstr[i];
+    // }
+}
+QString DataParser::removeSpaces(const QString &input)
+{
+    QString result = input;
+    result.remove(' ');
+    return result;
 }
 DataParser::~DataParser()
 {

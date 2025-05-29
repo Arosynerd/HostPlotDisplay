@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     setWindowTitle("Qt Serial Debugger");
 
-    CurveLineNames << "currentDistance" << "lineSeparation" << "rudderAngle" << "motorSpeedLeft" << "motorSpeedRight"<<"phaseFlag";
+    CurveLineNames << "currentDistance" << "lineSeparation" << "rudderAngle" << "motorSpeedLeft" << "motorSpeedRight" << "phaseFlag" << "speed" << "goDestSpeed" << "originBearing" << "currentBearing" << "currentYaw" << "bearingError" << "yawCurrentBearing" << "kp_angle" << "minYawDeviation" << "maxYawDeviation" << "yawDeviation" << "imuYaw" << "ddmYaw" << "gpsYaw";
 
     // 查找当前目录下的txt文件并导入表格
     QStandardItemModel *model = new QStandardItemModel(this);
@@ -68,7 +68,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(mySerialPort, SIGNAL(readyRead()), this, SLOT(serialPortRead_Slot()));
 
     // 新建波形显示界面
-    plot = new Plot;
+    plot = new Plot(logData, group_index);
 
     // 生成对象
     dataParser = new DataParser();
@@ -152,7 +152,6 @@ void MainWindow::paintEvent(QPaintEvent *)
 void MainWindow::serialPortRead_SlotForPlot(QByteArray recBuf)
 {
     /* 帧过滤部分代码 */
-    short wmValue[20] = {0};
 
     //}
 
@@ -555,7 +554,7 @@ void MainWindow::on_pushButton_clicked()
     }
 
     // 创建一个新的 Plot 对象
-    plot = new Plot;
+    plot = new Plot(logData, group_index);
 
     // 显示新的波形绘图窗口
     plot->show();
@@ -594,12 +593,13 @@ void MainWindow::on_pushButton_clicked()
 }
 #define testdd
 // 测试1
-    void MainWindow::on_pushButton_3_released()
+void MainWindow::on_pushButton_3_released()
 {
     int GroupCount = 0;
     int group_count = 0;
     int idx_index = 0; // 每组的起始点
     memset(logData, 0, sizeof(logData));
+    memset(group_index, 0, sizeof(group_index));
 
     QString plainText = ui->txtRec->toPlainText();
 
@@ -609,8 +609,9 @@ void MainWindow::on_pushButton_clicked()
     {
         qDebug() << "group_index[" << i << "]:" << group_index[i].first << "," << group_index[i].second;
     }
+
     QStringList groupOptions;
-    for (int i = 0; i < group_count; ++i)
+    for (int i = 0; i <= group_count; ++i)
     {
         groupOptions << QString("第%1组").arg(i + 1);
     }
@@ -636,40 +637,119 @@ void MainWindow::on_pushButton_clicked()
             }
 
             // 创建一个新的 Plot 对象
-            plot = new Plot;
+            plot = new Plot(logData, group_index);
+            ;
 
             // 显示新的波形绘图窗口
             plot->showMaximized();
             // 修改plot的标题
-
+            plot->setSelectedGroup(selectedIndex);
             int rowIndex = file_selected;
             QString secondColumnData = ui->tableView->model()->index(rowIndex, 0).data().toString();
             qDebug() << "Second column content:" << secondColumnData;
             // QString plotTitle = "波形显示";
             plot->setWindowTitle(secondColumnData);
+            int flag[3] = {0};
             float value[20] = {0};
+            float Kp[3] = {0};
+            float Ki[3] = {0};
+            float Kd[3] = {0};
+            float Ki_limit[3] = {0};
             for (int j = 1; j <= group_index[selectedIndex].second; j++)
             {
                 value[0] = logData[group_index[selectedIndex].first + j].currentDistance;
-                value[1] = logData[group_index[selectedIndex].first + j].lineSeparation;
                 value[2] = logData[group_index[selectedIndex].first + j].rudderAngle;
                 value[3] = logData[group_index[selectedIndex].first + j].motorSpeedLeft;
                 value[4] = logData[group_index[selectedIndex].first + j].motorSpeedRight;
                 value[5] = logData[group_index[selectedIndex].first + j].phaseFlag;
+                value[7] = logData[group_index[selectedIndex].first + j].goDestSpeed;
 
+                //未分析
+                value[8] = logData[group_index[selectedIndex].first + j].firstPhaseCount; 
+                value[9] = logData[group_index[selectedIndex].first + j].originBearing; // 原始航向
+                value[10] = logData[group_index[selectedIndex].first + j].currentBearing; // 当前航向
+                value[11] = logData[group_index[selectedIndex].first + j].currentYaw;
+                value[12] = logData[group_index[selectedIndex].first + j].bearingError;
+                value[13] = logData[group_index[selectedIndex].first + j].yawCurrentBearing;
+                value[14] = logData[group_index[selectedIndex].first + j].kp_angle;
+                value[15] = logData[group_index[selectedIndex].first + j].minYawDeviation;
+                value[16] = logData[group_index[selectedIndex].first + j].maxYawDeviation;
+                value[17] = logData[group_index[selectedIndex].first + j].yawDeviation; // 航向偏差
+                value[18] = logData[group_index[selectedIndex].first + j].imuYaw;
+                value[19] = logData[group_index[selectedIndex].first + j].ddmYaw;
+                value[20] = logData[group_index[selectedIndex].first + j].gpsYaw;
+
+
+
+                // 因为y值变化幅度小要单独显示在右侧轴的曲线
+                value[1] = logData[group_index[selectedIndex].first + j].lineSeparation; // 航线间距
+                value[6] = logData[group_index[selectedIndex].first + j].speed;          // 速度 米/秒
+
+                
+
+                if (flag[0] == 0)
+                {
+                    if (logData[group_index[selectedIndex].first + j].phaseFlag == 1)
+                    {
+                        Kp[0] = logData[group_index[selectedIndex].first + j].kp_yaw_first;
+                        Ki[0] = logData[group_index[selectedIndex].first + j].ki_yaw_first;
+                        Kd[0] = logData[group_index[selectedIndex].first + j].kd_yaw_first;
+                        Ki_limit[0] = logData[group_index[selectedIndex].first + j].integralLimit_yaw_first;
+                        flag[0] = 1;
+                    }
+                }
+                else if (flag[1] == 0)
+                {
+                    if (logData[group_index[selectedIndex].first + j].phaseFlag == 2)
+                    {
+                        Kp[1] = logData[group_index[selectedIndex].first + j].kp_pos;
+                        Ki[1] = logData[group_index[selectedIndex].first + j].ki_pos;
+                        Kd[1] = logData[group_index[selectedIndex].first + j].kd_pos;
+                        Ki_limit[1] = logData[group_index[selectedIndex].first + j].integralLimit_pos;
+                        flag[1] = 1;
+                    }
+                }
+                else if (flag[2] == 0)
+                {
+                    if (logData[group_index[selectedIndex].first + j].phaseFlag == 3)
+                    {
+                        Kp[2] = logData[group_index[selectedIndex].first + j].kp_yaw_third;
+                        Ki[2] = logData[group_index[selectedIndex].first + j].ki_yaw_third;
+                        Kd[2] = logData[group_index[selectedIndex].first + j].kd_yaw_third;
+                        Ki_limit[2] = logData[group_index[selectedIndex].first + j].integralLimit_yaw_third;
+                        flag[2] = 1;
+                    }
+                }
+                qDebug() << "Kp:" << Kp[0] << Kp[1] << Kp[2];
+                qDebug() << "Ki:" << Ki[0] << Ki[1] << Ki[2];
+                qDebug() << "Kd:" << Kd[0] << Kd[1] << Kd[2];
+                qDebug() << "Ki_limit:" << Ki_limit[0] << Ki_limit[1] << Ki_limit[2];
                 // 输出一下
-                // qDebug() << "currentDistance:" << value[0] << "lineSeparation:" << value[1] << "rudderAngle:" << value[2] << "motorSpeedLeft:" << value[3] << "motorSpeedRight:" << value[4];
+                // qDebug() << "currentDistance:" << value[0] << "lineSeparation:" << value[1] << "rudderAngle:" << value[2] << "speed" << value[6];
                 plot->ShowPlot_WaveForm(plot->pPlot1, value);
             }
+            for (int i = 0; i < 3; i++)
+                plot->setPid(i, Kp[i], Ki[i], Kd[i], Ki_limit[i]);
             plot->setAutoX(plot->pPlot1, group_index[selectedIndex].second + 10);
 
-            //主动隐藏阶段曲线
+            // 主动隐藏阶段曲线
             plot->hideCurve(5);
-            plot->hideCurve(0);//距离线
+            plot->hideCurve(0); // 距离线
+            plot->hideCurve(6); // 速度线
+            plot->hideCurve(7); //
+            for(int i = 8; i < 20; i++){
+                plot->hideCurve(i);
+            }
+            QStringList templist;
+            DataParser parsefp;
+            for (int i = 0; i < CurveLineNames.size(); i++)
+            {
+                templist << parsefp.parseData(CurveLineNames.at(i));
+            }
 
-            plot->setCurvesName(CurveLineNames);
+            plot->setCurvesName(templist);
 
-            //阶段区分
+            // 阶段区分
             plot->stageDistinguish();
         }
     }
@@ -998,10 +1078,13 @@ void MainWindow::on_inandoutButton_released()
 
 void MainWindow::on_TestButton_released()
 {
-    QStringList txtFiles = FileHelper::findAllTxtFiles();
-    qDebug() << "本目录下的txt文件：";
-    for (const QString &fileName : txtFiles)
-    {
-        qDebug() << fileName;
-    }
+    // QVector<int> test = {1, 2, 3, 4, 5, 78, 79};
+    // std::pair<int, int> test1;
+    // std::vector<int> stdTest = test.toStdVector();
+    // DataParser d;
+    // d.CreatePhaseRange(stdTest, test1);
+    // qDebug() << "pair" << test1.first << test1.second;
+    QString test1 = "dawfhjefoie f           fesafefase";
+    DataParser d;
+    qDebug() << "test1:" << d.removeSpaces(test1);
 }

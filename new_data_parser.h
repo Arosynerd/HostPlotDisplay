@@ -10,7 +10,9 @@
 
 #include <QByteArray>
 #include <QDebug>
-
+#include <QFontMetrics>
+#include "ploterror.h"
+#include <QStandardItemModel>
 typedef struct GODEST_log_data_t {
     int id;
     int timestamp;
@@ -27,22 +29,22 @@ typedef struct GODEST_log_data_t {
     float yawCurrentBearing;
     float rudderAngle;
     int motorSpeedLeft;
-    int motorSpeedRight;
-    float kp_yaw_first;
-    float ki_yaw_first;
-    float kd_yaw_first;
-    int integralLimit_yaw_first;
+    int motorSpeedRight;//16
+    float kp_yaw_first;//17
+    float ki_yaw_first;//18
+    float kd_yaw_first;//19
+    int integralLimit_yaw_first;//20
     float kp_pos;
     float ki_pos;
-    float kd_pos;
+    float kd_pos;//23
     int integralLimit_pos;
     float kp_yaw_third;
     float ki_yaw_third;
     float kd_yaw_third;
-    int integralLimit_yaw_third;
-    double latitude;
-    double longitude;
-    double speed;
+    int integralLimit_yaw_third;//28
+    double latitude;//29
+    double longitude;//30
+    double speed;//31
     float kp_angle;
     float minYawDeviation;
     float maxYawDeviation;
@@ -64,7 +66,9 @@ public:
     QString parseData(const QString& rawData);
     void test(void);
     void parseData(const QString &plainText, std::pair<int, int> group_index[],GODEST_log_data_t logData[],int &GroupCount, int &group_count, int &idx_index);
-
+    void CreatePhaseRange(const std::vector<int>& vec, std::pair<int, int>& result);
+    void alignString(QStringList& okstr,QFont font);
+    QString removeSpaces(const QString &input);
 };
 
 #endif // NEW_DATA_PARSER_H

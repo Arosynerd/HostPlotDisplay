@@ -150,7 +150,6 @@ private:
     int f_length = 0;                           // 帧数据中包含有效字节的长度
     int data_send_count = 0;                    // 发送数据的计数,用于绘制波形
     int file_selected = NO_FILE_SELECTED;                     // 选择的文件 0为未选中
-    void xFrameDataFilter(QByteArray *str, short value[]);
     //QByteArray xFrameDataFilter(QByteArray *str);
 
     // 定时发送-定时器
