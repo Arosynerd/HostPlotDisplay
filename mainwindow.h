@@ -69,6 +69,8 @@ public:
 
     void Open_Serial(QString spTxt);
 
+    void FilesReflash(void);
+
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
     // 重写鼠标按下事件
@@ -112,6 +114,7 @@ private slots:
     void on_TestButton_released();
 
 
+
     void onKey5Pressed();
 
     void onKey6Pressed();
@@ -149,7 +152,7 @@ private:
     int f_fun_word = 0;                         // 功能字，限定为0x01、0x02
     int f_length = 0;                           // 帧数据中包含有效字节的长度
     int data_send_count = 0;                    // 发送数据的计数,用于绘制波形
-    int file_selected = NO_FILE_SELECTED;                     // 选择的文件 0为未选中
+    int file_selected = NO_FILE_SELECTED;                     // 选择的文件 0为未选中,用于删除文件
     //QByteArray xFrameDataFilter(QByteArray *str);
 
     // 定时发送-定时器

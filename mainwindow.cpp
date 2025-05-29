@@ -18,7 +18,8 @@ MainWindow::MainWindow(QWidget *parent)
     model->setColumnCount(1); // 修改列数为1
     model->setHeaderData(0, Qt::Horizontal, "名称");
 
-    QStringList txtFiles = FileHelper::findAllTxtFiles();
+    QStringList txtFiles = FileHelper::findAllTxtFiles(RAW);
+    qDebug() << "txtFiles:" << txtFiles;
     for (int i = 0; i < txtFiles.size(); ++i)
     {
         QList<QStandardItem *> row;
@@ -603,7 +604,6 @@ void MainWindow::on_pushButton_3_released()
 
     dataParser->parseData(plainText, group_index, logData, GroupCount, group_count, idx_index);
 
-
     QStringList groupOptions;
     for (int i = 0; i <= group_count; ++i)
     {
@@ -657,9 +657,9 @@ void MainWindow::on_pushButton_3_released()
                 value[5] = logData[group_index[selectedIndex].first + j].phaseFlag;
                 value[7] = logData[group_index[selectedIndex].first + j].goDestSpeed;
 
-                //未分析
-                value[8] = logData[group_index[selectedIndex].first + j].firstPhaseCount; 
-                value[9] = logData[group_index[selectedIndex].first + j].originBearing; // 原始航向
+                // 未分析
+                value[8] = logData[group_index[selectedIndex].first + j].firstPhaseCount;
+                value[9] = logData[group_index[selectedIndex].first + j].originBearing;   // 原始航向
                 value[10] = logData[group_index[selectedIndex].first + j].currentBearing; // 当前航向
                 value[11] = logData[group_index[selectedIndex].first + j].currentYaw;
                 value[12] = logData[group_index[selectedIndex].first + j].bearingError;
@@ -670,15 +670,11 @@ void MainWindow::on_pushButton_3_released()
                 value[17] = logData[group_index[selectedIndex].first + j].yawDeviation; // 航向偏差
                 value[18] = logData[group_index[selectedIndex].first + j].imuYaw;
                 value[19] = logData[group_index[selectedIndex].first + j].ddmYaw;
-                value[20] = logData[group_index[selectedIndex].first + j].gpsYaw;
-
-
+                // value[20] = logData[group_index[selectedIndex].first + j].gpsYaw;
 
                 // 因为y值变化幅度小要单独显示在右侧轴的曲线
                 value[1] = logData[group_index[selectedIndex].first + j].lineSeparation; // 航线间距
                 value[6] = logData[group_index[selectedIndex].first + j].speed;          // 速度 米/秒
-
-                
 
                 if (flag[0] == 0)
                 {
@@ -713,7 +709,6 @@ void MainWindow::on_pushButton_3_released()
                         flag[2] = 1;
                     }
                 }
-
                 // 输出一下
                 // qDebug() << "currentDistance:" << value[0] << "lineSeparation:" << value[1] << "rudderAngle:" << value[2] << "speed" << value[6];
                 plot->ShowPlot_WaveForm(plot->pPlot1, value);
@@ -727,7 +722,8 @@ void MainWindow::on_pushButton_3_released()
             plot->hideCurve(0); // 距离线
             plot->hideCurve(6); // 速度线
             plot->hideCurve(7); //
-            for(int i = 8; i < 20; i++){
+            for (int i = 8; i < 20; i++)
+            {
                 plot->hideCurve(i);
             }
             QStringList templist;
@@ -750,7 +746,7 @@ void MainWindow::on_pushButton_3_released()
 // 保存
 void MainWindow::on_pushButton_4_released()
 {
-    QString fileName = FileHelper::saveTxtFile(ui->txtRec->toPlainText());
+    QString fileName = FileHelper::saveTxtFile(ui->txtRec->toPlainText(),RAW);
     if (!fileName.isEmpty())
     {
         QMessageBox::information(this, "提示", "文件已保存为: " + fileName);
@@ -765,21 +761,11 @@ void MainWindow::on_pushButton_4_released()
     model->setColumnCount(1); // 修改列数为1
     model->setHeaderData(0, Qt::Horizontal, "名称");
 
-    QStringList txtFiles = FileHelper::findAllTxtFiles();
-    for (int i = 0; i < txtFiles.size(); ++i)
-    {
-        QList<QStandardItem *> row;
-        row.append(new QStandardItem(txtFiles.at(i))); // 仅添加名称列
-        model->appendRow(row);
-    }
-
-    ui->tableView->setModel(model);
-    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    FilesReflash();
     qDebug() << "当前目录下的txt文件导入表格完成";
 }
 void MainWindow::on_tableView_clicked(const QModelIndex &index)
 {
-    dataParser->test();
     // bug:会连续触发
     if (index.isValid())
     {
@@ -791,21 +777,10 @@ void MainWindow::on_tableView_clicked(const QModelIndex &index)
 
         // 获取点击行的名称（第二列的值）
         QString fileName = index.sibling(index.row(), 0).data().toString();
-
-        // 构造文件路径
-        QString filePath = QCoreApplication::applicationDirPath() + "/" + fileName;
-
-        // 读取文件内容并显示在 textEdit 控件上
-        QFile file(filePath);
-        if (file.open(QIODevice::ReadOnly | QIODevice::Text))
-        {
-            QTextStream in(&file);
-            ui->txtRec->setPlainText(in.readAll());
-            file.close();
-            // this->setWindowTitle(fileName); // 更新窗口标题为文件名
-        }
-        else
-        {
+        QString readtxt;
+        if(FileHelper::readtxtFile(fileName, RAW, readtxt)){
+        ui->txtRec->setPlainText(readtxt);
+        }else{
             QMessageBox::warning(this, "警告", "无法打开文件: " + fileName);
         }
     }
@@ -829,7 +804,23 @@ void MainWindow::onKey1Pressed()
 
     qDebug() << "executed!";
 }
-
+void MainWindow::FilesReflash(void)
+{
+    // 刷新文件列表
+    QStandardItemModel *newModel = new QStandardItemModel(this);
+    newModel->setColumnCount(1);
+    newModel->setHeaderData(0, Qt::Horizontal, "名称");
+    QStringList txtFiles = FileHelper::findAllTxtFiles(RAW);
+    for (int i = 0; i < txtFiles.size(); ++i)
+    {
+        QList<QStandardItem *> row;
+        row.append(new QStandardItem(txtFiles.at(i)));
+        newModel->appendRow(row);
+    }
+    ui->tableView->setModel(newModel);
+    ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    file_selected = NO_FILE_SELECTED;
+}
 bool MainWindow::eventFilter(QObject *obj, QEvent *event)
 {
     if (event->type() == QEvent::KeyPress)
@@ -889,7 +880,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
                 QAbstractItemModel *model = ui->tableView->model();
                 QModelIndex index = model->index(file_selected, 0);
                 QString fileName = model->data(index).toString();
-                if (FileHelper::removeTxtFile(fileName))
+                if (FileHelper::removeTxtFile(fileName,RAW))
                 {
                     qDebug() << "文件删除成功:" << fileName;
                 }
@@ -901,16 +892,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
                 QStandardItemModel *newModel = new QStandardItemModel(this);
                 newModel->setColumnCount(1);
                 newModel->setHeaderData(0, Qt::Horizontal, "名称");
-                QStringList txtFiles = FileHelper::findAllTxtFiles();
-                for (int i = 0; i < txtFiles.size(); ++i)
-                {
-                    QList<QStandardItem *> row;
-                    row.append(new QStandardItem(txtFiles.at(i)));
-                    newModel->appendRow(row);
-                }
-                ui->tableView->setModel(newModel);
-                ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-                file_selected = NO_FILE_SELECTED;
+                FilesReflash();
             }
             return true;
         }

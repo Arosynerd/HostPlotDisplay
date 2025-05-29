@@ -16,7 +16,7 @@
 
 //#define DEBUG 1
 #define ZOOMSTANDARD 64
-
+#define RAW "raw" // 原始数据的目录
 
 typedef struct GODEST_log_data_t {
     int id;
