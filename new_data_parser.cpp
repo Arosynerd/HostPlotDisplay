@@ -238,7 +238,7 @@ void DataParser::parseData(const QString &plainText, std::pair<int, int> group_i
             for (const QString &line : betweenLines)
             {
                 QStringList items = line.split(' ', QString::SkipEmptyParts);
-                if (items.size() >= 11)
+                if (items.size() >= 32)
                 {
                     innerGroupCount++;
                     logData[idx_index + innerGroupCount].id = items[0].toInt();
