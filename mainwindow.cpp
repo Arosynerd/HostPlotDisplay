@@ -746,7 +746,7 @@ void MainWindow::on_pushButton_3_released()
 // 保存
 void MainWindow::on_pushButton_4_released()
 {
-    QString fileName = FileHelper::saveTxtFile(ui->txtRec->toPlainText(),RAW);
+    QString fileName = FileHelper::saveTxtFile(ui->txtRec->toPlainText(), RAW);
     if (!fileName.isEmpty())
     {
         QMessageBox::information(this, "提示", "文件已保存为: " + fileName);
@@ -766,6 +766,15 @@ void MainWindow::on_pushButton_4_released()
 }
 void MainWindow::on_tableView_clicked(const QModelIndex &index)
 {
+    // test
+    // int GroupCount = 0;
+    // int group_count = 0;
+    // int idx_index = 0; // 每组的起始点
+    // QString plainText = ui->txtRec->toPlainText();
+
+    // dataParser->parseData(plainText, group_index, logData, GroupCount, group_count, idx_index);
+    // test
+
     // bug:会连续触发
     if (index.isValid())
     {
@@ -778,11 +787,29 @@ void MainWindow::on_tableView_clicked(const QModelIndex &index)
         // 获取点击行的名称（第二列的值）
         QString fileName = index.sibling(index.row(), 0).data().toString();
         QString readtxt;
-        if(FileHelper::readtxtFile(fileName, RAW, readtxt)){
-        ui->txtRec->setPlainText(readtxt);
-        }else{
+        if (FileHelper::readtxtFile(fileName, RAW, readtxt))
+        {
+            ui->txtRec->setPlainText(readtxt);
+        }
+        else
+        {
             QMessageBox::warning(this, "警告", "无法打开文件: " + fileName);
         }
+    }
+}
+
+
+void MainWindow::scrollToString(const QString &targetString)
+{
+    // 获取全部文本
+    QString text = ui->txtRec->toPlainText();
+    int pos = text.indexOf(targetString);
+    if (pos >= 0) {
+        QTextCursor cursor = ui->txtRec->textCursor();
+        cursor.setPosition(pos);
+        ui->txtRec->setTextCursor(cursor); // 自动滚动到光标处
+    } else {
+        QMessageBox::information(this, "查找结果", "未找到指定字符串: " + targetString);
     }
 }
 
@@ -880,7 +907,7 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event)
                 QAbstractItemModel *model = ui->tableView->model();
                 QModelIndex index = model->index(file_selected, 0);
                 QString fileName = model->data(index).toString();
-                if (FileHelper::removeTxtFile(fileName,RAW))
+                if (FileHelper::removeTxtFile(fileName, RAW))
                 {
                     qDebug() << "文件删除成功:" << fileName;
                 }
@@ -1048,13 +1075,73 @@ void MainWindow::on_inandoutButton_released()
 
 void MainWindow::on_TestButton_released()
 {
-    // QVector<int> test = {1, 2, 3, 4, 5, 78, 79};
-    // std::pair<int, int> test1;
-    // std::vector<int> stdTest = test.toStdVector();
-    // DataParser d;
-    // d.CreatePhaseRange(stdTest, test1);
-    // qDebug() << "pair" << test1.first << test1.second;
-    QString test1 = "dawfhjefoie f           fesafefase";
     DataParser d;
-    qDebug() << "test1:" << d.removeSpaces(test1);
+    // 属性项名称
+    QStringList headers;
+    headers << "timestamp"
+            << "currentMode"
+            << "phaseFlag"
+            << "goDestSpeed"
+            << "firstPhaseCount"
+            << "originBearing"
+            << "currentBearing"
+            << "currentYaw"
+            << "currentDistance"
+            << "lineSeparation"
+            << "bearingError"
+            << "yawCurrentBearing"
+            << "rudderAngle"
+            << "motorSpeedLeft"
+            << "motorSpeedRight"
+            << "kp_yaw_first"
+            << "ki_yaw_first"
+            << "kd_yaw_first"
+            << "integralLimit_yaw_first"
+            << "kp_pos"
+            << "ki_pos"
+            << "kd_pos"
+            << "integralLimit_pos"
+            << "kp_yaw_third"
+            << "ki_yaw_third"
+            << "kd_yaw_third"
+            << "integralLimit_yaw_third"
+            << "latitude"
+            << "longitude"
+            << "speed"
+            << "kp_angle"
+            << "minYawDeviation"
+            << "maxYawDeviation"
+            << "yawDeviation"
+            << "imuYaw"
+            << "ddmYaw"
+            << "gpsYaw";
+    for(int i = 0; i < headers.size(); i++){
+        QString temp = d.parseData(headers.at(i));
+        headers[i] = temp;
+    }
+    int rowCount = 5; // 示例数据行数
+    int colCount = headers.size();
+
+    QStandardItemModel *model = new QStandardItemModel(rowCount, colCount, this);
+    model->setHorizontalHeaderLabels(headers);
+
+    // 填充示例数据
+    for (int row = 0; row < rowCount; ++row)
+    {
+        for (int col = 0; col < colCount; ++col)
+        {
+            QStandardItem *item = new QStandardItem(QString("R%1C%2").arg(row + 1).arg(col + 1));
+            model->setItem(row, col, item);
+        }
+    }
+    ui->structed_table->setModel(model);
+    // ui->structed_table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->structed_table->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 }
+
+void MainWindow::on_pushButton_2_released()
+{
+    qDebug() << "test";
+    scrollToString("454247: GODEST: 1 2 80 1  178.955  177.908  178.360");
+}
+

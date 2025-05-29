@@ -125,35 +125,7 @@
                 </property>
                </widget>
               </item>
-              <item row="4" column="1">
-               <widget class="QCheckBox" name="chkRec">
-                <property name="text">
-                 <string>16进制接收</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1">
-               <widget class="QPushButton" name="pushButton">
-                <property name="text">
-                 <string>null</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="0" colspan="2">
-               <widget class="QPushButton" name="pushButton_4">
-                <property name="text">
-                 <string>保存</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="0" colspan="2">
-               <widget class="QPushButton" name="btnClearRec">
-                <property name="text">
-                 <string>清除接收/统计</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="1">
+              <item row="6" column="1">
                <spacer name="verticalSpacer_2">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
@@ -165,6 +137,27 @@
                  </size>
                 </property>
                </spacer>
+              </item>
+              <item row="4" column="0">
+               <widget class="QPushButton" name="TestButton">
+                <property name="text">
+                 <string>测试按钮</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QPushButton" name="pushButton">
+                <property name="text">
+                 <string>null</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0" colspan="2">
+               <widget class="QPushButton" name="btnClearRec">
+                <property name="text">
+                 <string>清除接收/统计</string>
+                </property>
+               </widget>
               </item>
               <item row="0" column="0" colspan="2">
                <widget class="QFrame" name="frame_4">
@@ -417,10 +410,24 @@
                 </layout>
                </widget>
               </item>
-              <item row="4" column="0">
-               <widget class="QPushButton" name="TestButton">
+              <item row="4" column="1">
+               <widget class="QCheckBox" name="chkRec">
                 <property name="text">
-                 <string>测试按钮</string>
+                 <string>16进制接收</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0" colspan="2">
+               <widget class="QPushButton" name="pushButton_4">
+                <property name="text">
+                 <string>保存</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="0">
+               <widget class="QPushButton" name="pushButton_2">
+                <property name="text">
+                 <string>测试1</string>
                 </property>
                </widget>
               </item>

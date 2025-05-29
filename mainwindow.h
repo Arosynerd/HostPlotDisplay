@@ -71,6 +71,8 @@ public:
 
     void FilesReflash(void);
 
+    void scrollToString(const QString &targetString);
+
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
     // 重写鼠标按下事件
@@ -122,6 +124,8 @@ private slots:
     void onKey7Pressed();
 
     void onKey8Pressed();
+
+    void on_pushButton_2_released();
 
 private:
     Ui::MainWindow *ui;
