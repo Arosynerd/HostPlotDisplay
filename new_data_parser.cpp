@@ -11,7 +11,6 @@
 DataParser::DataParser()
 {
     // 构造函数初始化
-    qDebug() << "DataParser initialized";
 }
 
 // 解析数据的具体实现
@@ -213,8 +212,8 @@ void DataParser::parseData(const QString &plainText, std::pair<int, int> group_i
             for (int i = eventIndices[0] + 1; i < lines.size(); ++i)
                 betweenLines << lines[i];
             qDebug() << "最后一个\"EVENT: 201\"到结尾的内容:";
-            for (const QString &line : betweenLines)
-                qDebug() << line;
+            // for (const QString &line : betweenLines)
+            //     qDebug() << line;
         }
         else
         {
@@ -277,6 +276,14 @@ void DataParser::parseData(const QString &plainText, std::pair<int, int> group_i
                     logData[idx_index + innerGroupCount].latitude = items[29].toDouble();
                     logData[idx_index + innerGroupCount].longitude = items[30].toDouble();
                     logData[idx_index + innerGroupCount].speed = items[31].toDouble();
+
+                    // logData[idx_index + innerGroupCount].kp_angle = items[32].toFloat();
+                    // logData[idx_index + innerGroupCount].minYawDeviation = items[33].toFloat();
+                    // logData[idx_index + innerGroupCount].maxYawDeviation = items[34].toFloat();
+                    // logData[idx_index + innerGroupCount].yawDeviation = items[35].toFloat();
+                    // logData[idx_index + innerGroupCount].imuYaw = items[36].toFloat();
+                    // logData[idx_index + innerGroupCount].ddmYaw = items[37].toFloat();
+                    // logData[idx_index + innerGroupCount].gpsYaw = items[38].toFloat();
                     // qDebug() << "phaseFlag" << logData[idx_index + innerGroupCount].phaseFlag << "currentDistance:" << logData[idx_index + innerGroupCount].currentDistance << "lineSeparation:" << logData[idx_index + innerGroupCount].lineSeparation << "rudderAngle:" << logData[idx_index + innerGroupCount].rudderAngle << "motorSpeedLeft:" << logData[idx_index + innerGroupCount].motorSpeedLeft << "motorSpeedRight:" << logData[idx_index + innerGroupCount].motorSpeedRight;
                     GroupCount++;
                 }
@@ -304,7 +311,7 @@ void DataParser::parseData(const QString &plainText, std::pair<int, int> group_i
             for (const QString &line : betweenLines)
             {
                 QStringList items = line.split(' ', QString::SkipEmptyParts);
-                if (items.size() >= 11)
+                if (items.size() >= 32)
                 {
                     innerGroupCount++;
                     logData[idx_index + innerGroupCount].id = items[0].toInt();
@@ -339,16 +346,28 @@ void DataParser::parseData(const QString &plainText, std::pair<int, int> group_i
                     logData[idx_index + innerGroupCount].kd_yaw_third = items[27].toFloat();
                     logData[idx_index + innerGroupCount].integralLimit_yaw_third = items[28].toInt();
                     //GPS and Speed
-                    logData[idx_index + innerGroupCount].latitude = items[17].toDouble();
-                    logData[idx_index + innerGroupCount].longitude = items[18].toDouble();
-                    logData[idx_index + innerGroupCount].speed = items[19].toDouble();
+                    logData[idx_index + innerGroupCount].latitude = items[29].toDouble();
+                    logData[idx_index + innerGroupCount].longitude = items[30].toDouble();
+                    logData[idx_index + innerGroupCount].speed = items[31].toDouble();
 
+                    //logData[idx_index + innerGroupCount].kp_angle = items[32].toFloat();
+                    // logData[idx_index + innerGroupCount].minYawDeviation = items[33].toFloat();
+                    // logData[idx_index + innerGroupCount].maxYawDeviation = items[34].toFloat();
+                    // logData[idx_index + innerGroupCount].yawDeviation = items[35].toFloat();
+                    // logData[idx_index + innerGroupCount].imuYaw = items[36].toFloat();
+                    // logData[idx_index + innerGroupCount].ddmYaw = items[37].toFloat();
+                    // logData[idx_index + innerGroupCount].gpsYaw = items[38].toFloat();
+                    
+                    #if defined DEBUG
                     qDebug() << "first phase pid" << logData[idx_index + innerGroupCount].kp_yaw_first << logData[idx_index + innerGroupCount].ki_yaw_first << logData[idx_index + innerGroupCount].kd_yaw_first << logData[idx_index + innerGroupCount].integralLimit_yaw_first;
                     qDebug() << "second phase pid" << logData[idx_index + innerGroupCount].kp_pos << logData[idx_index + innerGroupCount].ki_pos << logData[idx_index + innerGroupCount].kd_pos << logData[idx_index + innerGroupCount].integralLimit_pos;
                     qDebug() << "third phase pid" << logData[idx_index + innerGroupCount].kp_yaw_third << logData[idx_index + innerGroupCount].ki_yaw_third << logData[idx_index + innerGroupCount].kd_yaw_third << logData[idx_index + innerGroupCount].integralLimit_yaw_third;
                     qDebug() << "timestamp_origin" << items[1] << "timestamp" << logData[idx_index + innerGroupCount].timestamp;
                     qDebug() << "==================================";
+                    #endif
                     GroupCount++;
+                    qDebug() << "speed" << items[31].toDouble();
+                    qDebug() << "===================================";
                 }
             }
             group_index[group_count].first = idx_index;

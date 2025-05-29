@@ -77,8 +77,6 @@ private slots:
 
     void on_chkShowLegend_stateChanged(int arg1);
 
-    void on_chkDrawDemo_stateChanged(int arg1);
-
     void on_txtPointCountX_returnPressed();
 
     void on_txtPointCountY_returnPressed();

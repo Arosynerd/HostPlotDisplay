@@ -13,6 +13,11 @@
 #include <QFontMetrics>
 #include "ploterror.h"
 #include <QStandardItemModel>
+
+//#define DEBUG 1
+#define ZOOMSTANDARD 64
+
+
 typedef struct GODEST_log_data_t {
     int id;
     int timestamp;

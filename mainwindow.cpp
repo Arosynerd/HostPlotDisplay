@@ -28,7 +28,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->tableView->setModel(model);
     ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    qDebug() << "当前目录下的txt文件导入表格完成";
     // 连接表格点击信号
     connect(ui->tableView, &QTableView::clicked, this, &MainWindow::on_tableView_clicked);
 
@@ -562,7 +561,6 @@ void MainWindow::on_pushButton_clicked()
 
     int rowIndex = file_selected;
     QString secondColumnData = ui->tableView->model()->index(rowIndex, 0).data().toString();
-    qDebug() << "Second column content:" << secondColumnData;
     // QString plotTitle = "波形显示";
     plot->setWindowTitle(secondColumnData);
     for (int i = 0; i < receivedData.size(); i += 9)
@@ -605,10 +603,6 @@ void MainWindow::on_pushButton_3_released()
 
     dataParser->parseData(plainText, group_index, logData, GroupCount, group_count, idx_index);
 
-    for (int i = 0; i <= group_count; i++)
-    {
-        qDebug() << "group_index[" << i << "]:" << group_index[i].first << "," << group_index[i].second;
-    }
 
     QStringList groupOptions;
     for (int i = 0; i <= group_count; ++i)
@@ -646,7 +640,6 @@ void MainWindow::on_pushButton_3_released()
             plot->setSelectedGroup(selectedIndex);
             int rowIndex = file_selected;
             QString secondColumnData = ui->tableView->model()->index(rowIndex, 0).data().toString();
-            qDebug() << "Second column content:" << secondColumnData;
             // QString plotTitle = "波形显示";
             plot->setWindowTitle(secondColumnData);
             int flag[3] = {0};
@@ -720,10 +713,7 @@ void MainWindow::on_pushButton_3_released()
                         flag[2] = 1;
                     }
                 }
-                qDebug() << "Kp:" << Kp[0] << Kp[1] << Kp[2];
-                qDebug() << "Ki:" << Ki[0] << Ki[1] << Ki[2];
-                qDebug() << "Kd:" << Kd[0] << Kd[1] << Kd[2];
-                qDebug() << "Ki_limit:" << Ki_limit[0] << Ki_limit[1] << Ki_limit[2];
+
                 // 输出一下
                 // qDebug() << "currentDistance:" << value[0] << "lineSeparation:" << value[1] << "rudderAngle:" << value[2] << "speed" << value[6];
                 plot->ShowPlot_WaveForm(plot->pPlot1, value);
@@ -795,14 +785,12 @@ void MainWindow::on_tableView_clicked(const QModelIndex &index)
     {
         // 获取点击行的序号（第一列的值）
         QString number = QString::number(index.row() + 1);
-        qDebug() << "点击了第" << number << "行";
 
         // 记录选中的文件序号
         file_selected = number.toInt() - 1;
 
         // 获取点击行的名称（第二列的值）
         QString fileName = index.sibling(index.row(), 0).data().toString();
-        qDebug() << "文件名称：" << fileName;
 
         // 构造文件路径
         QString filePath = QCoreApplication::applicationDirPath() + "/" + fileName;

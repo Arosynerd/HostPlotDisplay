@@ -98,8 +98,8 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
     }
 
     // 属于右侧轴的曲线使用实心圆表示，作为区分。
-    curveSetScatterStyle(pPlot1, pCurve[1], 5);
-    curveSetScatterStyle(pPlot1, pCurve[6], 5);
+    // curveSetScatterStyle(pPlot1, pCurve[1], 5);
+    // curveSetScatterStyle(pPlot1, pCurve[6], 5);
     // 设置y轴2，与y轴共享x轴，添加曲线1到y轴2
     customPlot->yAxis2->setVisible(true);
     pCurve[1]->setValueAxis(customPlot->yAxis2);
@@ -110,17 +110,17 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
             [customPlot](const QCPRange &leftRange)
             {
                 double leftSpan = leftRange.upper - leftRange.lower;
-                double leftCenter = (leftRange.upper + leftRange.lower) / 16.0;
-                double newRightLower = leftCenter - leftSpan / 16;
-                double newRightUpper = leftCenter + leftSpan / 16;
+                double leftCenter = (leftRange.upper + leftRange.lower) / ZOOMSTANDARD;
+                double newRightLower = leftCenter - leftSpan / ZOOMSTANDARD;
+                double newRightUpper = leftCenter + leftSpan / ZOOMSTANDARD;
                 customPlot->yAxis2->setRange(newRightLower, newRightUpper);
             });
     // 初始化时也对齐一次
     QCPRange leftRange = customPlot->yAxis->range();
     double leftSpan = leftRange.upper - leftRange.lower;
-    double leftCenter = (leftRange.upper + leftRange.lower) / 16.0;
-    double newRightLower = leftCenter - leftSpan / 16;
-    double newRightUpper = leftCenter + leftSpan / 16;
+    double leftCenter = (leftRange.upper + leftRange.lower) / ZOOMSTANDARD;
+    double newRightLower = leftCenter - leftSpan / ZOOMSTANDARD;
+    double newRightUpper = leftCenter + leftSpan / ZOOMSTANDARD;
     customPlot->yAxis2->setRange(newRightLower, newRightUpper);
 
     QSharedPointer<QCPAxisTickerFixed> fixedTicker(new QCPAxisTickerFixed);
@@ -769,18 +769,7 @@ void Plot::on_chkShowLegend_stateChanged(int arg1)
     pPlot1->replot(QCustomPlot::rpQueuedReplot);
 }
 
-// 绘图演示-曲线
-void Plot::on_chkDrawDemo_stateChanged(int arg1)
-{
-    if (arg1)
-    {
-        timer->start(10);
-    }
-    else
-    {
-        timer->stop();
-    }
-}
+
 
 // 设置曲线x轴自动跟随
 void Plot::setAutoTrackX(QCustomPlot *pPlot)
@@ -1120,13 +1109,13 @@ void Plot::mouseMove2(QMouseEvent *e)
         {
             tracerX = maxX;
             vLineX = maxX; // 竖线吸附到峰值
-            snapInfo = " (吸附峰值)";
+            snapInfo = "";
         }
         else if (fabs(mouseX - minX) < snapThreshold)
         {
             tracerX = minX;
             vLineX = minX; // 竖线吸附到谷值
-            snapInfo = " (吸附谷值)";
+            snapInfo = "";
         }
         tracers[i]->setGraphKey(tracerX);
         tracers[i]->setInterpolating(true);
@@ -1203,9 +1192,11 @@ void Plot::stageDistinguish(void)
             d.CreatePhaseRange(x11, range1);
             d.CreatePhaseRange(x22, range2);
             d.CreatePhaseRange(x33, range3);
+            #if defined DEBUG
             qDebug() << "range1:" << range1;
             qDebug() << "range2:" << range2;
             qDebug() << "range3:" << range3;
+            #endif
             // 在x范围内画不同颜色的矩形
             if (!x1.isEmpty())
             {
@@ -1341,7 +1332,6 @@ void Plot::setPid(int index, float kp, float ki, float kd, float integralLimit)
 {
     QString str;
     str = QString("kp: %1 ki: %2 kd: %3 integralLimit: %4").arg(kp).arg(ki).arg(kd).arg(integralLimit);
-    qDebug() << str;
     switch (index)
     {
     case 0:
