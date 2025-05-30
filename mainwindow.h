@@ -52,6 +52,8 @@
 
 
 
+
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -174,4 +176,6 @@ private:
     
     std::pair<int, int> group_index[100];
 };
+
+extern MainWindow *g_mainWindow; // 声明全局主窗口指针
 #endif // MAINWINDOW_H

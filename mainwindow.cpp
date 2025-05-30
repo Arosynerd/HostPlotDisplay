@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     setWindowTitle("Qt Serial Debugger");
-
+    ui->txtRec->setLineWrapMode(QPlainTextEdit::NoWrap);
     CurveLineNames << "currentDistance" << "lineSeparation" << "rudderAngle" << "motorSpeedLeft" << "motorSpeedRight" << "phaseFlag" << "speed" << "goDestSpeed" << "originBearing" << "currentBearing" << "currentYaw" << "bearingError" << "yawCurrentBearing" << "kp_angle" << "minYawDeviation" << "maxYawDeviation" << "yawDeviation" << "imuYaw" << "ddmYaw" << "gpsYaw";
 
     // 查找当前目录下的txt文件并导入表格
@@ -669,7 +669,7 @@ void MainWindow::on_pushButton_3_released()
                 value[16] = logData[group_index[selectedIndex].first + j].maxYawDeviation;
                 value[17] = logData[group_index[selectedIndex].first + j].yawDeviation; // 航向偏差
                 value[18] = logData[group_index[selectedIndex].first + j].imuYaw;
-                value[19] = logData[group_index[selectedIndex].first + j].ddmYaw;
+                value[19] = logData[group_index[selectedIndex].first + j].timestamp;
                 // value[20] = logData[group_index[selectedIndex].first + j].gpsYaw;
 
                 // 因为y值变化幅度小要单独显示在右侧轴的曲线
@@ -798,17 +798,40 @@ void MainWindow::on_tableView_clicked(const QModelIndex &index)
     }
 }
 
-
 void MainWindow::scrollToString(const QString &targetString)
 {
     // 获取全部文本
     QString text = ui->txtRec->toPlainText();
     int pos = text.indexOf(targetString);
-    if (pos >= 0) {
+    if (pos >= 0)
+    {
+        // 创建光标并定位
         QTextCursor cursor = ui->txtRec->textCursor();
         cursor.setPosition(pos);
-        ui->txtRec->setTextCursor(cursor); // 自动滚动到光标处
-    } else {
+
+        // 选中整行
+        cursor.movePosition(QTextCursor::StartOfLine);
+        cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
+
+        // 设置高亮
+        QTextEdit::ExtraSelection highlight;
+        highlight.cursor = cursor;
+        highlight.format.setBackground(Qt::yellow); // 高亮颜色
+
+        QList<QTextEdit::ExtraSelection> extras;
+        extras << highlight;
+        ui->txtRec->setExtraSelections(extras);
+
+        // 滚动到光标处
+        ui->txtRec->setTextCursor(cursor);
+
+        // 强制将水平滚动条移到最左侧（行首）
+        ui->txtRec->horizontalScrollBar()->setValue(ui->txtRec->horizontalScrollBar()->minimum());
+    }
+    else
+    {
+        // 清除高亮
+        ui->txtRec->setExtraSelections({});
         QMessageBox::information(this, "查找结果", "未找到指定字符串: " + targetString);
     }
 }
@@ -1115,7 +1138,8 @@ void MainWindow::on_TestButton_released()
             << "imuYaw"
             << "ddmYaw"
             << "gpsYaw";
-    for(int i = 0; i < headers.size(); i++){
+    for (int i = 0; i < headers.size(); i++)
+    {
         QString temp = d.parseData(headers.at(i));
         headers[i] = temp;
     }
@@ -1144,4 +1168,3 @@ void MainWindow::on_pushButton_2_released()
     qDebug() << "test";
     scrollToString("454247: GODEST: 1 2 80 1  178.955  177.908  178.360");
 }
-

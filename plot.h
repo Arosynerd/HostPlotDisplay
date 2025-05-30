@@ -9,6 +9,8 @@
 #include "new_data_parser.h"
 //报错类
 #include "ploterror.h"
+
+
 extern QStringList CurveLineNames;
 
 
@@ -50,6 +52,8 @@ public:
     
     int selectedIndex = -1;
 
+    bool Skip_Enable = false;//默认不可跳转
+
     QCPItemText *allCurvesInfoText = nullptr;
 
     void ShowPlot_TimeDemo(QCustomPlot *customPlot, double num);
@@ -72,6 +76,7 @@ protected:
     void keyReleaseEvent(QKeyEvent *event) override;
 public slots:
     void mouseMove2(QMouseEvent *e);
+    void onPlotClicked(QMouseEvent *event); // 新增：鼠标点击事件槽函数声明
 private slots:
     void TimeData_Update(void);
 

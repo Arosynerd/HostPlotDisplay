@@ -237,7 +237,7 @@ void DataParser::parseData(const QString &plainText, std::pair<int, int> group_i
             for (const QString &line : betweenLines)
             {
                 QStringList items = line.split(' ', QString::SkipEmptyParts);
-                if (items.size() >= 32)
+                if (items.size() >= 38)
                 {
                     innerGroupCount++;
                     logData[idx_index + innerGroupCount].id = items[0].toInt();
@@ -277,13 +277,13 @@ void DataParser::parseData(const QString &plainText, std::pair<int, int> group_i
                     logData[idx_index + innerGroupCount].longitude = items[30].toDouble();
                     logData[idx_index + innerGroupCount].speed = items[31].toDouble();
 
-                    // logData[idx_index + innerGroupCount].kp_angle = items[32].toFloat();
-                    // logData[idx_index + innerGroupCount].minYawDeviation = items[33].toFloat();
-                    // logData[idx_index + innerGroupCount].maxYawDeviation = items[34].toFloat();
-                    // logData[idx_index + innerGroupCount].yawDeviation = items[35].toFloat();
-                    // logData[idx_index + innerGroupCount].imuYaw = items[36].toFloat();
-                    // logData[idx_index + innerGroupCount].ddmYaw = items[37].toFloat();
-                    // logData[idx_index + innerGroupCount].gpsYaw = items[38].toFloat();
+                    logData[idx_index + innerGroupCount].kp_angle = items[32].toFloat();
+                    logData[idx_index + innerGroupCount].minYawDeviation = items[33].toFloat();
+                    logData[idx_index + innerGroupCount].maxYawDeviation = items[34].toFloat();
+                    logData[idx_index + innerGroupCount].yawDeviation = items[35].toFloat();
+                    logData[idx_index + innerGroupCount].imuYaw = items[36].toFloat();
+                    logData[idx_index + innerGroupCount].ddmYaw = items[37].toFloat();
+                    logData[idx_index + innerGroupCount].gpsYaw = items[38].toFloat();
                     // qDebug() << "phaseFlag" << logData[idx_index + innerGroupCount].phaseFlag << "currentDistance:" << logData[idx_index + innerGroupCount].currentDistance << "lineSeparation:" << logData[idx_index + innerGroupCount].lineSeparation << "rudderAngle:" << logData[idx_index + innerGroupCount].rudderAngle << "motorSpeedLeft:" << logData[idx_index + innerGroupCount].motorSpeedLeft << "motorSpeedRight:" << logData[idx_index + innerGroupCount].motorSpeedRight;
                     GroupCount++;
                 }
@@ -311,7 +311,7 @@ void DataParser::parseData(const QString &plainText, std::pair<int, int> group_i
             for (const QString &line : betweenLines)
             {
                 QStringList items = line.split(' ', QString::SkipEmptyParts);
-                if (items.size() >= 32)
+                if (items.size() >= 38)
                 {
                     innerGroupCount++;
                     logData[idx_index + innerGroupCount].id = items[0].toInt();
@@ -350,13 +350,13 @@ void DataParser::parseData(const QString &plainText, std::pair<int, int> group_i
                     logData[idx_index + innerGroupCount].longitude = items[30].toDouble();
                     logData[idx_index + innerGroupCount].speed = items[31].toDouble();
 
-                    //logData[idx_index + innerGroupCount].kp_angle = items[32].toFloat();
-                    // logData[idx_index + innerGroupCount].minYawDeviation = items[33].toFloat();
-                    // logData[idx_index + innerGroupCount].maxYawDeviation = items[34].toFloat();
-                    // logData[idx_index + innerGroupCount].yawDeviation = items[35].toFloat();
-                    // logData[idx_index + innerGroupCount].imuYaw = items[36].toFloat();
-                    // logData[idx_index + innerGroupCount].ddmYaw = items[37].toFloat();
-                    // logData[idx_index + innerGroupCount].gpsYaw = items[38].toFloat();
+                    logData[idx_index + innerGroupCount].kp_angle = items[32].toFloat();
+                    logData[idx_index + innerGroupCount].minYawDeviation = items[33].toFloat();
+                    logData[idx_index + innerGroupCount].maxYawDeviation = items[34].toFloat();
+                    logData[idx_index + innerGroupCount].yawDeviation = items[35].toFloat();
+                    logData[idx_index + innerGroupCount].imuYaw = items[36].toFloat();
+                    logData[idx_index + innerGroupCount].ddmYaw = items[37].toFloat();
+                    logData[idx_index + innerGroupCount].gpsYaw = items[38].toFloat();
                     
                     #if defined DEBUG
                     qDebug() << "first phase pid" << logData[idx_index + innerGroupCount].kp_yaw_first << logData[idx_index + innerGroupCount].ki_yaw_first << logData[idx_index + innerGroupCount].kd_yaw_first << logData[idx_index + innerGroupCount].integralLimit_yaw_first;
@@ -423,49 +423,23 @@ void DataParser::CreatePhaseRange(const std::vector<int>& vec, std::pair<int, in
 */
 void DataParser::alignString(QStringList& okstr,QFont font)
 {
-    int maxYPos = 0;
+     QFontMetrics fm(font);
+    int maxWidth = 0;
+    // 计算最大宽度
     for (const QString &str : okstr)
     {
-        int yPos = str.indexOf("y");
-        if (yPos > maxYPos)
-            maxYPos = yPos;
+        int width = fm.horizontalAdvance(str);
+        if (width > maxWidth)
+            maxWidth = width;
     }
-    // 对齐每个字符串的"y"
+    // 每行前补空格，使右对齐
     for (int i = 0; i < okstr.size(); ++i)
     {
-        int yPos = okstr[i].indexOf("y");
-        if (yPos >= 0 && yPos < maxYPos)
-        {
-            okstr[i].insert(yPos, QString(maxYPos - yPos, ' '));
-        }
+        int width = fm.horizontalAdvance(okstr[i]);
+        int spaceWidth = fm.horizontalAdvance(" ");
+        int needSpaces = (maxWidth - width + spaceWidth - 1) / spaceWidth;
+        okstr[i].prepend(QString(needSpaces, ' '));
     }
-    // 使用 QFontMetrics 计算像素宽度对齐“y”
-    QFontMetrics fm(font);
-    int maxYWidth = 0;
-    for (const QString &str : okstr)
-    {
-        int yPos = str.indexOf("y");
-        if (yPos > 0)
-        {
-            int width = fm.horizontalAdvance(str.left(yPos));
-            if (width > maxYWidth)
-                maxYWidth = width;
-        }
-    }
-    for (int i = 0; i < okstr.size(); ++i)
-    {
-        int yPos = okstr[i].indexOf("y");
-        if (yPos > 0)
-        {
-            int width = fm.horizontalAdvance(okstr[i].left(yPos));
-            int spaceWidth = fm.horizontalAdvance(" ");
-            int needSpaces = (maxYWidth - width + spaceWidth - 1) / spaceWidth;
-            okstr[i].insert(yPos, QString(needSpaces, ' '));
-        }
-    }
-    // for(int i = 0; i < okstr.size(); i++){
-    //     qDebug() << "start:" << okstr[i];
-    // }
 }
 QString DataParser::removeSpaces(const QString &input)
 {
@@ -473,6 +447,32 @@ QString DataParser::removeSpaces(const QString &input)
     result.remove(' ');
     return result;
 }
+float DataParser::getNumber(const QString &input,int index)
+{
+    QRegularExpression re("(\\d*\\.?\\d*)");
+    QRegularExpressionMatchIterator i = re.globalMatch(input);
+    QStringList numbers;
+    while (i.hasNext()) {
+        QRegularExpressionMatch match = i.next();
+        if (!match.captured(1).isEmpty()) {
+            numbers << match.captured(1);
+        }
+    }
+    if (numbers.size() > index) {
+        return numbers[index].toFloat();
+    }
+    return 0.0f;
+}
+QString DataParser::getLastline(const QString &input){
+    QStringList lines = input.split('\n');
+    if (lines.isEmpty()) {
+        return "";
+    }else{
+        //输出倒数第二行
+        return lines[lines.size()-2];
+    }
+}
+
 DataParser::~DataParser()
 {
     // 析构函数实现，如有资源释放可在此添加

@@ -13,11 +13,11 @@
 #include <QFontMetrics>
 #include "ploterror.h"
 #include <QStandardItemModel>
+#include <QRegularExpression> // 正则
 
 //#define DEBUG 1
 #define ZOOMSTANDARD 64
 #define RAW "raw" // 原始数据的目录
-
 typedef struct GODEST_log_data_t {
     int id;
     int timestamp;
@@ -74,6 +74,8 @@ public:
     void CreatePhaseRange(const std::vector<int>& vec, std::pair<int, int>& result);
     void alignString(QStringList& okstr,QFont font);
     QString removeSpaces(const QString &input);
+    static QString getLastline(const QString &input);
+    static float getNumber(const QString &input,int index);
 };
 
 #endif // NEW_DATA_PARSER_H

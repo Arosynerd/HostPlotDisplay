@@ -5,6 +5,7 @@
 #include <QFontMetrics>
 #include <QStandardItemModel>
 
+#include "mainwindow.h"
 QStringList CurveLineNamesInChinese;
 Plot::Plot(GODEST_log_data_t *logDataPtr, std::pair<int, int> group_index[100], QWidget *parent)
     : QMainWindow(parent),
@@ -198,6 +199,7 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
 
     // 信号-槽连接语句
     connect(customPlot, SIGNAL(mouseMove(QMouseEvent *)), this, SLOT(mouseMove2(QMouseEvent *)));
+    connect(customPlot, SIGNAL(mousePress(QMouseEvent *)), this, SLOT(onPlotClicked(QMouseEvent *))); // 新增：鼠标点击事件信号连接
 }
 
 /*
@@ -769,8 +771,6 @@ void Plot::on_chkShowLegend_stateChanged(int arg1)
     pPlot1->replot(QCustomPlot::rpQueuedReplot);
 }
 
-
-
 // 设置曲线x轴自动跟随
 void Plot::setAutoTrackX(QCustomPlot *pPlot)
 {
@@ -942,14 +942,6 @@ void Plot::showDashboard(QCustomPlot *customPlot)
         {
             customPlot->graph(i)->setVisible(true);
             customPlot->legend->item(i)->setVisible(true);
-            // 第一条曲线图例字体加大加粗
-            if (i == 0)
-            {
-                QFont font = customPlot->legend->item(i)->font();
-                font.setPointSize(font.pointSize() + 4); // 字号加大
-                font.setBold(true);                      // 加粗
-                customPlot->legend->item(i)->setFont(font);
-            }
             ++legendItemCount;
         }
         else
@@ -1004,7 +996,6 @@ void Plot::TopLegendFlash(void)
     allCurvesInfoText->setPen(QPen(Qt::black));
     // 关键：设置文本左对齐
     allCurvesInfoText->setTextAlignment(Qt::AlignLeft | Qt::AlignTop);
-   
 }
 
 // 每次图表重绘后，都会更新当前显示的原点坐标与范围。与上次不同时才会更新显示，解决有曲线数据时无法输入y的参数的问题
@@ -1065,87 +1056,57 @@ void Plot::on_txtMainScaleNumY_returnPressed()
 void Plot::mouseMove2(QMouseEvent *e)
 {
     double mouseX = pPlot1->xAxis->pixelToCoord(e->pos().x());
-    // 更新竖线位置
     double vLineX = mouseX;
-    QString labelText;
-    double snapThreshold = 0.5; // 吸附判据，x距离小于此值就吸附
-    int searchRange = 5;        // 峰值搜索范围（x方向±5）
     QStringList Cvlls = CurveLineNamesInChinese;
     for (int i = 0; i < pPlot1->graphCount(); ++i)
     {
         QCPGraph *graph = pPlot1->graph(i);
         if (!graph)
             continue;
-        // 获取数据
         auto data = graph->data();
         if (data->isEmpty())
             continue;
-        // 在鼠标x附近±searchRange内找最大y值点和最小y值点
-        double maxY = -1e100;
-        double maxX = mouseX;
-        double minY = 1e100;
-        double minX = mouseX;
+
+        // 找到距离mouseX最近的点
+        double minDist = 1e100;
+        double nearestKey = 0;
+        double nearestValue = 0;
         for (auto it = data->constBegin(); it != data->constEnd(); ++it)
         {
-            if (it->key < mouseX - searchRange)
-                continue;
-            if (it->key > mouseX + searchRange)
-                break;
-            if (it->value > maxY)
+            double dist = fabs(it->key - mouseX);
+            if (dist < minDist)
             {
-                maxY = it->value;
-                maxX = it->key;
-            }
-            if (it->value < minY)
-            {
-                minY = it->value;
-                minX = it->key;
+                minDist = dist;
+                nearestKey = it->key;
+                nearestValue = it->value;
             }
         }
-        // 判断是否吸附到峰值或谷值
-        double tracerX = mouseX;
-        QString snapInfo;
-        if (fabs(mouseX - maxX) < snapThreshold && fabs(mouseX - minX) >= fabs(mouseX - maxX))
-        {
-            tracerX = maxX;
-            vLineX = maxX; // 竖线吸附到峰值
-            snapInfo = "";
-        }
-        else if (fabs(mouseX - minX) < snapThreshold)
-        {
-            tracerX = minX;
-            vLineX = minX; // 竖线吸附到谷值
-            snapInfo = "";
-        }
-        tracers[i]->setGraphKey(tracerX);
-        tracers[i]->setInterpolating(true);
+
+        // 更新tracer到最近点
+        tracers[i]->setGraphKey(nearestKey);
+        tracers[i]->setInterpolating(false); // 关闭插值
         tracers[i]->updatePosition();
         tracers[i]->setVisible(true);
-        // double xValue = tracers[i]->position->key();
-        double yValue = tracers[i]->position->value();
 
-        // CurveLineNames
+        double yValue = nearestValue;
 
         if (i < Cvlls.size())
         {
             if (Cvlls[i] == "currentDistance")
-                Cvlls[i].append(QString("总距离10米,剩余%1米%2\n").arg(QString::number(yValue, 'f', 2)).arg(snapInfo));
+                Cvlls[i].append(QString("总距离10米,剩余%1米\n")
+                                    .arg(yValue < 0 ? QString::number(yValue, 'f', 2) : " " + QString::number(yValue, 'f', 2)));
             else
-                Cvlls[i].append(QString("y = %1%2\n").arg(QString::number(yValue, 'f', 2)).arg(snapInfo));
+                Cvlls[i].append(QString("y = %1\n")
+                                    .arg(yValue < 0 ? QString::number(yValue, 'f', 2) : " " + QString::number(yValue, 'f', 2)));
         }
+        vLineX = nearestKey; // 竖线也吸附到最近点
     }
-    // 找到所有字符串中"y"的位置的最大值
     DataParser d;
-    d.alignString(Cvlls, pPlot1->legend->font()); // 对齐y
-    // setCurvesName(Cvlls);
+    d.alignString(Cvlls, pPlot1->legend->font());
     setCurveslegendName(Cvlls);
-    // 竖线吸附到最近的峰值
     vLine->point1->setCoords(vLineX, pPlot1->yAxis->range().lower);
     vLine->point2->setCoords(vLineX, pPlot1->yAxis->range().upper);
-    // tracerLabel->setTextAlignment(Qt::AlignLeft | Qt::AlignTop);
-
-    TopLegendFlash(); // 更新图例信息
-
+    TopLegendFlash();
     pPlot1->replot();
 }
 
@@ -1192,11 +1153,11 @@ void Plot::stageDistinguish(void)
             d.CreatePhaseRange(x11, range1);
             d.CreatePhaseRange(x22, range2);
             d.CreatePhaseRange(x33, range3);
-            #if defined DEBUG
+#if defined DEBUG
             qDebug() << "range1:" << range1;
             qDebug() << "range2:" << range2;
             qDebug() << "range3:" << range3;
-            #endif
+#endif
             // 在x范围内画不同颜色的矩形
             if (!x1.isEmpty())
             {
@@ -1366,4 +1327,42 @@ void Plot::keyReleaseEvent(QKeyEvent *event)
         pPlot1->axisRect()->setRangeZoom(Qt::Vertical); // 竖直方向缩放
     }
     QMainWindow::keyReleaseEvent(event); // 传递事件
+}
+
+void Plot::onPlotClicked(QMouseEvent *event)
+{
+    // 示例：获取点击位置的像素坐标和轴坐标
+    if (!pPlot1)
+        return;
+    QString timestamp;
+    // 检查 Alt 键是否为按下状态
+    if (QApplication::keyboardModifiers() & Qt::AltModifier)
+    {
+        Skip_Enable = true;
+    }
+    else
+    {
+        Skip_Enable = false;
+    }
+
+    if (Skip_Enable)
+    {
+        qDebug() << "Skip_Enable";
+        if (allCurvesInfoText)
+        {
+            QString text = allCurvesInfoText->text();
+            float number = DataParser::getNumber(DataParser::getLastline(text), 1);
+            timestamp = QString::number(number);
+        }
+        else{
+            PlotError error(PlotError::KnownError, "allCurvesInfoText为空");
+            PlotError::showErrorDialog(this, error);
+        }
+        if (g_mainWindow->windowState() & Qt::WindowMinimized)
+        {
+            g_mainWindow->setWindowState(Qt::WindowNoState);
+        }
+        g_mainWindow->raise();
+        g_mainWindow->scrollToString(timestamp);
+    }
 }
