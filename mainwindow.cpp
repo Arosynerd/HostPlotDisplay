@@ -4,17 +4,36 @@
 #include "test.h"
 
 QStringList CurveLineNames;
-
+int defaultCurveDisplayIndex[4] = {6,9,10,11};
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     setWindowTitle("Qt Serial Debugger");
     ui->txtRec->setLineWrapMode(QPlainTextEdit::NoWrap);
-    CurveLineNames << "currentDistance" << "lineSeparation" << "rudderAngle" << "motorSpeedLeft" << "motorSpeedRight" << "phaseFlag" << "speed" << "goDestSpeed" << "originBearing" << "currentBearing" << "currentYaw" << "bearingError" << "yawCurrentBearing" << "kp_angle" << "minYawDeviation" << "maxYawDeviation" << "yawDeviation" << "imuYaw" << "ddmYaw" << "gpsYaw";
+    CurveLineNames << "timestamp"
+                   << "goDestSpeed"
+                   << "originBearing"
+                   << "currentBearing"
+                   << "currentYaw"
+                   << "currentDistance"
+                   << "lineSeparation"
+                   << "bearingError"
+                   << "yawCurrentBearing"
+                   << "rudderAngle"
+                   << "motorSpeedLeft"
+                   << "motorSpeedRight"
+                   << "speed"
+                   << "kp_angle"
+                   << "minYawDeviation"
+                   << "maxYawDeviation"
+                   << "yawDeviation"
+                   << "imuYaw"
+                   << "ddmYaw"
+                   << "gpsYaw";
 
-    // 查找当前目录下的txt文件并导入表格
-    QStandardItemModel *model = new QStandardItemModel(this);
+        // 查找当前目录下的txt文件并导入表格
+        QStandardItemModel *model = new QStandardItemModel(this);
     model->setColumnCount(1); // 修改列数为1
     model->setHeaderData(0, Qt::Horizontal, "名称");
 
@@ -650,31 +669,54 @@ void MainWindow::on_pushButton_3_released()
             float Ki_limit[3] = {0};
             for (int j = 1; j <= group_index[selectedIndex].second; j++)
             {
-                value[0] = logData[group_index[selectedIndex].first + j].currentDistance;
-                value[2] = logData[group_index[selectedIndex].first + j].rudderAngle;
-                value[3] = logData[group_index[selectedIndex].first + j].motorSpeedLeft;
-                value[4] = logData[group_index[selectedIndex].first + j].motorSpeedRight;
-                value[5] = logData[group_index[selectedIndex].first + j].phaseFlag;
-                value[7] = logData[group_index[selectedIndex].first + j].goDestSpeed;
+                /*第一组显示数据*/
+                value[0] = logData[group_index[selectedIndex].first + j].timestamp;
+                value[1] = logData[group_index[selectedIndex].first + j].goDestSpeed;
+                value[2] = logData[group_index[selectedIndex].first + j].originBearing;
+                value[3] = logData[group_index[selectedIndex].first + j].currentBearing;
+                value[4] = logData[group_index[selectedIndex].first + j].currentYaw;
+                value[5] = logData[group_index[selectedIndex].first + j].currentDistance;
+                value[6] = logData[group_index[selectedIndex].first + j].lineSeparation; // 默认放置在右侧y轴
+                value[7] = logData[group_index[selectedIndex].first + j].bearingError;
+                value[8] = logData[group_index[selectedIndex].first + j].yawCurrentBearing;
+                value[9] = logData[group_index[selectedIndex].first + j].rudderAngle;
+                value[10] = logData[group_index[selectedIndex].first + j].motorSpeedLeft;
+                value[11] = logData[group_index[selectedIndex].first + j].motorSpeedRight;
 
-                // 未分析
-                value[8] = logData[group_index[selectedIndex].first + j].firstPhaseCount;
-                value[9] = logData[group_index[selectedIndex].first + j].originBearing;   // 原始航向
-                value[10] = logData[group_index[selectedIndex].first + j].currentBearing; // 当前航向
-                value[11] = logData[group_index[selectedIndex].first + j].currentYaw;
-                value[12] = logData[group_index[selectedIndex].first + j].bearingError;
-                value[13] = logData[group_index[selectedIndex].first + j].yawCurrentBearing;
-                value[14] = logData[group_index[selectedIndex].first + j].kp_angle;
-                value[15] = logData[group_index[selectedIndex].first + j].minYawDeviation;
-                value[16] = logData[group_index[selectedIndex].first + j].maxYawDeviation;
-                value[17] = logData[group_index[selectedIndex].first + j].yawDeviation; // 航向偏差
-                value[18] = logData[group_index[selectedIndex].first + j].imuYaw;
-                value[19] = logData[group_index[selectedIndex].first + j].timestamp;
-                // value[20] = logData[group_index[selectedIndex].first + j].gpsYaw;
+                /*第二组显示数据*/
+                value[12] = logData[group_index[selectedIndex].first + j].speed; // 默认放置在右侧y轴
+                value[13] = logData[group_index[selectedIndex].first + j].kp_angle;
+                value[14] = logData[group_index[selectedIndex].first + j].minYawDeviation;
+                value[15] = logData[group_index[selectedIndex].first + j].maxYawDeviation;
+                value[16] = logData[group_index[selectedIndex].first + j].yawDeviation;
+                value[17] = logData[group_index[selectedIndex].first + j].imuYaw;
+                value[18] = logData[group_index[selectedIndex].first + j].ddmYaw;
+                value[19] = logData[group_index[selectedIndex].first + j].gpsYaw;
+                // value[0] = logData[group_index[selectedIndex].first + j].currentDistance;
+                // value[2] = logData[group_index[selectedIndex].first + j].rudderAngle;
+                // value[3] = logData[group_index[selectedIndex].first + j].motorSpeedLeft;
+                // value[4] = logData[group_index[selectedIndex].first + j].motorSpeedRight;
+                // value[5] = logData[group_index[selectedIndex].first + j].phaseFlag;
+                // value[7] = logData[group_index[selectedIndex].first + j].goDestSpeed;
 
-                // 因为y值变化幅度小要单独显示在右侧轴的曲线
-                value[1] = logData[group_index[selectedIndex].first + j].lineSeparation; // 航线间距
-                value[6] = logData[group_index[selectedIndex].first + j].speed;          // 速度 米/秒
+                // // 未分析
+                // value[8] = logData[group_index[selectedIndex].first + j].firstPhaseCount;
+                // value[9] = logData[group_index[selectedIndex].first + j].originBearing;   // 原始航向
+                // value[10] = logData[group_index[selectedIndex].first + j].currentBearing; // 当前航向
+                // value[11] = logData[group_index[selectedIndex].first + j].currentYaw;
+                // value[12] = logData[group_index[selectedIndex].first + j].bearingError;
+                // value[13] = logData[group_index[selectedIndex].first + j].yawCurrentBearing;
+                // value[14] = logData[group_index[selectedIndex].first + j].kp_angle;
+                // value[15] = logData[group_index[selectedIndex].first + j].minYawDeviation;
+                // value[16] = logData[group_index[selectedIndex].first + j].maxYawDeviation;
+                // value[17] = logData[group_index[selectedIndex].first + j].yawDeviation; // 航向偏差
+                // value[18] = logData[group_index[selectedIndex].first + j].imuYaw;
+                // value[19] = logData[group_index[selectedIndex].first + j].timestamp;
+                // // value[20] = logData[group_index[selectedIndex].first + j].gpsYaw;
+
+                // // 因为y值变化幅度小要单独显示在右侧轴的曲线
+                // value[1] = logData[group_index[selectedIndex].first + j].lineSeparation; // 航线间距
+                // value[6] = logData[group_index[selectedIndex].first + j].speed;          // 速度 米/秒
 
                 if (flag[0] == 0)
                 {
@@ -717,14 +759,13 @@ void MainWindow::on_pushButton_3_released()
                 plot->setPid(i, Kp[i], Ki[i], Kd[i], Ki_limit[i]);
             plot->setAutoX(plot->pPlot1, group_index[selectedIndex].second + 10);
 
-            // 主动隐藏阶段曲线
-            plot->hideCurve(5);
-            plot->hideCurve(0); // 距离线
-            plot->hideCurve(6); // 速度线
-            plot->hideCurve(7); //
-            for (int i = 8; i < 20; i++)
+            //先隐藏所有曲线
+            for (int i = 0; i < 20; i++)
             {
                 plot->hideCurve(i);
+            }
+            for(int i = 0; i < sizeof(defaultCurveDisplayIndex)/sizeof(defaultCurveDisplayIndex[0]); i++){
+                plot->showCurve(defaultCurveDisplayIndex[i]);
             }
             QStringList templist;
             DataParser parsefp;

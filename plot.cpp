@@ -7,6 +7,9 @@
 
 #include "mainwindow.h"
 QStringList CurveLineNamesInChinese;
+
+int defaultLegendIndex[5] = {5, 6, 9, 10, 11};
+
 Plot::Plot(GODEST_log_data_t *logDataPtr, std::pair<int, int> group_index[100], QWidget *parent)
     : QMainWindow(parent),
       logDataPtr(logDataPtr),
@@ -35,7 +38,7 @@ Plot::Plot(GODEST_log_data_t *logDataPtr, std::pair<int, int> group_index[100], 
     // timer->start(10);
 
     // 关联控件初始化
-    //ui->txtPointOriginX->setEnabled(false);
+    // ui->txtPointOriginX->setEnabled(false);
     // 图表重绘后，刷新原点坐标和范围
     connect(pPlot1, SIGNAL(afterReplot()), this, SLOT(repPlotCoordinate()));
 }
@@ -81,9 +84,9 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
     lineNames << "bbq" << "波形2" << "波形3" << "波形4" << "波形5" << "波形6" << "速度" << "波形8" << "波形9" << "波形10"
               << "波形11" << "波形12" << "波形13" << "波形14" << "波形15" << "波形16" << "波形17" << "波形18" << "波形19" << "波形20";
     // 曲线初始颜色
-    QColor initColor[20] = {QColor(0, 146, 152), QColor(162, 0, 124), QColor(241, 175, 0), QColor(27, 79, 147), QColor(229, 70, 70),
-                            QColor(0, 140, 94), QColor(178, 0, 31), QColor(91, 189, 43), QColor(0, 219, 219), QColor(172, 172, 172),
-                            QColor(0, 178, 191), QColor(197, 124, 172), QColor(243, 194, 70), QColor(115, 136, 193), QColor(245, 168, 154),
+    QColor initColor[20] = {QColor(243, 194, 70), QColor(162, 0, 124), QColor(172, 172, 172), QColor(0, 178, 191), QColor(197, 124, 172),
+                            QColor(0, 140, 94), QColor(178, 0, 31), QColor(91, 189, 43), QColor(0, 219, 219), QColor(241, 175, 0),
+                            QColor(27, 79, 147), QColor(229, 70, 70), QColor(0, 146, 152), QColor(115, 136, 193), QColor(245, 168, 154),
                             QColor(152, 208, 185), QColor(223, 70, 41), QColor(175, 215, 136), QColor(157, 255, 255), QColor(0, 0, 0)}; // QColor(255,255,255)};//白色
     // 图表添加20条曲线，并设置初始颜色，和图例名称
     for (int i = 0; i < 20; i++)
@@ -103,8 +106,8 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
     // curveSetScatterStyle(pPlot1, pCurve[6], 5);
     // 设置y轴2，与y轴共享x轴，添加曲线1到y轴2
     customPlot->yAxis2->setVisible(true);
-    pCurve[1]->setValueAxis(customPlot->yAxis2);
     pCurve[6]->setValueAxis(customPlot->yAxis2);
+    pCurve[12]->setValueAxis(customPlot->yAxis2);
     customPlot->yAxis2->setLabel("线距");
     // 保证yAxis2的0刻度与yAxis对齐，并随左轴拖动同步移动
     connect(customPlot->yAxis, QOverload<const QCPRange &>::of(&QCPAxis::rangeChanged),
@@ -133,14 +136,14 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
 
     // 曲线设置粗细
     QPen pen;
-    for (int i = 0; i < 6; i++)
+    for (int i = 0; i < 13; i++)
     {
-        if (i == 3 || i == 4)
+        if (i == 10 || i == 11)
             ;
         else
             continue;
         pen = pCurve[i]->pen();
-        pen.setWidth(3);
+        pen.setWidth(2);
         pCurve[i]->setPen(pen);
     }
 
@@ -154,10 +157,10 @@ void Plot::QPlot_init(QCustomPlot *customPlot)
     customPlot->yAxis->setLabel("Y");
 
     // 设置x,y坐标轴显示范围
-    pointCountX = ui->txtPointCountX->text().toUInt();
-    pointCountY = ui->txtPointCountY->text().toUInt();
-    customPlot->xAxis->setRange(0, pointCountX);
-    customPlot->yAxis->setRange(pointCountY / 2 * -1, pointCountY / 2);
+    //    pointCountX = ui->txtPointCountX->text().toUInt();
+    //    pointCountY = ui->txtPointCountY->text().toUInt();
+    customPlot->xAxis->setRange(0, 1000);
+    customPlot->yAxis->setRange(400 / 2 * -1, 400 / 2);
 
     customPlot->xAxis->ticker()->setTickCount(ui->txtMainScaleNumX->text().toUInt()); // 11个主刻度
     customPlot->yAxis->ticker()->setTickCount(ui->txtMainScaleNumY->text().toUInt()); // 11个主刻度
@@ -490,16 +493,16 @@ void Plot::ShowPlot_TimeDemo(QCustomPlot *customPlot, double num)
     }
 
     // 设置x坐标轴显示范围，使其自适应缩放x轴，x轴最大显示pointCountX个点。与chkTrackX复选框有关
-    if (ui->chkTrackX->checkState())
-    {
-        // customPlot->xAxis->setRange((pCurve[0]->dataCount()>pointCountX)?(pCurve[0]->dataCount()-pointCountX):0, pCurve[0]->dataCount());
-        setAutoTrackX(customPlot);
-    }
-    // 设置y坐标轴显示范围，使其自适应曲线缩放
-    if (ui->chkAdjustY->checkState())
-    {
-        setAutoTrackY(customPlot);
-    }
+    //    if (ui->chkTrackX->checkState())
+    //    {
+    //        // customPlot->xAxis->setRange((pCurve[0]->dataCount()>pointCountX)?(pCurve[0]->dataCount()-pointCountX):0, pCurve[0]->dataCount());
+    //        setAutoTrackX(customPlot);
+    //    }
+    //    // 设置y坐标轴显示范围，使其自适应曲线缩放
+    //    if (ui->chkAdjustY->checkState())
+    //    {
+    //        setAutoTrackY(customPlot);
+    //    }
 
     // 更新绘图，这种方式在高填充下太浪费资源。有另一种方式rpQueuedReplot，可避免重复绘图。
     // 最好的方法还是将数据填充、和更新绘图分隔开。将更新绘图单独用定时器更新。例程数据量较少没用单独定时器更新，实际工程中建议大家加上。
@@ -540,16 +543,16 @@ void Plot::ShowPlot_WaveForm(QCustomPlot *customPlot, short value[])
     }
 
     // 设置x坐标轴显示范围，使其自适应缩放x轴，x轴最大显示pointCountX个点。与chkTrackX复选框有关
-    if (ui->chkTrackX->checkState())
-    {
-        // customPlot->xAxis->setRange((pCurve[0]->dataCount()>pointCountX)?(pCurve[0]->dataCount()-pointCountX):0, pCurve[0]->dataCount());
-        setAutoTrackX(customPlot);
-    }
-    // 设置y坐标轴显示范围，使其自适应曲线缩放
-    if (ui->chkAdjustY->checkState())
-    {
-        setAutoTrackY(customPlot);
-    }
+    //    if (ui->chkTrackX->checkState())
+    //    {
+    //        // customPlot->xAxis->setRange((pCurve[0]->dataCount()>pointCountX)?(pCurve[0]->dataCount()-pointCountX):0, pCurve[0]->dataCount());
+    //        setAutoTrackX(customPlot);
+    //    }
+    //    // 设置y坐标轴显示范围，使其自适应曲线缩放
+    //    if (ui->chkAdjustY->checkState())
+    //    {
+    //        setAutoTrackY(customPlot);
+    //    }
 
     // 更新绘图，这种方式在高填充下太浪费资源。有另一种方式rpQueuedReplot，可避免重复绘图。
     // 最好的方法还是将数据填充、和更新绘图分隔开。将更新绘图单独用定时器更新。例程数据量较少没用单独定时器更新，实际工程中建议大家加上。
@@ -584,14 +587,14 @@ void Plot::ShowPlot_WaveForm(QCustomPlot *customPlot, int value[])
         pTxtValueCurve[i]->setText(QString::number(value[i]));
         pCurve[i]->addData(cnt, value[i]);
     }
-    if (ui->chkTrackX->checkState())
-    {
-        setAutoTrackX(customPlot);
-    }
-    if (ui->chkAdjustY->checkState())
-    {
-        setAutoTrackY(customPlot);
-    }
+    //    if (ui->chkTrackX->checkState())
+    //    {
+    //        setAutoTrackX(customPlot);
+    //    }
+    //    if (ui->chkAdjustY->checkState())
+    //    {
+    //        setAutoTrackY(customPlot);
+    //    }
     customPlot->replot(QCustomPlot::rpQueuedReplot);
     static QTime time(QTime::currentTime());
     double key = time.elapsed() / 1000.0;
@@ -619,14 +622,14 @@ void Plot::ShowPlot_WaveForm(QCustomPlot *customPlot, float value[])
         pTxtValueCurve[i]->setText(QString::number(value[i]));
         pCurve[i]->addData(cnt, value[i]);
     }
-    if (ui->chkTrackX->checkState())
-    {
-        setAutoTrackX(customPlot);
-    }
-    if (ui->chkAdjustY->checkState())
-    {
-        setAutoTrackY(customPlot);
-    }
+    //    if (ui->chkTrackX->checkState())
+    //    {
+    //        setAutoTrackX(customPlot);
+    //    }
+    //    if (ui->chkAdjustY->checkState())
+    //    {
+    //        setAutoTrackY(customPlot);
+    //    }
     customPlot->replot(QCustomPlot::rpQueuedReplot);
     static QTime time(QTime::currentTime());
     double key = time.elapsed() / 1000.0;
@@ -774,7 +777,7 @@ void Plot::on_chkShowLegend_stateChanged(int arg1)
 // 设置曲线x轴自动跟随
 void Plot::setAutoTrackX(QCustomPlot *pPlot)
 {
-    pointCountX = ui->txtPointCountX->text().toUInt();
+    //    pointCountX = ui->txtPointCountX->text().toUInt();
     if (pCurve[0]->dataCount() < pointCountX)
     {
         pPlot->xAxis->setRange(0, pointCountX);
@@ -802,9 +805,9 @@ void Plot::setAutoX(QCustomPlot *pPlot, int xRange)
 // 设置曲线x轴手动设置范围（依照右下角输入框）
 void Plot::setManualSettingX(QCustomPlot *pPlot)
 {
-    pointOriginX = ui->txtPointOriginX->text().toInt();
-    pointCountX = ui->txtPointCountX->text().toUInt();
-    pPlot->xAxis->setRange(pointOriginX, pointOriginX + pointCountX);
+    //    pointOriginX = ui->txtPointOriginX->text().toInt();
+    //    pointCountX = ui->txtPointCountX->text().toUInt();
+    //    pPlot->xAxis->setRange(pointOriginX, pointOriginX + pointCountX);
 }
 
 // 设置Y轴自适应
@@ -820,23 +823,23 @@ void Plot::setAutoTrackY(QCustomPlot *pPlot)
 // 重新设置X轴显示的点数
 void Plot::on_txtPointCountX_returnPressed()
 {
-    if (ui->chkTrackX->checkState())
-    {
-        setAutoTrackX(pPlot1);
-    }
-    else
-    {
-        setManualSettingX(pPlot1);
-    }
+    //    if (ui->chkTrackX->checkState())
+    //    {
+    //        setAutoTrackX(pPlot1);
+    //    }
+    //    else
+    //    {
+    //        setManualSettingX(pPlot1);
+    //    }
     pPlot1->replot(QCustomPlot::rpQueuedReplot);
 }
 
 void Plot::on_txtPointCountY_returnPressed()
 {
-    pointCountY = ui->txtPointCountY->text().toUInt();
-    pPlot1->yAxis->setRange(pointCountY / 2 * -1, pointCountY / 2);
-    ui->txtPointOriginY->setText(QString::number(pointCountY / 2 * -1));
-    pPlot1->replot(QCustomPlot::rpQueuedReplot);
+    //    pointCountY = ui->txtPointCountY->text().toUInt();
+    //    pPlot1->yAxis->setRange(pointCountY / 2 * -1, pointCountY / 2);
+    //    ui->txtPointOriginY->setText(QString::number(pointCountY / 2 * -1));
+    //    pPlot1->replot(QCustomPlot::rpQueuedReplot);
 }
 
 void Plot::on_btnColourBack_clicked()
@@ -870,41 +873,41 @@ void Plot::on_txtPointOriginX_returnPressed()
 
 void Plot::on_chkTrackX_stateChanged(int arg1)
 {
-    if (arg1)
-    {
-        ui->txtPointOriginX->setEnabled(false);
-        setAutoTrackX(pPlot1);
-        pPlot1->replot(QCustomPlot::rpQueuedReplot);
-    }
-    else
-    {
-        ui->txtPointOriginX->setEnabled(true);
-    }
+    //    if (arg1)
+    //    {
+    //        ui->txtPointOriginX->setEnabled(false);
+    //        setAutoTrackX(pPlot1);
+    //        pPlot1->replot(QCustomPlot::rpQueuedReplot);
+    //    }
+    //    else
+    //    {
+    //        ui->txtPointOriginX->setEnabled(true);
+    //    }
 }
 
 void Plot::on_chkAdjustY_stateChanged(int arg1)
 {
-    if (arg1)
-    {
-        ui->txtPointOriginY->setEnabled(false);
-        ui->txtPointCountY->setEnabled(false);
-        setAutoTrackY(pPlot1);
-        pPlot1->replot(QCustomPlot::rpQueuedReplot);
-    }
-    else
-    {
-        ui->txtPointOriginY->setEnabled(true);
-        ui->txtPointCountY->setEnabled(true);
-    }
+    //    if (arg1)
+    //    {
+    //        ui->txtPointOriginY->setEnabled(false);
+    //        ui->txtPointCountY->setEnabled(false);
+    //        setAutoTrackY(pPlot1);
+    //        pPlot1->replot(QCustomPlot::rpQueuedReplot);
+    //    }
+    //    else
+    //    {
+    //        ui->txtPointOriginY->setEnabled(true);
+    //        ui->txtPointCountY->setEnabled(true);
+    //    }
 }
 
 void Plot::on_txtPointOriginY_returnPressed()
 {
-    pointOriginY = ui->txtPointOriginY->text().toInt();
-    pointCountY = ui->txtPointCountY->text().toUInt();
-    pPlot1->yAxis->setRange(pointOriginY, pointOriginY + pointCountY);
-    qDebug() << pointOriginY << pointCountY;
-    pPlot1->replot(QCustomPlot::rpQueuedReplot);
+    //    pointOriginY = ui->txtPointOriginY->text().toInt();
+    //    pointCountY = ui->txtPointCountY->text().toUInt();
+    //    pPlot1->yAxis->setRange(pointOriginY, pointOriginY + pointCountY);
+    //    qDebug() << pointOriginY << pointCountY;
+    //    pPlot1->replot(QCustomPlot::rpQueuedReplot);
 }
 
 void Plot::showDashboard(QCustomPlot *customPlot)
@@ -936,26 +939,50 @@ void Plot::showDashboard(QCustomPlot *customPlot)
     customPlot->legend->setMaximumSize(300, 16777215); // 设置最大宽度
     // 只显示前10条图例，并缩小图例框面积，不显示的曲线不占用空间
     int legendItemCount = 0;
-    for (int i = 0; i < customPlot->graphCount(); ++i)
+    // for (int i = 0; i < customPlot->graphCount(); ++i)
+    // {
+
+    //     bool showLegend = false;
+    //     for (int j = 0; j < sizeof(defaultLegendIndex)/sizeof(defaultLegendIndex[0]); ++j)
+    //     {
+    //         if (i == defaultLegendIndex[j])
+    //         {
+    //         showLegend = true;
+    //         break;
+    //         }
+    //     }
+    //     if (showLegend)
+    //     {
+    //         customPlot->graph(i)->setVisible(true);
+    //         customPlot->legend->item(i)->setVisible(true);
+    //         ++legendItemCount;
+    //     }
+    //     else
+    //     {
+    //         customPlot->graph(i)->setVisible(true); // 曲线本身可见性不变
+    //         customPlot->legend->item(i)->setVisible(false);
+    //     }
+    // }
+    // ...existing code...
+    // 只显示defaultLegendIndex中的曲线图例，其它图例项彻底移除
+    customPlot->legend->clearItems(); // 先清空所有图例项
+    for (int j = 0; j < sizeof(defaultLegendIndex) / sizeof(defaultLegendIndex[0]); ++j)
     {
-        if (i < 5)
+        int idx = defaultLegendIndex[j];
+        if (idx < customPlot->graphCount())
         {
-            customPlot->graph(i)->setVisible(true);
-            customPlot->legend->item(i)->setVisible(true);
-            ++legendItemCount;
-        }
-        else
-        {
-            customPlot->graph(i)->setVisible(true); // 曲线本身可见性不变
-            customPlot->legend->item(i)->setVisible(false);
+            customPlot->graph(idx)->setVisible(true);
+            customPlot->legend->addItem(new QCPPlottableLegendItem(customPlot->legend, customPlot->graph(idx)));
         }
     }
+    // ...existing code...
     TopLegendFlash();
 }
 
 void Plot::TopLegendFlash(void)
 {
     QString temp;
+    QString temp2;
     QStringList templist; // 对齐使用
     DataParser d;
     if (allCurvesInfoText)
@@ -966,27 +993,37 @@ void Plot::TopLegendFlash(void)
     QString info;
     int maxIndex = pPlot1->graphCount();
     int indexWidth = QString::number(maxIndex).length(); // 序号最大宽度
-    for (int i = 0; i < maxIndex; ++i)
+    for (int i = 0; i < 12; ++i)
     {
-        QCPGraph *graph = pPlot1->graph(i);
-        if (!graph)
-            continue;
-        temp = d.removeSpaces(graph->name());
-
-        // 序号左对齐，内容左对齐，宽度可根据实际调整
-        // info += QString("%1. ").arg(i + 1, indexWidth, 10, QChar(' ')) + temp;
-        templist << temp;
+        if (i < 8)
+        {
+            QCPGraph *graph = pPlot1->graph(i);
+            QCPGraph *graph2 = pPlot1->graph(i + 12);
+            if (!graph || !graph2)
+                continue;
+            temp = d.removeSpaces(graph->name());
+            temp.replace("\n", "");
+            temp2 = d.removeSpaces(graph2->name());
+            templist << temp + " " + temp2;
+        }
+        else
+        {
+            QCPGraph *graph = pPlot1->graph(i);
+            if (!graph)
+                continue;
+            temp = d.removeSpaces(graph->name());
+            templist << temp;
+        }
     }
     QFont infoFont(font().family(), 10, QFont::DemiBold);
     d.alignString(templist, infoFont); // 按y对齐
-    for (int i = 0; i < templist.size(); ++i)
+    for (int i = 0; i < 12; ++i)
     {
-        if (i + 1 < 10)
-            info += QString(" %1. ").arg(i + 1) + templist.at(i);
-        else
-            info += QString("%1. ").arg(i + 1) + templist.at(i);
+        info += templist.at(i);
     }
     allCurvesInfoText = new QCPItemText(pPlot1);
+     // 设置无边框
+    allCurvesInfoText->setBrush(QBrush(Qt::NoBrush));
     allCurvesInfoText->setPositionAlignment(Qt::AlignTop | Qt::AlignHCenter);
     allCurvesInfoText->position->setType(QCPItemPosition::ptAxisRectRatio);
     allCurvesInfoText->position->setCoords(0.5, 0); // 顶部居中
@@ -994,10 +1031,10 @@ void Plot::TopLegendFlash(void)
 
     allCurvesInfoText->setFont(infoFont);
     allCurvesInfoText->setPen(QPen(Qt::black));
-    //设置无边框
-    allCurvesInfoText->setBrush(QBrush(Qt::NoBrush));
+   
     // 关键：设置文本左对齐
     allCurvesInfoText->setTextAlignment(Qt::AlignLeft | Qt::AlignTop);
+
 
     // // 新增一个QCPItemText，显示固定内容，放在中间偏右
     // QCPItemText *fixedText = new QCPItemText(pPlot1);
@@ -1009,8 +1046,6 @@ void Plot::TopLegendFlash(void)
     // fixedText->setPen(QPen(Qt::darkBlue));
     // fixedText->setBrush(QBrush(Qt::NoBrush));
     // fixedText->setTextAlignment(Qt::AlignRight | Qt::AlignTop);
-
-
 }
 
 // 每次图表重绘后，都会更新当前显示的原点坐标与范围。与上次不同时才会更新显示，解决有曲线数据时无法输入y的参数的问题
@@ -1023,18 +1058,18 @@ void Plot::repPlotCoordinate()
     yOrigin = pPlot1->yAxis->range().lower;
     yCount = pPlot1->yAxis->range().size();
     // 与上次不同时才会更新显示，解决有曲线数据时无法输入y的参数的问题
-//    if (xOriginLast != xOrigin)
-//    {
-//        ui->txtPointOriginX->setText(QString::number(xOrigin));
-//    }
-//    if (yOriginLast != yOrigin)
-//    {
-//        ui->txtPointOriginY->setText(QString::number(yOrigin));
-//    }
-//    if (yCountLast != yCount)
-//    {
-//        ui->txtPointCountY->setText(QString::number(yCount));
-//    }
+    //    if (xOriginLast != xOrigin)
+    //    {
+    //        ui->txtPointOriginX->setText(QString::number(xOrigin));
+    //    }
+    //    if (yOriginLast != yOrigin)
+    //    {
+    //        ui->txtPointOriginY->setText(QString::number(yOrigin));
+    //    }
+    //    if (yCountLast != yCount)
+    //    {
+    //        ui->txtPointCountY->setText(QString::number(yCount));
+    //    }
     // 记录历史值
     xOriginLast = xOrigin;
     yOriginLast = yOrigin;
@@ -1111,7 +1146,7 @@ void Plot::mouseMove2(QMouseEvent *e)
                 Cvlls[i].append(QString("总距离10米,剩余%1米\n")
                                     .arg(yValue < 0 ? QString::number(yValue, 'f', 2) : " " + QString::number(yValue, 'f', 2)));
             else
-                Cvlls[i].append(QString("y = %1\n")
+                Cvlls[i].append(QString("%1\n")
                                     .arg(yValue < 0 ? QString::number(yValue, 'f', 2) : " " + QString::number(yValue, 'f', 2)));
         }
         vLineX = nearestKey; // 竖线也吸附到最近点
@@ -1131,6 +1166,20 @@ void Plot::hideCurve(int index)
     {
         curveSetVisible(pPlot1, pCurve[index], 0);
         pChkVisibleCurve[index]->setChecked(false);
+    }
+    else
+    {
+        QString errorMsg = QString("曲线索引超出范围，最大索引为：%1").arg(pPlot1->graphCount() - 1);
+        PlotError error(PlotError::KnownError, errorMsg);
+        PlotError::showErrorDialog(this, error);
+    }
+}
+void Plot::showCurve(int index)
+{
+    if (index < pPlot1->graphCount())
+    {
+        curveSetVisible(pPlot1, pCurve[index], 1);
+        pChkVisibleCurve[index]->setChecked(true);
     }
     else
     {
@@ -1369,7 +1418,8 @@ void Plot::onPlotClicked(QMouseEvent *event)
             float number = DataParser::getNumber(DataParser::getLastline(text), 1);
             timestamp = QString::number(number);
         }
-        else{
+        else
+        {
             PlotError error(PlotError::KnownError, "allCurvesInfoText为空");
             PlotError::showErrorDialog(this, error);
         }

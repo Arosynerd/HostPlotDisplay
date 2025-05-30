@@ -15,16 +15,22 @@
 #include <QStandardItemModel>
 #include <QRegularExpression> // 正则
 
+
+
+
+
+
+
 //#define DEBUG 1
 #define ZOOMSTANDARD 64
 #define RAW "raw" // 原始数据的目录
 typedef struct GODEST_log_data_t {
-    int id;
+        int id;
     int timestamp;
-    int currentMode;//
-    int phaseFlag;
+        int currentMode;//
+        int phaseFlag;
     int goDestSpeed;// 基础油门
-    int firstPhaseCount;
+        int firstPhaseCount;
     float originBearing;
     float currentBearing;
     float currentYaw;
@@ -35,20 +41,30 @@ typedef struct GODEST_log_data_t {
     float rudderAngle;
     int motorSpeedLeft;
     int motorSpeedRight;//16
-    float kp_yaw_first;//17
-    float ki_yaw_first;//18
-    float kd_yaw_first;//19
-    int integralLimit_yaw_first;//20
-    float kp_pos;
-    float ki_pos;
-    float kd_pos;//23
-    int integralLimit_pos;
-    float kp_yaw_third;
-    float ki_yaw_third;
-    float kd_yaw_third;
-    int integralLimit_yaw_third;//28
-    double latitude;//29
-    double longitude;//30
+
+/*
+    12个
+*/
+
+
+        float kp_yaw_first;//17
+        float ki_yaw_first;//18
+        float kd_yaw_first;//19
+        int integralLimit_yaw_first;//20
+        float kp_pos;
+        float ki_pos;
+        float kd_pos;//23
+        int integralLimit_pos;
+        float kp_yaw_third;
+        float ki_yaw_third;
+        float kd_yaw_third;
+        int integralLimit_yaw_third;//28
+        double latitude;//29
+        double longitude;//30
+
+/*
+    14个
+*/
     double speed;//31
     float kp_angle;
     float minYawDeviation;
@@ -57,6 +73,10 @@ typedef struct GODEST_log_data_t {
     float imuYaw;
     float ddmYaw;
     float gpsYaw;
+/*
+
+
+*/
 } GODEST_log_data_t;
 
 

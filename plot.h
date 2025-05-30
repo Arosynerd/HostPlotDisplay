@@ -65,6 +65,7 @@ public:
     void setCurvesName(QStringList lineNames);
     void addCurvesName(QStringList lineNames);
     void hideCurve(int index);
+    void showCurve(int index);
     void stageDistinguish(void);
 
     void testLogDataPtr();
@@ -72,6 +73,7 @@ public:
     void showGroupToTable();
     void setPid(int index, float kp, float ki, float kd, float integralLimit);
     void setCurveslegendName(QStringList lineNames);
+    
 protected:
     void keyPressEvent(QKeyEvent *event) override;
     void keyReleaseEvent(QKeyEvent *event) override;
