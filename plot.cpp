@@ -35,7 +35,7 @@ Plot::Plot(GODEST_log_data_t *logDataPtr, std::pair<int, int> group_index[100], 
     // timer->start(10);
 
     // 关联控件初始化
-    ui->txtPointOriginX->setEnabled(false);
+    //ui->txtPointOriginX->setEnabled(false);
     // 图表重绘后，刷新原点坐标和范围
     connect(pPlot1, SIGNAL(afterReplot()), this, SLOT(repPlotCoordinate()));
 }
@@ -977,7 +977,7 @@ void Plot::TopLegendFlash(void)
         // info += QString("%1. ").arg(i + 1, indexWidth, 10, QChar(' ')) + temp;
         templist << temp;
     }
-    QFont infoFont(font().family(), 10, QFont::Bold);
+    QFont infoFont(font().family(), 10, QFont::DemiBold);
     d.alignString(templist, infoFont); // 按y对齐
     for (int i = 0; i < templist.size(); ++i)
     {
@@ -994,8 +994,23 @@ void Plot::TopLegendFlash(void)
 
     allCurvesInfoText->setFont(infoFont);
     allCurvesInfoText->setPen(QPen(Qt::black));
+    //设置无边框
+    allCurvesInfoText->setBrush(QBrush(Qt::NoBrush));
     // 关键：设置文本左对齐
     allCurvesInfoText->setTextAlignment(Qt::AlignLeft | Qt::AlignTop);
+
+    // // 新增一个QCPItemText，显示固定内容，放在中间偏右
+    // QCPItemText *fixedText = new QCPItemText(pPlot1);
+    // fixedText->setPositionAlignment(Qt::AlignTop | Qt::AlignRight);
+    // fixedText->position->setType(QCPItemPosition::ptAxisRectRatio);
+    // fixedText->position->setCoords(0.85, 0.1); // x=0.85(右侧), y=0.1(顶部偏下)
+    // fixedText->setText("这是一个固定内容的文本");
+    // fixedText->setFont(QFont(font().family(), 12, QFont::Bold));
+    // fixedText->setPen(QPen(Qt::darkBlue));
+    // fixedText->setBrush(QBrush(Qt::NoBrush));
+    // fixedText->setTextAlignment(Qt::AlignRight | Qt::AlignTop);
+
+
 }
 
 // 每次图表重绘后，都会更新当前显示的原点坐标与范围。与上次不同时才会更新显示，解决有曲线数据时无法输入y的参数的问题
@@ -1008,18 +1023,18 @@ void Plot::repPlotCoordinate()
     yOrigin = pPlot1->yAxis->range().lower;
     yCount = pPlot1->yAxis->range().size();
     // 与上次不同时才会更新显示，解决有曲线数据时无法输入y的参数的问题
-    if (xOriginLast != xOrigin)
-    {
-        ui->txtPointOriginX->setText(QString::number(xOrigin));
-    }
-    if (yOriginLast != yOrigin)
-    {
-        ui->txtPointOriginY->setText(QString::number(yOrigin));
-    }
-    if (yCountLast != yCount)
-    {
-        ui->txtPointCountY->setText(QString::number(yCount));
-    }
+//    if (xOriginLast != xOrigin)
+//    {
+//        ui->txtPointOriginX->setText(QString::number(xOrigin));
+//    }
+//    if (yOriginLast != yOrigin)
+//    {
+//        ui->txtPointOriginY->setText(QString::number(yOrigin));
+//    }
+//    if (yCountLast != yCount)
+//    {
+//        ui->txtPointCountY->setText(QString::number(yCount));
+//    }
     // 记录历史值
     xOriginLast = xOrigin;
     yOriginLast = yOrigin;

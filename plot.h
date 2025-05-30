@@ -55,6 +55,7 @@ public:
     bool Skip_Enable = false;//默认不可跳转
 
     QCPItemText *allCurvesInfoText = nullptr;
+    QCPItemText *allCurvesInfoText2 = nullptr;
 
     void ShowPlot_TimeDemo(QCustomPlot *customPlot, double num);
     void ShowPlot_WaveForm(QCustomPlot *customPlot, short value[]);
