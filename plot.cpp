@@ -1015,37 +1015,50 @@ void Plot::TopLegendFlash(void)
             templist << temp;
         }
     }
-    QFont infoFont(font().family(), 10, QFont::DemiBold);
-    d.alignString(templist, infoFont); // 按y对齐
+
+    QFont monoFont("Courier New"); // 或 "Monospace", "Consolas"
+    monoFont.setPointSize(10);
+
+    // d.alignString(templist, infoFont); // 按y对齐
     for (int i = 0; i < 12; ++i)
     {
+        if (i < 8)
+        {
+            // info += templist.at(i);
+            QRegularExpression re(R"((\D+)(\d+(?:\.\d+)?)\s*(\D+)(\d+(?:\.\d+)?))");
+
+            // 执行匹配
+            QRegularExpressionMatch match = re.match(templist.at(i));
+
+            if (match.hasMatch())
+            {
+                QString str1 = match.captured(1); // 第一个字符串
+                QString num1 = match.captured(2); // 第一个数字
+                QString str2 = match.captured(3); // 第二个字符串
+                QString num2 = match.captured(4); // 第二个数字
+
+                // qDebug() << "str1:" << str1;
+                // qDebug() << "num1:" << num1.toDouble();
+                // qDebug() << "str2:" << str2;
+                // qDebug() << "num2:" << num2.toDouble();
+                info += QString::asprintf("%-15s %12.2f    %-10s %12.2f\n", str1.toStdString().c_str(), num1.toDouble(), str2.toStdString().c_str(), num2.toDouble());
+            }
+        }
+        else
         info += templist.at(i);
     }
     allCurvesInfoText = new QCPItemText(pPlot1);
-     // 设置无边框
+    // 设置无边框
     allCurvesInfoText->setBrush(QBrush(Qt::NoBrush));
     allCurvesInfoText->setPositionAlignment(Qt::AlignTop | Qt::AlignHCenter);
     allCurvesInfoText->position->setType(QCPItemPosition::ptAxisRectRatio);
     allCurvesInfoText->position->setCoords(0.5, 0); // 顶部居中
-    allCurvesInfoText->setText(info);
-
-    allCurvesInfoText->setFont(infoFont);
-    allCurvesInfoText->setPen(QPen(Qt::black));
-   
-    // 关键：设置文本左对齐
     allCurvesInfoText->setTextAlignment(Qt::AlignLeft | Qt::AlignTop);
+    allCurvesInfoText->setText(info);
+    allCurvesInfoText->setFont(monoFont);
+    allCurvesInfoText->setPen(QPen(Qt::NoPen));
 
-
-    // // 新增一个QCPItemText，显示固定内容，放在中间偏右
-    // QCPItemText *fixedText = new QCPItemText(pPlot1);
-    // fixedText->setPositionAlignment(Qt::AlignTop | Qt::AlignRight);
-    // fixedText->position->setType(QCPItemPosition::ptAxisRectRatio);
-    // fixedText->position->setCoords(0.85, 0.1); // x=0.85(右侧), y=0.1(顶部偏下)
-    // fixedText->setText("这是一个固定内容的文本");
-    // fixedText->setFont(QFont(font().family(), 12, QFont::Bold));
-    // fixedText->setPen(QPen(Qt::darkBlue));
-    // fixedText->setBrush(QBrush(Qt::NoBrush));
-    // fixedText->setTextAlignment(Qt::AlignRight | Qt::AlignTop);
+    // 关键：设置文本左对齐
 }
 
 // 每次图表重绘后，都会更新当前显示的原点坐标与范围。与上次不同时才会更新显示，解决有曲线数据时无法输入y的参数的问题
