@@ -172,7 +172,6 @@ void Plot::addFrameToWinPlot()
             }
             templist << temp;
         }
-        qDebug() << templist.size();
     }
     // 如果已存在，只需修改 label 内容
     QStringList testTexts = {
@@ -441,83 +440,83 @@ void Plot::QPlot_widget_init(void)
     // 获取控件指针数组，方便设置时编码书写
     pChkVisibleCurve[0] = ui->chkVisibleCurve1;
     pBtnColourCurve[0] = ui->btnColourCurve1;
-    pTxtValueCurve[0] = ui->txtValueCurve1;
+    //pTxtValueCurve[0] = ui->txtValueCurve1;
     pRdoBoldCurve[0] = ui->rdoBoldCurve1;
     pChkVisibleCurve[1] = ui->chkVisibleCurve2;
     pBtnColourCurve[1] = ui->btnColourCurve2;
-    pTxtValueCurve[1] = ui->txtValueCurve2;
+   // pTxtValueCurve[1] = ui->txtValueCurve2;
     pRdoBoldCurve[1] = ui->rdoBoldCurve2;
     pChkVisibleCurve[2] = ui->chkVisibleCurve3;
     pBtnColourCurve[2] = ui->btnColourCurve3;
-    pTxtValueCurve[2] = ui->txtValueCurve3;
+   // pTxtValueCurve[2] = ui->txtValueCurve3;
     pRdoBoldCurve[2] = ui->rdoBoldCurve3;
     pChkVisibleCurve[3] = ui->chkVisibleCurve4;
     pBtnColourCurve[3] = ui->btnColourCurve4;
-    pTxtValueCurve[3] = ui->txtValueCurve4;
+   // pTxtValueCurve[3] = ui->txtValueCurve4;
     pRdoBoldCurve[3] = ui->rdoBoldCurve4;
     pChkVisibleCurve[4] = ui->chkVisibleCurve5;
     pBtnColourCurve[4] = ui->btnColourCurve5;
-    pTxtValueCurve[4] = ui->txtValueCurve5;
+   // pTxtValueCurve[4] = ui->txtValueCurve5;
     pRdoBoldCurve[4] = ui->rdoBoldCurve5;
     pChkVisibleCurve[5] = ui->chkVisibleCurve6;
     pBtnColourCurve[5] = ui->btnColourCurve6;
-    pTxtValueCurve[5] = ui->txtValueCurve6;
+    //pTxtValueCurve[5] = ui->txtValueCurve6;
     pRdoBoldCurve[5] = ui->rdoBoldCurve6;
     pChkVisibleCurve[6] = ui->chkVisibleCurve7;
     pBtnColourCurve[6] = ui->btnColourCurve7;
-    pTxtValueCurve[6] = ui->txtValueCurve7;
+   // pTxtValueCurve[6] = ui->txtValueCurve7;
     pRdoBoldCurve[6] = ui->rdoBoldCurve7;
     pChkVisibleCurve[7] = ui->chkVisibleCurve8;
     pBtnColourCurve[7] = ui->btnColourCurve8;
-    pTxtValueCurve[7] = ui->txtValueCurve8;
+   // pTxtValueCurve[7] = ui->txtValueCurve8;
     pRdoBoldCurve[7] = ui->rdoBoldCurve8;
     pChkVisibleCurve[8] = ui->chkVisibleCurve9;
     pBtnColourCurve[8] = ui->btnColourCurve9;
-    pTxtValueCurve[8] = ui->txtValueCurve9;
+   // pTxtValueCurve[8] = ui->txtValueCurve9;
     pRdoBoldCurve[8] = ui->rdoBoldCurve9;
     pChkVisibleCurve[9] = ui->chkVisibleCurve10;
     pBtnColourCurve[9] = ui->btnColourCurve10;
-    pTxtValueCurve[9] = ui->txtValueCurve10;
+   // pTxtValueCurve[9] = ui->txtValueCurve10;
     pRdoBoldCurve[9] = ui->rdoBoldCurve10;
     pChkVisibleCurve[10] = ui->chkVisibleCurve11;
     pBtnColourCurve[10] = ui->btnColourCurve11;
-    pTxtValueCurve[10] = ui->txtValueCurve11;
+   // pTxtValueCurve[10] = ui->txtValueCurve11;
     pRdoBoldCurve[10] = ui->rdoBoldCurve11;
     pChkVisibleCurve[11] = ui->chkVisibleCurve12;
     pBtnColourCurve[11] = ui->btnColourCurve12;
-    pTxtValueCurve[11] = ui->txtValueCurve12;
+   // pTxtValueCurve[11] = ui->txtValueCurve12;
     pRdoBoldCurve[11] = ui->rdoBoldCurve12;
     pChkVisibleCurve[12] = ui->chkVisibleCurve13;
     pBtnColourCurve[12] = ui->btnColourCurve13;
-    pTxtValueCurve[12] = ui->txtValueCurve13;
+   // pTxtValueCurve[12] = ui->txtValueCurve13;
     pRdoBoldCurve[12] = ui->rdoBoldCurve13;
     pChkVisibleCurve[13] = ui->chkVisibleCurve14;
     pBtnColourCurve[13] = ui->btnColourCurve14;
-    pTxtValueCurve[13] = ui->txtValueCurve14;
+   // pTxtValueCurve[13] = ui->txtValueCurve14;
     pRdoBoldCurve[13] = ui->rdoBoldCurve14;
     pChkVisibleCurve[14] = ui->chkVisibleCurve15;
     pBtnColourCurve[14] = ui->btnColourCurve15;
-    pTxtValueCurve[14] = ui->txtValueCurve15;
+   // pTxtValueCurve[14] = ui->txtValueCurve15;
     pRdoBoldCurve[14] = ui->rdoBoldCurve15;
     pChkVisibleCurve[15] = ui->chkVisibleCurve16;
     pBtnColourCurve[15] = ui->btnColourCurve16;
-    pTxtValueCurve[15] = ui->txtValueCurve16;
+   // pTxtValueCurve[15] = ui->txtValueCurve16;
     pRdoBoldCurve[15] = ui->rdoBoldCurve16;
     pChkVisibleCurve[16] = ui->chkVisibleCurve17;
     pBtnColourCurve[16] = ui->btnColourCurve17;
-    pTxtValueCurve[16] = ui->txtValueCurve17;
+   // pTxtValueCurve[16] = ui->txtValueCurve17;
     pRdoBoldCurve[16] = ui->rdoBoldCurve17;
     pChkVisibleCurve[17] = ui->chkVisibleCurve18;
     pBtnColourCurve[17] = ui->btnColourCurve18;
-    pTxtValueCurve[17] = ui->txtValueCurve18;
+   // pTxtValueCurve[17] = ui->txtValueCurve18;
     pRdoBoldCurve[17] = ui->rdoBoldCurve18;
     pChkVisibleCurve[18] = ui->chkVisibleCurve19;
     pBtnColourCurve[18] = ui->btnColourCurve19;
-    pTxtValueCurve[18] = ui->txtValueCurve19;
+  //  pTxtValueCurve[18] = ui->txtValueCurve19;
     pRdoBoldCurve[18] = ui->rdoBoldCurve19;
     pChkVisibleCurve[19] = ui->chkVisibleCurve20;
     pBtnColourCurve[19] = ui->btnColourCurve20;
-    pTxtValueCurve[19] = ui->txtValueCurve20;
+   // pTxtValueCurve[19] = ui->txtValueCurve20;
     pRdoBoldCurve[19] = ui->rdoBoldCurve20;
 
     pCmbLineStyle[0] = ui->cmbLineStyle1;
@@ -628,12 +627,12 @@ void Plot::ShowPlot_TimeDemo(QCustomPlot *customPlot, double num)
     // 给曲线添加数据
     for (int i = 0; i < 10; i++)
     {
-        pTxtValueCurve[i]->setText(QString::number(num - i * 10, 'g', 8)); // 显示曲线当前值
+        //pTxtValueCurve[i]->setText(QString::number(num - i * 10, 'g', 8)); // 显示曲线当前值
         pCurve[i]->addData(cnt, num - i * 10);
     }
     for (int i = 10; i < 20; i++)
     {
-        pTxtValueCurve[i]->setText(QString::number(num + (i - 9) * 10, 'g', 8)); // 显示曲线当前值
+      //  pTxtValueCurve[i]->setText(QString::number(num + (i - 9) * 10, 'g', 8)); // 显示曲线当前值
         pCurve[i]->addData(cnt, num + (i - 9) * 10);
     }
 
@@ -681,7 +680,7 @@ void Plot::ShowPlot_WaveForm(QCustomPlot *customPlot, short value[])
     for (int i = 0; i < 20; i++)
     {
         // QString strNum = QString::number(num,'g',8);// double类型
-        pTxtValueCurve[i]->setText(QString::number(value[i])); // 显示曲线当前值
+       // pTxtValueCurve[i]->setText(QString::number(value[i])); // 显示曲线当前值
         pCurve[i]->addData(cnt, value[i]);                     // 从原值获取数据
         // pCurve[i]->addData(cnt, pTxtValueCurve[i]->text().toShort());// 从输入框获取数据
         //  因为20条线重叠在一起，所以QCustomPlot输入为0时看起来像不显示，隐藏其他后观察单条曲线是可以看到显示的
@@ -729,7 +728,7 @@ void Plot::ShowPlot_WaveForm(QCustomPlot *customPlot, int value[])
     cnt++;
     for (int i = 0; i < 20; i++)
     {
-        pTxtValueCurve[i]->setText(QString::number(value[i]));
+       // pTxtValueCurve[i]->setText(QString::number(value[i]));
         pCurve[i]->addData(cnt, value[i]);
     }
     //    if (ui->chkTrackX->checkState())
@@ -764,7 +763,7 @@ void Plot::ShowPlot_WaveForm(QCustomPlot *customPlot, float value[])
     cnt++;
     for (int i = 0; i < 20; i++)
     {
-        pTxtValueCurve[i]->setText(QString::number(value[i]));
+       // pTxtValueCurve[i]->setText(QString::number(value[i]));
         pCurve[i]->addData(cnt, value[i]);
     }
     //    if (ui->chkTrackX->checkState())
@@ -1383,26 +1382,29 @@ void Plot::showCurve(int index)
     }
 }
 
-void Plot::stageDistinguish(void)
+// 参数为 pair<int, int>，分别表示起始点和数量
+void Plot::stageDistinguish(std::pair<int, int> range)
 {
-    if (pPlot1->graphCount() >= 6)
+    int startPoint = range.first + 1;
+    int pointCount = range.second;
+    qDebug() << "startPoint:" << startPoint << "pointCount:" << pointCount;
+    // for(int i = 0; i < pointCount; i++){
+    //     qDebug() << "y:" << logDataPtr[startPoint + i].phaseFlag;
+    // }
+    if (1)
     {
-        QCPGraph *curve6 = pPlot1->graph(5);
-
-        // 获取曲线数据
-        auto data = curve6->data();
-        if (!data->isEmpty())
+        if (1)
         {
             // 遍历数据，查找y=1,2,3对应的x范围
             QVector<int> x1, x2, x3;
-            for (auto it = data->constBegin(); it != data->constEnd(); ++it)
+            for (int i = 0; i < pointCount; i++)
             {
-                if (qFuzzyCompare(it->value + 1, 2.0)) // y==1
-                    x1.append(it->key);
-                else if (qFuzzyCompare(it->value, 2)) // y==2
-                    x2.append(it->key);
-                else if (qFuzzyCompare(it->value, 3)) // y==3
-                    x3.append(it->key);
+                if (logDataPtr[startPoint + i].phaseFlag == 1) // y==1
+                    x1.append(i);
+                else if (logDataPtr[startPoint + i].phaseFlag == 2) // y==2
+                    x2.append(i);
+                else if (logDataPtr[startPoint + i].phaseFlag == 3) // y==3
+                    x3.append(i);
             }
             DataParser d;
             std::vector<int> x11 = x1.toStdVector();
@@ -1411,18 +1413,18 @@ void Plot::stageDistinguish(void)
             d.CreatePhaseRange(x11, range1);
             d.CreatePhaseRange(x22, range2);
             d.CreatePhaseRange(x33, range3);
-#if defined DEBUG
+
             qDebug() << "range1:" << range1;
             qDebug() << "range2:" << range2;
             qDebug() << "range3:" << range3;
-#endif
+
             // 在x范围内画不同颜色的矩形
             if (!x1.isEmpty())
             {
                 QCPItemRect *rect1 = new QCPItemRect(pPlot1);
                 rect1->topLeft->setType(QCPItemPosition::ptPlotCoords);
                 rect1->bottomRight->setType(QCPItemPosition::ptPlotCoords);
-                rect1->topLeft->setCoords(x1.first(), pPlot1->yAxis->range().upper);
+                rect1->topLeft->setCoords(x1.first(), 0);
                 rect1->bottomRight->setCoords(x1.last(), pPlot1->yAxis->range().lower);
                 rect1->setBrush(QBrush(QColor(255, 0, 0, 10))); // 红色
                 rect1->setPen(Qt::NoPen);
@@ -1432,7 +1434,7 @@ void Plot::stageDistinguish(void)
                 QCPItemRect *rect2 = new QCPItemRect(pPlot1);
                 rect2->topLeft->setType(QCPItemPosition::ptPlotCoords);
                 rect2->bottomRight->setType(QCPItemPosition::ptPlotCoords);
-                rect2->topLeft->setCoords(x2.first(), pPlot1->yAxis->range().upper);
+                rect2->topLeft->setCoords(x2.first(), 0); // 只到y=0
                 rect2->bottomRight->setCoords(x2.last(), pPlot1->yAxis->range().lower);
                 rect2->setBrush(QBrush(QColor(0, 255, 0, 10))); // 绿色
                 rect2->setPen(Qt::NoPen);
@@ -1442,14 +1444,78 @@ void Plot::stageDistinguish(void)
                 QCPItemRect *rect3 = new QCPItemRect(pPlot1);
                 rect3->topLeft->setType(QCPItemPosition::ptPlotCoords);
                 rect3->bottomRight->setType(QCPItemPosition::ptPlotCoords);
-                rect3->topLeft->setCoords(x3.first(), pPlot1->yAxis->range().upper);
+                rect3->topLeft->setCoords(x3.first(), 0); // 只到y=0
                 rect3->bottomRight->setCoords(x3.last(), pPlot1->yAxis->range().lower);
                 rect3->setBrush(QBrush(QColor(0, 0, 255, 10))); // 蓝色
                 rect3->setPen(Qt::NoPen);
+            } 
+            
+            
+            
+            
+            
+            
+            QVector<int> x4, x5, x6, x7;
+            for (int i = 0; i < pointCount; i++)
+            {
+                qDebug() << "y:" << logDataPtr[startPoint + i].firstPhaseCount;
+                if (logDataPtr[startPoint + i].firstPhaseCount == 1) // y==1
+                    x4.append(i);
+                else if (logDataPtr[startPoint + i].firstPhaseCount == 2) // y==2
+                    x5.append(i);
+                else if (logDataPtr[startPoint + i].firstPhaseCount == 3) // y==3
+                    x6.append(i);
+                else if (logDataPtr[startPoint + i].firstPhaseCount == 4) // y==4
+                    x7.append(i);
             }
+
+            // 在x范围内画不同颜色的矩形
+            if (!x4.isEmpty())
+            {
+                QCPItemRect *rect4 = new QCPItemRect(pPlot1);
+                rect4->topLeft->setType(QCPItemPosition::ptPlotCoords);
+                rect4->bottomRight->setType(QCPItemPosition::ptPlotCoords);
+                rect4->topLeft->setCoords(x4.first(), pPlot1->yAxis->range().upper);
+                rect4->bottomRight->setCoords(x4.last(), 0);
+                rect4->setBrush(QBrush(QColor(255, 0, 0, 10))); // 红色
+                rect4->setPen(Qt::NoPen);
+            }
+            if (!x5.isEmpty())
+            {
+                QCPItemRect *rect5 = new QCPItemRect(pPlot1);
+                rect5->topLeft->setType(QCPItemPosition::ptPlotCoords);
+                rect5->bottomRight->setType(QCPItemPosition::ptPlotCoords);
+                rect5->topLeft->setCoords(x5.first(), pPlot1->yAxis->range().upper); // 只到y=0
+                rect5->bottomRight->setCoords(x5.last(), 0);
+                rect5->setBrush(QBrush(QColor(0, 255, 0, 10))); // 绿色
+                rect5->setPen(Qt::NoPen);
+            }
+            if (!x6.isEmpty())
+            {
+                QCPItemRect *rect6 = new QCPItemRect(pPlot1);
+                rect6->topLeft->setType(QCPItemPosition::ptPlotCoords);
+                rect6->bottomRight->setType(QCPItemPosition::ptPlotCoords);
+                rect6->topLeft->setCoords(x6.first(), pPlot1->yAxis->range().upper); // 只到y=0
+                rect6->bottomRight->setCoords(x6.last(), 0);
+                rect6->setBrush(QBrush(QColor(0, 0, 255, 10))); // 蓝色
+                rect6->setPen(Qt::NoPen);
+            }
+            if (!x7.isEmpty())
+            {
+                QCPItemRect *rect7 = new QCPItemRect(pPlot1);
+                rect7->topLeft->setType(QCPItemPosition::ptPlotCoords);
+                rect7->bottomRight->setType(QCPItemPosition::ptPlotCoords);
+                rect7->topLeft->setCoords(x7.first(), pPlot1->yAxis->range().upper); // 只到y=0
+                rect7->bottomRight->setCoords(x7.last(), 0);
+                rect7->setBrush(QBrush(QColor(255, 255, 0, 10))); // 黄色
+                rect7->setPen(Qt::NoPen);
+            }
+
+
         }
         pPlot1->replot(QCustomPlot::rpQueuedReplot);
     }
+
 }
 
 void Plot::on_pushButton_released()
@@ -1606,11 +1672,10 @@ void Plot::onPlotClicked(QMouseEvent *event)
     if (Skip_Enable)
     {
         qDebug() << "Skip_Enable";
-        if (allCurvesInfoText)
+        if (labels.size() > 2)
         {
-            QString text = allCurvesInfoText->text();
-            float number = DataParser::getNumber(DataParser::getLastline(text), 1);
-            timestamp = QString::number(number);
+            timestamp = labels[1]->text().remove(' ');
+            qDebug() << "timestamp:" << timestamp ;
         }
         else
         {

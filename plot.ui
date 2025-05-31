@@ -185,7 +185,7 @@
                  <property name="geometry">
                   <rect>
                    <x>0</x>
-                   <y>0</y>
+                   <y>-213</y>
                    <width>353</width>
                    <height>743</height>
                   </rect>
@@ -212,23 +212,10 @@
                       <height>22</height>
                      </size>
                     </property>
-                    <widget class="QLineEdit" name="txtValueCurve1">
-                     <property name="geometry">
-                      <rect>
-                       <x>130</x>
-                       <y>0</y>
-                       <width>51</width>
-                       <height>20</height>
-                      </rect>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
                     <widget class="QRadioButton" name="rdoBoldCurve1">
                      <property name="geometry">
                       <rect>
-                       <x>110</x>
+                       <x>160</x>
                        <y>3</y>
                        <width>16</width>
                        <height>16</height>
@@ -246,7 +233,7 @@
                       <rect>
                        <x>0</x>
                        <y>3</y>
-                       <width>81</width>
+                       <width>120</width>
                        <height>16</height>
                       </rect>
                      </property>
@@ -260,7 +247,7 @@
                     <widget class="QPushButton" name="btnColourCurve1">
                      <property name="geometry">
                       <rect>
-                       <x>90</x>
+                       <x>120</x>
                        <y>0</y>
                        <width>21</width>
                        <height>21</height>
@@ -487,23 +474,10 @@
                       <height>22</height>
                      </size>
                     </property>
-                    <widget class="QLineEdit" name="txtValueCurve2">
-                     <property name="geometry">
-                      <rect>
-                       <x>130</x>
-                       <y>0</y>
-                       <width>51</width>
-                       <height>20</height>
-                      </rect>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
                     <widget class="QRadioButton" name="rdoBoldCurve2">
                      <property name="geometry">
                       <rect>
-                       <x>110</x>
+                       <x>160</x>
                        <y>0</y>
                        <width>16</width>
                        <height>16</height>
@@ -521,7 +495,7 @@
                       <rect>
                        <x>0</x>
                        <y>3</y>
-                       <width>81</width>
+                       <width>120</width>
                        <height>16</height>
                       </rect>
                      </property>
@@ -535,7 +509,7 @@
                     <widget class="QPushButton" name="btnColourCurve2">
                      <property name="geometry">
                       <rect>
-                       <x>90</x>
+                       <x>120</x>
                        <y>-3</y>
                        <width>21</width>
                        <height>21</height>
@@ -762,23 +736,10 @@
                       <height>22</height>
                      </size>
                     </property>
-                    <widget class="QLineEdit" name="txtValueCurve3">
-                     <property name="geometry">
-                      <rect>
-                       <x>140</x>
-                       <y>0</y>
-                       <width>41</width>
-                       <height>20</height>
-                      </rect>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
                     <widget class="QRadioButton" name="rdoBoldCurve3">
                      <property name="geometry">
                       <rect>
-                       <x>120</x>
+                       <x>160</x>
                        <y>0</y>
                        <width>16</width>
                        <height>16</height>
@@ -796,7 +757,7 @@
                       <rect>
                        <x>0</x>
                        <y>3</y>
-                       <width>91</width>
+                       <width>120</width>
                        <height>16</height>
                       </rect>
                      </property>
@@ -810,7 +771,7 @@
                     <widget class="QPushButton" name="btnColourCurve3">
                      <property name="geometry">
                       <rect>
-                       <x>100</x>
+                       <x>120</x>
                        <y>-3</y>
                        <width>21</width>
                        <height>21</height>
@@ -1037,23 +998,10 @@
                       <height>22</height>
                      </size>
                     </property>
-                    <widget class="QLineEdit" name="txtValueCurve4">
-                     <property name="geometry">
-                      <rect>
-                       <x>140</x>
-                       <y>0</y>
-                       <width>41</width>
-                       <height>20</height>
-                      </rect>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
                     <widget class="QRadioButton" name="rdoBoldCurve4">
                      <property name="geometry">
                       <rect>
-                       <x>120</x>
+                       <x>160</x>
                        <y>3</y>
                        <width>16</width>
                        <height>16</height>
@@ -1071,7 +1019,7 @@
                       <rect>
                        <x>0</x>
                        <y>3</y>
-                       <width>91</width>
+                       <width>120</width>
                        <height>16</height>
                       </rect>
                      </property>
@@ -1085,7 +1033,7 @@
                     <widget class="QPushButton" name="btnColourCurve4">
                      <property name="geometry">
                       <rect>
-                       <x>100</x>
+                       <x>120</x>
                        <y>0</y>
                        <width>21</width>
                        <height>21</height>
@@ -1312,23 +1260,10 @@
                       <height>22</height>
                      </size>
                     </property>
-                    <widget class="QLineEdit" name="txtValueCurve5">
-                     <property name="geometry">
-                      <rect>
-                       <x>140</x>
-                       <y>0</y>
-                       <width>41</width>
-                       <height>20</height>
-                      </rect>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
                     <widget class="QRadioButton" name="rdoBoldCurve5">
                      <property name="geometry">
                       <rect>
-                       <x>120</x>
+                       <x>160</x>
                        <y>3</y>
                        <width>16</width>
                        <height>16</height>
@@ -1346,7 +1281,7 @@
                       <rect>
                        <x>0</x>
                        <y>3</y>
-                       <width>91</width>
+                       <width>120</width>
                        <height>16</height>
                       </rect>
                      </property>
@@ -1360,7 +1295,7 @@
                     <widget class="QPushButton" name="btnColourCurve5">
                      <property name="geometry">
                       <rect>
-                       <x>100</x>
+                       <x>120</x>
                        <y>0</y>
                        <width>21</width>
                        <height>21</height>
@@ -1587,23 +1522,10 @@
                       <height>22</height>
                      </size>
                     </property>
-                    <widget class="QLineEdit" name="txtValueCurve6">
-                     <property name="geometry">
-                      <rect>
-                       <x>140</x>
-                       <y>0</y>
-                       <width>41</width>
-                       <height>20</height>
-                      </rect>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
                     <widget class="QRadioButton" name="rdoBoldCurve6">
                      <property name="geometry">
                       <rect>
-                       <x>120</x>
+                       <x>160</x>
                        <y>0</y>
                        <width>16</width>
                        <height>16</height>
@@ -1621,7 +1543,7 @@
                       <rect>
                        <x>0</x>
                        <y>3</y>
-                       <width>91</width>
+                       <width>120</width>
                        <height>16</height>
                       </rect>
                      </property>
@@ -1635,7 +1557,7 @@
                     <widget class="QPushButton" name="btnColourCurve6">
                      <property name="geometry">
                       <rect>
-                       <x>100</x>
+                       <x>120</x>
                        <y>-3</y>
                        <width>21</width>
                        <height>21</height>
@@ -1862,23 +1784,10 @@
                       <height>22</height>
                      </size>
                     </property>
-                    <widget class="QLineEdit" name="txtValueCurve7">
-                     <property name="geometry">
-                      <rect>
-                       <x>140</x>
-                       <y>0</y>
-                       <width>41</width>
-                       <height>20</height>
-                      </rect>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
                     <widget class="QRadioButton" name="rdoBoldCurve7">
                      <property name="geometry">
                       <rect>
-                       <x>110</x>
+                       <x>160</x>
                        <y>3</y>
                        <width>16</width>
                        <height>16</height>
@@ -1896,7 +1805,7 @@
                       <rect>
                        <x>0</x>
                        <y>3</y>
-                       <width>80</width>
+                       <width>120</width>
                        <height>16</height>
                       </rect>
                      </property>
@@ -1910,7 +1819,7 @@
                     <widget class="QPushButton" name="btnColourCurve7">
                      <property name="geometry">
                       <rect>
-                       <x>85</x>
+                       <x>120</x>
                        <y>0</y>
                        <width>21</width>
                        <height>21</height>
@@ -2137,23 +2046,10 @@
                       <height>22</height>
                      </size>
                     </property>
-                    <widget class="QLineEdit" name="txtValueCurve8">
-                     <property name="geometry">
-                      <rect>
-                       <x>140</x>
-                       <y>0</y>
-                       <width>41</width>
-                       <height>20</height>
-                      </rect>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
                     <widget class="QRadioButton" name="rdoBoldCurve8">
                      <property name="geometry">
                       <rect>
-                       <x>110</x>
+                       <x>160</x>
                        <y>3</y>
                        <width>16</width>
                        <height>16</height>
@@ -2171,7 +2067,7 @@
                       <rect>
                        <x>0</x>
                        <y>3</y>
-                       <width>85</width>
+                       <width>120</width>
                        <height>16</height>
                       </rect>
                      </property>
@@ -2185,7 +2081,7 @@
                     <widget class="QPushButton" name="btnColourCurve8">
                      <property name="geometry">
                       <rect>
-                       <x>85</x>
+                       <x>120</x>
                        <y>0</y>
                        <width>21</width>
                        <height>21</height>
@@ -2412,23 +2308,10 @@
                       <height>22</height>
                      </size>
                     </property>
-                    <widget class="QLineEdit" name="txtValueCurve9">
-                     <property name="geometry">
-                      <rect>
-                       <x>140</x>
-                       <y>0</y>
-                       <width>41</width>
-                       <height>20</height>
-                      </rect>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
                     <widget class="QRadioButton" name="rdoBoldCurve9">
                      <property name="geometry">
                       <rect>
-                       <x>110</x>
+                       <x>160</x>
                        <y>3</y>
                        <width>16</width>
                        <height>16</height>
@@ -2446,7 +2329,7 @@
                       <rect>
                        <x>0</x>
                        <y>3</y>
-                       <width>85</width>
+                       <width>120</width>
                        <height>16</height>
                       </rect>
                      </property>
@@ -2460,7 +2343,7 @@
                     <widget class="QPushButton" name="btnColourCurve9">
                      <property name="geometry">
                       <rect>
-                       <x>85</x>
+                       <x>120</x>
                        <y>0</y>
                        <width>21</width>
                        <height>21</height>
@@ -2687,23 +2570,10 @@
                       <height>22</height>
                      </size>
                     </property>
-                    <widget class="QLineEdit" name="txtValueCurve10">
-                     <property name="geometry">
-                      <rect>
-                       <x>140</x>
-                       <y>0</y>
-                       <width>41</width>
-                       <height>20</height>
-                      </rect>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
                     <widget class="QRadioButton" name="rdoBoldCurve10">
                      <property name="geometry">
                       <rect>
-                       <x>110</x>
+                       <x>160</x>
                        <y>3</y>
                        <width>16</width>
                        <height>16</height>
@@ -2721,7 +2591,7 @@
                       <rect>
                        <x>0</x>
                        <y>3</y>
-                       <width>85</width>
+                       <width>120</width>
                        <height>16</height>
                       </rect>
                      </property>
@@ -2735,7 +2605,7 @@
                     <widget class="QPushButton" name="btnColourCurve10">
                      <property name="geometry">
                       <rect>
-                       <x>85</x>
+                       <x>120</x>
                        <y>0</y>
                        <width>21</width>
                        <height>21</height>
@@ -2962,23 +2832,10 @@
                       <height>22</height>
                      </size>
                     </property>
-                    <widget class="QLineEdit" name="txtValueCurve11">
-                     <property name="geometry">
-                      <rect>
-                       <x>140</x>
-                       <y>0</y>
-                       <width>41</width>
-                       <height>20</height>
-                      </rect>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
                     <widget class="QRadioButton" name="rdoBoldCurve11">
                      <property name="geometry">
                       <rect>
-                       <x>110</x>
+                       <x>160</x>
                        <y>3</y>
                        <width>16</width>
                        <height>16</height>
@@ -2996,7 +2853,7 @@
                       <rect>
                        <x>0</x>
                        <y>3</y>
-                       <width>85</width>
+                       <width>120</width>
                        <height>16</height>
                       </rect>
                      </property>
@@ -3010,7 +2867,7 @@
                     <widget class="QPushButton" name="btnColourCurve11">
                      <property name="geometry">
                       <rect>
-                       <x>85</x>
+                       <x>120</x>
                        <y>0</y>
                        <width>21</width>
                        <height>21</height>
@@ -3237,23 +3094,10 @@
                       <height>22</height>
                      </size>
                     </property>
-                    <widget class="QLineEdit" name="txtValueCurve12">
-                     <property name="geometry">
-                      <rect>
-                       <x>140</x>
-                       <y>0</y>
-                       <width>41</width>
-                       <height>20</height>
-                      </rect>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
                     <widget class="QRadioButton" name="rdoBoldCurve12">
                      <property name="geometry">
                       <rect>
-                       <x>110</x>
+                       <x>160</x>
                        <y>3</y>
                        <width>16</width>
                        <height>16</height>
@@ -3271,7 +3115,7 @@
                       <rect>
                        <x>0</x>
                        <y>3</y>
-                       <width>85</width>
+                       <width>120</width>
                        <height>16</height>
                       </rect>
                      </property>
@@ -3285,7 +3129,7 @@
                     <widget class="QPushButton" name="btnColourCurve12">
                      <property name="geometry">
                       <rect>
-                       <x>85</x>
+                       <x>120</x>
                        <y>0</y>
                        <width>21</width>
                        <height>21</height>
@@ -3512,23 +3356,10 @@
                       <height>22</height>
                      </size>
                     </property>
-                    <widget class="QLineEdit" name="txtValueCurve13">
-                     <property name="geometry">
-                      <rect>
-                       <x>140</x>
-                       <y>0</y>
-                       <width>41</width>
-                       <height>20</height>
-                      </rect>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
                     <widget class="QRadioButton" name="rdoBoldCurve13">
                      <property name="geometry">
                       <rect>
-                       <x>120</x>
+                       <x>160</x>
                        <y>0</y>
                        <width>16</width>
                        <height>16</height>
@@ -3546,7 +3377,7 @@
                       <rect>
                        <x>0</x>
                        <y>3</y>
-                       <width>91</width>
+                       <width>120</width>
                        <height>16</height>
                       </rect>
                      </property>
@@ -3560,7 +3391,7 @@
                     <widget class="QPushButton" name="btnColourCurve13">
                      <property name="geometry">
                       <rect>
-                       <x>100</x>
+                       <x>120</x>
                        <y>0</y>
                        <width>21</width>
                        <height>21</height>
@@ -3787,23 +3618,10 @@
                       <height>22</height>
                      </size>
                     </property>
-                    <widget class="QLineEdit" name="txtValueCurve14">
-                     <property name="geometry">
-                      <rect>
-                       <x>140</x>
-                       <y>0</y>
-                       <width>41</width>
-                       <height>20</height>
-                      </rect>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
                     <widget class="QRadioButton" name="rdoBoldCurve14">
                      <property name="geometry">
                       <rect>
-                       <x>110</x>
+                       <x>160</x>
                        <y>3</y>
                        <width>16</width>
                        <height>16</height>
@@ -3821,7 +3639,7 @@
                       <rect>
                        <x>0</x>
                        <y>3</y>
-                       <width>85</width>
+                       <width>120</width>
                        <height>16</height>
                       </rect>
                      </property>
@@ -3835,7 +3653,7 @@
                     <widget class="QPushButton" name="btnColourCurve14">
                      <property name="geometry">
                       <rect>
-                       <x>85</x>
+                       <x>120</x>
                        <y>0</y>
                        <width>21</width>
                        <height>21</height>
@@ -4062,23 +3880,10 @@
                       <height>22</height>
                      </size>
                     </property>
-                    <widget class="QLineEdit" name="txtValueCurve15">
-                     <property name="geometry">
-                      <rect>
-                       <x>140</x>
-                       <y>0</y>
-                       <width>41</width>
-                       <height>20</height>
-                      </rect>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
                     <widget class="QRadioButton" name="rdoBoldCurve15">
                      <property name="geometry">
                       <rect>
-                       <x>110</x>
+                       <x>160</x>
                        <y>3</y>
                        <width>16</width>
                        <height>16</height>
@@ -4096,7 +3901,7 @@
                       <rect>
                        <x>0</x>
                        <y>3</y>
-                       <width>85</width>
+                       <width>120</width>
                        <height>16</height>
                       </rect>
                      </property>
@@ -4110,7 +3915,7 @@
                     <widget class="QPushButton" name="btnColourCurve15">
                      <property name="geometry">
                       <rect>
-                       <x>85</x>
+                       <x>120</x>
                        <y>0</y>
                        <width>21</width>
                        <height>21</height>
@@ -4337,23 +4142,10 @@
                       <height>22</height>
                      </size>
                     </property>
-                    <widget class="QLineEdit" name="txtValueCurve16">
-                     <property name="geometry">
-                      <rect>
-                       <x>140</x>
-                       <y>0</y>
-                       <width>41</width>
-                       <height>20</height>
-                      </rect>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
                     <widget class="QRadioButton" name="rdoBoldCurve16">
                      <property name="geometry">
                       <rect>
-                       <x>110</x>
+                       <x>160</x>
                        <y>3</y>
                        <width>16</width>
                        <height>16</height>
@@ -4371,7 +4163,7 @@
                       <rect>
                        <x>0</x>
                        <y>3</y>
-                       <width>85</width>
+                       <width>120</width>
                        <height>16</height>
                       </rect>
                      </property>
@@ -4385,7 +4177,7 @@
                     <widget class="QPushButton" name="btnColourCurve16">
                      <property name="geometry">
                       <rect>
-                       <x>85</x>
+                       <x>120</x>
                        <y>0</y>
                        <width>21</width>
                        <height>21</height>
@@ -4612,23 +4404,10 @@
                       <height>22</height>
                      </size>
                     </property>
-                    <widget class="QLineEdit" name="txtValueCurve17">
-                     <property name="geometry">
-                      <rect>
-                       <x>140</x>
-                       <y>0</y>
-                       <width>41</width>
-                       <height>20</height>
-                      </rect>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
                     <widget class="QRadioButton" name="rdoBoldCurve17">
                      <property name="geometry">
                       <rect>
-                       <x>110</x>
+                       <x>160</x>
                        <y>3</y>
                        <width>16</width>
                        <height>16</height>
@@ -4646,7 +4425,7 @@
                       <rect>
                        <x>0</x>
                        <y>3</y>
-                       <width>85</width>
+                       <width>120</width>
                        <height>16</height>
                       </rect>
                      </property>
@@ -4660,7 +4439,7 @@
                     <widget class="QPushButton" name="btnColourCurve17">
                      <property name="geometry">
                       <rect>
-                       <x>85</x>
+                       <x>120</x>
                        <y>0</y>
                        <width>21</width>
                        <height>21</height>
@@ -4887,23 +4666,10 @@
                       <height>22</height>
                      </size>
                     </property>
-                    <widget class="QLineEdit" name="txtValueCurve18">
-                     <property name="geometry">
-                      <rect>
-                       <x>140</x>
-                       <y>0</y>
-                       <width>41</width>
-                       <height>20</height>
-                      </rect>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
                     <widget class="QRadioButton" name="rdoBoldCurve18">
                      <property name="geometry">
                       <rect>
-                       <x>110</x>
+                       <x>160</x>
                        <y>3</y>
                        <width>16</width>
                        <height>16</height>
@@ -4921,7 +4687,7 @@
                       <rect>
                        <x>0</x>
                        <y>3</y>
-                       <width>85</width>
+                       <width>120</width>
                        <height>16</height>
                       </rect>
                      </property>
@@ -4935,7 +4701,7 @@
                     <widget class="QPushButton" name="btnColourCurve18">
                      <property name="geometry">
                       <rect>
-                       <x>85</x>
+                       <x>120</x>
                        <y>0</y>
                        <width>21</width>
                        <height>21</height>
@@ -5162,23 +4928,10 @@
                       <height>22</height>
                      </size>
                     </property>
-                    <widget class="QLineEdit" name="txtValueCurve19">
-                     <property name="geometry">
-                      <rect>
-                       <x>140</x>
-                       <y>0</y>
-                       <width>41</width>
-                       <height>20</height>
-                      </rect>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
                     <widget class="QRadioButton" name="rdoBoldCurve19">
                      <property name="geometry">
                       <rect>
-                       <x>110</x>
+                       <x>160</x>
                        <y>0</y>
                        <width>16</width>
                        <height>16</height>
@@ -5196,7 +4949,7 @@
                       <rect>
                        <x>0</x>
                        <y>3</y>
-                       <width>85</width>
+                       <width>120</width>
                        <height>16</height>
                       </rect>
                      </property>
@@ -5210,7 +4963,7 @@
                     <widget class="QPushButton" name="btnColourCurve19">
                      <property name="geometry">
                       <rect>
-                       <x>85</x>
+                       <x>120</x>
                        <y>0</y>
                        <width>21</width>
                        <height>21</height>
@@ -5437,23 +5190,10 @@
                       <height>22</height>
                      </size>
                     </property>
-                    <widget class="QLineEdit" name="txtValueCurve20">
-                     <property name="geometry">
-                      <rect>
-                       <x>140</x>
-                       <y>0</y>
-                       <width>41</width>
-                       <height>20</height>
-                      </rect>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                    </widget>
                     <widget class="QRadioButton" name="rdoBoldCurve20">
                      <property name="geometry">
                       <rect>
-                       <x>110</x>
+                       <x>160</x>
                        <y>0</y>
                        <width>16</width>
                        <height>16</height>
@@ -5471,7 +5211,7 @@
                       <rect>
                        <x>0</x>
                        <y>3</y>
-                       <width>81</width>
+                       <width>120</width>
                        <height>16</height>
                       </rect>
                      </property>
@@ -5485,7 +5225,7 @@
                     <widget class="QPushButton" name="btnColourCurve20">
                      <property name="geometry">
                       <rect>
-                       <x>85</x>
+                       <x>120</x>
                        <y>0</y>
                        <width>21</width>
                        <height>21</height>

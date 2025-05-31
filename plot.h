@@ -66,7 +66,7 @@ public:
     void addCurvesName(QStringList lineNames);
     void hideCurve(int index);
     void showCurve(int index);
-    void stageDistinguish(void);
+    void stageDistinguish(std::pair<int, int> range);
 
     void testLogDataPtr();
     void setSelectedGroup(int index);
@@ -144,7 +144,7 @@ private:
     // ui界面中，选择曲线颜色的pushButton的指针。方便用指针数组写代码，不然很占地方
     QPushButton *pBtnColourCurve[20];
     // ui界面中，曲线当前值的lineEdit的指针。方便用指针数组写代码，不然很占地方
-    QLineEdit *pTxtValueCurve[20];
+    //QLineEdit *pTxtValueCurve[20];
     // ui界面中，选择曲线粗细的radioButton的指针。方便用指针数组写代码，不然很占地方
     QRadioButton *pRdoBoldCurve[20];
     // ui界面中，选择曲线样式的cmbLineStyle的指针。方便用指针数组写代码，不然很占地方

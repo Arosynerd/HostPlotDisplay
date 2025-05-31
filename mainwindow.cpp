@@ -777,7 +777,7 @@ void MainWindow::on_pushButton_3_released()
             plot->setCurvesName(templist);
 
             // 阶段区分
-            plot->stageDistinguish();
+            plot->stageDistinguish(group_index[selectedIndex]);
         }
     }
 }
