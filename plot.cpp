@@ -74,12 +74,157 @@ Plot::~Plot()
     // 释放 UI 资源
     delete ui;
 }
+void Plot::addFrameToWinPlot()
+{
+    QString temp;
+    QString temp2;
+    QStringList templist; // 对齐使用
+    QString info;
+    int temp_count3 = 1;
+    int temp_count4 = 3;
+    if (!frame)
+    {
+        frame = new QFrame(ui->winPlot);
+        frame->setAttribute(Qt::WA_TranslucentBackground, true);
+        frame->setWindowFlags(Qt::FramelessWindowHint);
+        frame->setStyleSheet("background:transparent; border:none;");
+
+        // 创建网格布局
+        QGridLayout *gridLayout = new QGridLayout(frame);
+        gridLayout->setContentsMargins(0, 0, 0, 0);
+        gridLayout->setSpacing(2);
+
+        // 动态添加若干 QLabel 到 frame，4列2行
+        QStringList testTexts = {
+            "测试文字1", "测试文字2", "测试文字3", "测试文字4",
+            "测试文字5", "测试文字6", "测试文字7", "测试文字8",
+            "测试文字9", "测试文字10", "测试文字11", "测试文字12",
+            "测试文字13", "测试文字14", "测试文字15", "测试文字16",
+            "测试文字17", "测试文字18", "测试文字19", "测试文字20",
+            "测试文字21", "测试文字22", "测试文字23", "测试文字24",
+            "测试文字25", "测试文字26", "测试文字27", "测试文字28",
+            "测试文字29", "测试文字30", "", "",
+            "测试文字33", "测试文字34", "", "",
+            "测试文字37", "测试文字38", "", "",
+            "测试文字41", "测试文字42", "", "",
+            "测试文字45", "测试文字46"};
+        int temp_count = 0;
+        int temp_count2 = 2;
+        for (int i = 0; i < CurveLineNamesInChinese.size(); ++i)
+        {
+            if (i < 12)
+            {
+                testTexts[temp_count] = CurveLineNamesInChinese[i];
+                temp_count += 4;
+            }
+            // else{
+            //     testTexts[temp_count2] = CurveLineNamesInChinese[i];
+            //     temp_count2 += 4;
+            // }
+        }
+        testTexts[2] = CurveLineNamesInChinese.at(12);
+        testTexts[6] = CurveLineNamesInChinese.at(13);
+        testTexts[10] = CurveLineNamesInChinese.at(14);
+        testTexts[14] = CurveLineNamesInChinese.at(15);
+        testTexts[18] = CurveLineNamesInChinese.at(16);
+        testTexts[22] = CurveLineNamesInChinese.at(17);
+        testTexts[26] = CurveLineNamesInChinese.at(18);
+        testTexts[30] = CurveLineNamesInChinese.at(19);
+
+        for (int i = 0; i < testTexts.size(); ++i)
+        {
+            QLabel *label = new QLabel(testTexts[i], frame);
+            label->setStyleSheet("color:black; font: 10pt 'Consolas'; background:transparent; border:none;");
+            int row = i / 4;
+            int col = i % 4;
+            gridLayout->addWidget(label, row, col);
+            labels.append(label);
+        }
+
+        // 设置 frame 的大小和位置（顶部居中，紧贴winPlot顶部）
+        int frameWidth = 300;
+        int frameHeight = 60;
+        frame->setFixedSize(frameWidth, frameHeight);
+        frame->move((ui->winPlot->width() - frameWidth) / 2, 0); // 顶部居中
+
+        // 让 frame 始终在最上层
+        frame->raise();
+        frame->show();
+    }
+    else
+    {
+
+        for (int i = 0; i < 20; ++i)
+        {
+            QCPGraph *graph = pPlot1->graph(i);
+            if (!graph)
+                continue;
+            // 解析出数字部分，包括符号
+            QRegularExpression re(R"([-+]?\d*\.?\d+)");
+            QRegularExpressionMatch match = re.match(graph->name());
+            if (match.hasMatch())
+            {
+                temp = match.captured(0);
+            }
+            else
+            {
+                temp = "";
+            }
+            templist << temp;
+        }
+        qDebug() << templist.size();
+    }
+    // 如果已存在，只需修改 label 内容
+    QStringList testTexts = {
+        "测试文字1", "测试文字2", "测试文字3", "测试文字4",
+        "测试文字5", "测试文字6", "测试文字7", "测试文字8",
+        "测试文字9", "测试文字10", "测试文字11", "测试文字12",
+        "测试文字13", "测试文字14", "测试文字15", "测试文字16",
+        "测试文字17", "测试文字18", "测试文字19", "测试文字20",
+        "测试文字21", "测试文字22", "测试文字23", "测试文字24",
+        "测试文字25", "测试文字26", "测试文字27", "测试文字28",
+        "测试文字29", "测试文字30", "测试文字31", "测试文字32",
+        "测试文字33", "测试文字34", "测试文字35", "测试文字36",
+        "测试文字37", "测试文字38", "测试文字39", "测试文字40",
+        "测试文字41", "测试文字42", "测试文字43", "测试文字44",
+        "测试文字45", "测试文字46"};
+    for (int i = 0; i < labels.size() && i < testTexts.size() && templist.size(); ++i)
+    {
+        if (i < 12)
+        {
+            if (i == 0)
+                labels[temp_count3]->setText(QString("%1     ").arg(templist[i].toDouble(), 8, 'f', 0));
+            else
+                labels[temp_count3]->setText(QString("%1     ").arg(templist[i].toDouble(), 8, 'f', 2));
+            temp_count3 += 4;
+        }
+    }
+    for (int i = 0; i < templist.size(); i++)
+    {
+        if (i >= 12)
+        {
+            labels[temp_count4]->setText(QString("%1").arg(templist[i].toDouble(), 8, 'f', 2));
+            temp_count4 += 4;
+        }
+    }
+
+    // 重新调整位置和显示
+    int frameWidth = 300;
+    int frameHeight = 300;
+    frame->setFixedSize(frameWidth, frameHeight);
+    frame->move((ui->winPlot->width() - frameWidth) / 2, 0);
+    frame->raise();
+    frame->show();
+}
+
+// 6. 如需后续访问这些 label，可将 labels 保存为成员变量
 
 // 绘图图表初始化
 void Plot::QPlot_init(QCustomPlot *customPlot)
 {
     qDebug() << "QPlot_init";
-    // 添加曲线名称、设置图例的文本
+    // addFrameToWinPlot();
+    //  添加曲线名称、设置图例的文本
     QStringList lineNames;
     lineNames << "bbq" << "波形2" << "波形3" << "波形4" << "波形5" << "波形6" << "速度" << "波形8" << "波形9" << "波形10"
               << "波形11" << "波形12" << "波形13" << "波形14" << "波形15" << "波形16" << "波形17" << "波形18" << "波形19" << "波形20";
@@ -976,11 +1121,25 @@ void Plot::showDashboard(QCustomPlot *customPlot)
         }
     }
     // ...existing code...
-    TopLegendFlash();
+    // TopLegendFlash();
+}
+QString padString(const QString &str, int totalWidth)
+{
+    int width = 0;
+    for (QChar ch : str)
+    {
+        width += ch.unicode() < 128 ? 1 : 2; // 英文算1，汉字算2
+    }
+    int spaces = totalWidth - width;
+    if (spaces > 0)
+        return str + QString(spaces, ' ');
+    else
+        return str;
 }
 
 void Plot::TopLegendFlash(void)
 {
+
     QString temp;
     QString temp2;
     QStringList templist; // 对齐使用
@@ -1016,8 +1175,11 @@ void Plot::TopLegendFlash(void)
         }
     }
 
-    QFont monoFont("Courier New"); // 或 "Monospace", "Consolas"
-    monoFont.setPointSize(10);
+    // QFont monoFont("Courier New"); // 或 "Monospace", "Consolas"
+    // monoFont.setPointSize(10);
+
+    QFont monoFont("Consolas"); // 或 "Courier New"、"Monaco"
+    monoFont.setStyleHint(QFont::Monospace);
 
     // d.alignString(templist, infoFont); // 按y对齐
     for (int i = 0; i < 12; ++i)
@@ -1025,7 +1187,7 @@ void Plot::TopLegendFlash(void)
         if (i < 8)
         {
             // info += templist.at(i);
-            QRegularExpression re(R"((\D+)(\d+(?:\.\d+)?)\s*(\D+)(\d+(?:\.\d+)?))");
+            QRegularExpression re(R"(([^-\d]+)(-?\d+(?:\.\d+)?)\s*([^-\d]+)(-?\d+(?:\.\d+)?))");
 
             // 执行匹配
             QRegularExpressionMatch match = re.match(templist.at(i));
@@ -1037,15 +1199,32 @@ void Plot::TopLegendFlash(void)
                 QString str2 = match.captured(3); // 第二个字符串
                 QString num2 = match.captured(4); // 第二个数字
 
-                // qDebug() << "str1:" << str1;
-                // qDebug() << "num1:" << num1.toDouble();
-                // qDebug() << "str2:" << str2;
-                // qDebug() << "num2:" << num2.toDouble();
-                info += QString::asprintf("%-15s %12.2f    %-10s %12.2f\n", str1.toStdString().c_str(), num1.toDouble(), str2.toStdString().c_str(), num2.toDouble());
+                qDebug() << "str1:" << str1;
+                qDebug() << "num1:" << num1.toDouble();
+                qDebug() << "str2:" << str2;
+                qDebug() << "num2:" << num2.toDouble();
+                // info += QString::asprintf("%-15scc dd%12.2faa  bb%-10scc dd%12.2f\n", str1.toStdString().c_str(), num1.toDouble(), str2.toStdString().c_str(), num2.toDouble());
+                // info += QString("%1cc dd%2aa  bb%3cc dd%4\n").arg(str1, -15).arg(num1.toDouble(), 12, 'f', 2).arg(str2, -10).arg(num2.toDouble(), 12, 'f', 2);
+                if (i == 0)
+                {
+                    info += QString("%1  %2 %3 %4\n")
+                                .arg(padString(str1, 12))
+                                .arg(num1.toInt(), 12)
+                                .arg(padString(str2, 12))
+                                .arg(num2.toDouble(), 12, 'f', 2);
+                }
+                else
+                {
+                    info += QString("%1 %2 %3 %4\n")
+                                .arg(padString(str1, 12))
+                                .arg(num1.toDouble(), 12, 'f', 2)
+                                .arg(padString(str2, 12))
+                                .arg(num2.toDouble(), 12, 'f', 2);
+                }
             }
         }
-        else
-        info += templist.at(i);
+        /// else
+        // info += templist.at(i);
     }
     allCurvesInfoText = new QCPItemText(pPlot1);
     // 设置无边框
@@ -1169,8 +1348,10 @@ void Plot::mouseMove2(QMouseEvent *e)
     setCurveslegendName(Cvlls);
     vLine->point1->setCoords(vLineX, pPlot1->yAxis->range().lower);
     vLine->point2->setCoords(vLineX, pPlot1->yAxis->range().upper);
-    TopLegendFlash();
+    // TopLegendFlash();
     pPlot1->replot();
+
+    addFrameToWinPlot();
 }
 
 void Plot::hideCurve(int index)

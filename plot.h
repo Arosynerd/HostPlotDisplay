@@ -73,6 +73,8 @@ public:
     void showGroupToTable();
     void setPid(int index, float kp, float ki, float kd, float integralLimit);
     void setCurveslegendName(QStringList lineNames);
+
+    void addFrameToWinPlot();
     
 protected:
     void keyPressEvent(QKeyEvent *event) override;
@@ -130,6 +132,10 @@ private:
     int pointOriginY=0;
     int pointCountX=0;
     int pointCountY=0;
+
+
+    QFrame *frame = nullptr;
+    QVector<QLabel*> labels;
 
     double cnt=0;// 当前绘图的X坐标
 
