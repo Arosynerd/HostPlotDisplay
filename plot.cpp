@@ -80,8 +80,12 @@ void Plot::addFrameToWinPlot()
     QString temp2;
     QStringList templist; // 对齐使用
     QString info;
+    bool IsFullyDisplay = true; // 修正不同屏幕下的显示问题
+    int addnum = 0;
     int temp_count3 = 1;
     int temp_count4 = 3;
+    int frameWidth = 300;
+    int frameHeight = 300;
     if (!frame)
     {
         frame = new QFrame(ui->winPlot);
@@ -142,8 +146,7 @@ void Plot::addFrameToWinPlot()
         }
 
         // 设置 frame 的大小和位置（顶部居中，紧贴winPlot顶部）
-        int frameWidth = 300;
-        int frameHeight = 60;
+
         frame->setFixedSize(frameWidth, frameHeight);
         frame->move((ui->winPlot->width() - frameWidth) / 2, 0); // 顶部居中
 
@@ -187,7 +190,7 @@ void Plot::addFrameToWinPlot()
         "测试文字37", "测试文字38", "测试文字39", "测试文字40",
         "测试文字41", "测试文字42", "测试文字43", "测试文字44",
         "测试文字45", "测试文字46"};
-    for (int i = 0; i < labels.size() && i < testTexts.size() && templist.size(); ++i)
+    for (int i = 0; i < templist.size(); ++i)
     {
         if (i < 12)
         {
@@ -197,19 +200,34 @@ void Plot::addFrameToWinPlot()
                 labels[temp_count3]->setText(QString("%1     ").arg(templist[i].toDouble(), 8, 'f', 2));
             temp_count3 += 4;
         }
-    }
-    for (int i = 0; i < templist.size(); i++)
-    {
-        if (i >= 12)
+        else if (i >= 12)
         {
             labels[temp_count4]->setText(QString("%1").arg(templist[i].toDouble(), 8, 'f', 2));
             temp_count4 += 4;
         }
+        if (IsFullyDisplay)
+        {
+            QFontMetrics fm(labels[i]->font());
+            int textWidth = fm.horizontalAdvance(labels[i]->text());
+            if (textWidth > labels[i]->width())
+            {
+                qDebug() << "Label " << i << " text is not fully displayed after update.";
+                frameWidth += 100;
+                IsFullyDisplay = false;
+            }
+        }
     }
+    // for (int i = 0; i < templist.size(); i++)
+    // {
+    //     if (i >= 12)
+    //     {
+    //         labels[temp_count4]->setText(QString("%1").arg(templist[i].toDouble(), 8, 'f', 2));
+    //         temp_count4 += 4;
+    //     }
+    // }
 
     // 重新调整位置和显示
-    int frameWidth = 300;
-    int frameHeight = 300;
+
     frame->setFixedSize(frameWidth, frameHeight);
     frame->move((ui->winPlot->width() - frameWidth) / 2, 0);
     frame->raise();
@@ -440,83 +458,83 @@ void Plot::QPlot_widget_init(void)
     // 获取控件指针数组，方便设置时编码书写
     pChkVisibleCurve[0] = ui->chkVisibleCurve1;
     pBtnColourCurve[0] = ui->btnColourCurve1;
-    //pTxtValueCurve[0] = ui->txtValueCurve1;
+    // pTxtValueCurve[0] = ui->txtValueCurve1;
     pRdoBoldCurve[0] = ui->rdoBoldCurve1;
     pChkVisibleCurve[1] = ui->chkVisibleCurve2;
     pBtnColourCurve[1] = ui->btnColourCurve2;
-   // pTxtValueCurve[1] = ui->txtValueCurve2;
+    // pTxtValueCurve[1] = ui->txtValueCurve2;
     pRdoBoldCurve[1] = ui->rdoBoldCurve2;
     pChkVisibleCurve[2] = ui->chkVisibleCurve3;
     pBtnColourCurve[2] = ui->btnColourCurve3;
-   // pTxtValueCurve[2] = ui->txtValueCurve3;
+    // pTxtValueCurve[2] = ui->txtValueCurve3;
     pRdoBoldCurve[2] = ui->rdoBoldCurve3;
     pChkVisibleCurve[3] = ui->chkVisibleCurve4;
     pBtnColourCurve[3] = ui->btnColourCurve4;
-   // pTxtValueCurve[3] = ui->txtValueCurve4;
+    // pTxtValueCurve[3] = ui->txtValueCurve4;
     pRdoBoldCurve[3] = ui->rdoBoldCurve4;
     pChkVisibleCurve[4] = ui->chkVisibleCurve5;
     pBtnColourCurve[4] = ui->btnColourCurve5;
-   // pTxtValueCurve[4] = ui->txtValueCurve5;
+    // pTxtValueCurve[4] = ui->txtValueCurve5;
     pRdoBoldCurve[4] = ui->rdoBoldCurve5;
     pChkVisibleCurve[5] = ui->chkVisibleCurve6;
     pBtnColourCurve[5] = ui->btnColourCurve6;
-    //pTxtValueCurve[5] = ui->txtValueCurve6;
+    // pTxtValueCurve[5] = ui->txtValueCurve6;
     pRdoBoldCurve[5] = ui->rdoBoldCurve6;
     pChkVisibleCurve[6] = ui->chkVisibleCurve7;
     pBtnColourCurve[6] = ui->btnColourCurve7;
-   // pTxtValueCurve[6] = ui->txtValueCurve7;
+    // pTxtValueCurve[6] = ui->txtValueCurve7;
     pRdoBoldCurve[6] = ui->rdoBoldCurve7;
     pChkVisibleCurve[7] = ui->chkVisibleCurve8;
     pBtnColourCurve[7] = ui->btnColourCurve8;
-   // pTxtValueCurve[7] = ui->txtValueCurve8;
+    // pTxtValueCurve[7] = ui->txtValueCurve8;
     pRdoBoldCurve[7] = ui->rdoBoldCurve8;
     pChkVisibleCurve[8] = ui->chkVisibleCurve9;
     pBtnColourCurve[8] = ui->btnColourCurve9;
-   // pTxtValueCurve[8] = ui->txtValueCurve9;
+    // pTxtValueCurve[8] = ui->txtValueCurve9;
     pRdoBoldCurve[8] = ui->rdoBoldCurve9;
     pChkVisibleCurve[9] = ui->chkVisibleCurve10;
     pBtnColourCurve[9] = ui->btnColourCurve10;
-   // pTxtValueCurve[9] = ui->txtValueCurve10;
+    // pTxtValueCurve[9] = ui->txtValueCurve10;
     pRdoBoldCurve[9] = ui->rdoBoldCurve10;
     pChkVisibleCurve[10] = ui->chkVisibleCurve11;
     pBtnColourCurve[10] = ui->btnColourCurve11;
-   // pTxtValueCurve[10] = ui->txtValueCurve11;
+    // pTxtValueCurve[10] = ui->txtValueCurve11;
     pRdoBoldCurve[10] = ui->rdoBoldCurve11;
     pChkVisibleCurve[11] = ui->chkVisibleCurve12;
     pBtnColourCurve[11] = ui->btnColourCurve12;
-   // pTxtValueCurve[11] = ui->txtValueCurve12;
+    // pTxtValueCurve[11] = ui->txtValueCurve12;
     pRdoBoldCurve[11] = ui->rdoBoldCurve12;
     pChkVisibleCurve[12] = ui->chkVisibleCurve13;
     pBtnColourCurve[12] = ui->btnColourCurve13;
-   // pTxtValueCurve[12] = ui->txtValueCurve13;
+    // pTxtValueCurve[12] = ui->txtValueCurve13;
     pRdoBoldCurve[12] = ui->rdoBoldCurve13;
     pChkVisibleCurve[13] = ui->chkVisibleCurve14;
     pBtnColourCurve[13] = ui->btnColourCurve14;
-   // pTxtValueCurve[13] = ui->txtValueCurve14;
+    // pTxtValueCurve[13] = ui->txtValueCurve14;
     pRdoBoldCurve[13] = ui->rdoBoldCurve14;
     pChkVisibleCurve[14] = ui->chkVisibleCurve15;
     pBtnColourCurve[14] = ui->btnColourCurve15;
-   // pTxtValueCurve[14] = ui->txtValueCurve15;
+    // pTxtValueCurve[14] = ui->txtValueCurve15;
     pRdoBoldCurve[14] = ui->rdoBoldCurve15;
     pChkVisibleCurve[15] = ui->chkVisibleCurve16;
     pBtnColourCurve[15] = ui->btnColourCurve16;
-   // pTxtValueCurve[15] = ui->txtValueCurve16;
+    // pTxtValueCurve[15] = ui->txtValueCurve16;
     pRdoBoldCurve[15] = ui->rdoBoldCurve16;
     pChkVisibleCurve[16] = ui->chkVisibleCurve17;
     pBtnColourCurve[16] = ui->btnColourCurve17;
-   // pTxtValueCurve[16] = ui->txtValueCurve17;
+    // pTxtValueCurve[16] = ui->txtValueCurve17;
     pRdoBoldCurve[16] = ui->rdoBoldCurve17;
     pChkVisibleCurve[17] = ui->chkVisibleCurve18;
     pBtnColourCurve[17] = ui->btnColourCurve18;
-   // pTxtValueCurve[17] = ui->txtValueCurve18;
+    // pTxtValueCurve[17] = ui->txtValueCurve18;
     pRdoBoldCurve[17] = ui->rdoBoldCurve18;
     pChkVisibleCurve[18] = ui->chkVisibleCurve19;
     pBtnColourCurve[18] = ui->btnColourCurve19;
-  //  pTxtValueCurve[18] = ui->txtValueCurve19;
+    //  pTxtValueCurve[18] = ui->txtValueCurve19;
     pRdoBoldCurve[18] = ui->rdoBoldCurve19;
     pChkVisibleCurve[19] = ui->chkVisibleCurve20;
     pBtnColourCurve[19] = ui->btnColourCurve20;
-   // pTxtValueCurve[19] = ui->txtValueCurve20;
+    // pTxtValueCurve[19] = ui->txtValueCurve20;
     pRdoBoldCurve[19] = ui->rdoBoldCurve20;
 
     pCmbLineStyle[0] = ui->cmbLineStyle1;
@@ -627,12 +645,12 @@ void Plot::ShowPlot_TimeDemo(QCustomPlot *customPlot, double num)
     // 给曲线添加数据
     for (int i = 0; i < 10; i++)
     {
-        //pTxtValueCurve[i]->setText(QString::number(num - i * 10, 'g', 8)); // 显示曲线当前值
+        // pTxtValueCurve[i]->setText(QString::number(num - i * 10, 'g', 8)); // 显示曲线当前值
         pCurve[i]->addData(cnt, num - i * 10);
     }
     for (int i = 10; i < 20; i++)
     {
-      //  pTxtValueCurve[i]->setText(QString::number(num + (i - 9) * 10, 'g', 8)); // 显示曲线当前值
+        //  pTxtValueCurve[i]->setText(QString::number(num + (i - 9) * 10, 'g', 8)); // 显示曲线当前值
         pCurve[i]->addData(cnt, num + (i - 9) * 10);
     }
 
@@ -680,8 +698,8 @@ void Plot::ShowPlot_WaveForm(QCustomPlot *customPlot, short value[])
     for (int i = 0; i < 20; i++)
     {
         // QString strNum = QString::number(num,'g',8);// double类型
-       // pTxtValueCurve[i]->setText(QString::number(value[i])); // 显示曲线当前值
-        pCurve[i]->addData(cnt, value[i]);                     // 从原值获取数据
+        // pTxtValueCurve[i]->setText(QString::number(value[i])); // 显示曲线当前值
+        pCurve[i]->addData(cnt, value[i]); // 从原值获取数据
         // pCurve[i]->addData(cnt, pTxtValueCurve[i]->text().toShort());// 从输入框获取数据
         //  因为20条线重叠在一起，所以QCustomPlot输入为0时看起来像不显示，隐藏其他后观察单条曲线是可以看到显示的
     }
@@ -728,7 +746,7 @@ void Plot::ShowPlot_WaveForm(QCustomPlot *customPlot, int value[])
     cnt++;
     for (int i = 0; i < 20; i++)
     {
-       // pTxtValueCurve[i]->setText(QString::number(value[i]));
+        // pTxtValueCurve[i]->setText(QString::number(value[i]));
         pCurve[i]->addData(cnt, value[i]);
     }
     //    if (ui->chkTrackX->checkState())
@@ -763,7 +781,7 @@ void Plot::ShowPlot_WaveForm(QCustomPlot *customPlot, float value[])
     cnt++;
     for (int i = 0; i < 20; i++)
     {
-       // pTxtValueCurve[i]->setText(QString::number(value[i]));
+        // pTxtValueCurve[i]->setText(QString::number(value[i]));
         pCurve[i]->addData(cnt, value[i]);
     }
     //    if (ui->chkTrackX->checkState())
@@ -1616,17 +1634,17 @@ void Plot::on_plottest_button_released()
 void Plot::setPid(int index, float kp, float ki, float kd, float integralLimit)
 {
     QString str;
-    str = QString("kp: %1 ki: %2 kd: %3 integralLimit: %4").arg(kp).arg(ki).arg(kd).arg(integralLimit);
+    str = QString("kp:%1 ki:%2 kd:%3 iLim:%4").arg(kp,4).arg(ki,4).arg(kd,4).arg(integralLimit,4);
     switch (index)
     {
     case 0:
-        ui->first_pid->setText(str);
+        ui->first_pid->setText("PID1 " + str);
         break;
     case 1:
-        ui->second_pid->setText(str);
+        ui->second_pid->setText("PID2 " + str);
         break;
     case 2:
-        ui->third_pid->setText(str);
+        ui->third_pid->setText("PID3 " + str);
         break;
     default:
         break;
