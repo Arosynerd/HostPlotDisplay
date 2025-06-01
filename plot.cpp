@@ -80,11 +80,11 @@ void Plot::addFrameToWinPlot()
     QString temp2;
     QStringList templist; // 对齐使用
     QString info;
-    bool IsFullyDisplay = true; // 修正不同屏幕下的显示问题
+    //bool IsFullyDisplay = true; // 修正不同屏幕下的显示问题
     int addnum = 0;
     int temp_count3 = 1;
     int temp_count4 = 3;
-    int frameWidth = 300;
+    int frameWidth = 350;
     int frameHeight = 300;
     if (!frame)
     {
@@ -205,17 +205,17 @@ void Plot::addFrameToWinPlot()
             labels[temp_count4]->setText(QString("%1").arg(templist[i].toDouble(), 8, 'f', 2));
             temp_count4 += 4;
         }
-        if (IsFullyDisplay)
-        {
-            QFontMetrics fm(labels[i]->font());
-            int textWidth = fm.horizontalAdvance(labels[i]->text());
-            if (textWidth > labels[i]->width())
-            {
-                qDebug() << "Label " << i << " text is not fully displayed after update.";
-                frameWidth += 100;
-                IsFullyDisplay = false;
-            }
-        }
+        // if (IsFullyDisplay)
+        // {
+        //     QFontMetrics fm(labels[i]->font());
+        //     int textWidth = fm.horizontalAdvance(labels[i]->text());
+        //     if (textWidth > labels[i]->width())
+        //     {
+        //         qDebug() << "Label " << i << " text is not fully displayed after update.";
+        //         frameWidth += 100;
+        //         IsFullyDisplay = false;
+        //     }
+        // }
     }
     // for (int i = 0; i < templist.size(); i++)
     // {
