@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>debug_32px_1103189_easyicon.net.ico</file>
         <file>chart_curve_32px_506507_easyicon.net.ico</file>
         <file>pic/ssCircle.png</file>
         <file>pic/ssDisc.png</file>
@@ -18,5 +17,6 @@
         <file>pic/ssPlusCircle.png</file>
         <file>pic/ssPeace.png</file>
         <file>axis_64px_1200251_easyicon.net.ico</file>
+        <file>BlackMyth_WuKong.ico</file>
     </qresource>
 </RCC>
