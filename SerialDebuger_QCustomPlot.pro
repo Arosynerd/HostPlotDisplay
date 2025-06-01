@@ -18,7 +18,6 @@ RC_ICONS = debug_32px_1103189_easyicon.net.ico
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    Service/test.cpp \
     filehelper.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -29,9 +28,12 @@ SOURCES += \
     qcustomplot.cpp
 
 HEADERS += \
+    filehelper.h \
     mainwindow.h \
     mycombobox.h \
+    new_data_parser.h \
     plot.h \
+    ploterror.h \
     qcustomplot.h
 
 FORMS += \
