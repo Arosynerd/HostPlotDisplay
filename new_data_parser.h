@@ -17,7 +17,7 @@
 
 
 
-
+#define MAX_TYPE_COUNT 38
 
 
 

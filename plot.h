@@ -16,7 +16,8 @@ extern QStringList CurveLineNames;
 
 // 小数点保留位名称
 #define DECIMAL_COUNT_FOR_JW 6
-
+#define FIRST_PHASE_COUNT_RANGE 5
+#define FIRST_PHASE_COUNT_COLOR_DEEPTH 30
 
 
 
@@ -45,7 +46,11 @@ public:
     /*
     闭区间，
     三个阶段的x轴范围
+    
     */
+
+    QVector<int> x4, x5, x6, x7;
+
     std::pair<int,int> range1;
     std::pair<int,int> range2;
     std::pair<int,int> range3;
@@ -57,7 +62,7 @@ public:
     QCPItemText *allCurvesInfoText = nullptr;
     QCPItemText *allCurvesInfoText2 = nullptr;
 
-    void ShowPlot_TimeDemo(QCustomPlot *customPlot, double num);
+    //void ShowPlot_TimeDemo(QCustomPlot *customPlot, double num);
     void ShowPlot_WaveForm(QCustomPlot *customPlot, short value[]);
     void ShowPlot_WaveForm(QCustomPlot *customPlot, int value[]);
     void ShowPlot_WaveForm(QCustomPlot *customPlot, float value[]);
@@ -81,7 +86,7 @@ protected:
     void keyReleaseEvent(QKeyEvent *event) override;
 public slots:
     void mouseMove2(QMouseEvent *e);
-    void onPlotClicked(QMouseEvent *event); // 新增：鼠标点击事件槽函数声明
+    void onPlotClicked(); // 新增：鼠标点击事件槽函数声明
 private slots:
     void TimeData_Update(void);
 
@@ -94,14 +99,15 @@ private slots:
     void on_btnColourBack_clicked();
 
     void on_txtPointOriginX_returnPressed();
+    /*调整xy轴范围的，弃用 2025 5 31*/
+    //void on_chkTrackX_stateChanged(int arg1);
 
-    void on_chkTrackX_stateChanged(int arg1);
+    //void on_chkAdjustY_stateChanged(int arg1);
 
-    void on_chkAdjustY_stateChanged(int arg1);
+    //void on_txtPointOriginY_returnPressed();
 
-    void on_txtPointOriginY_returnPressed();
-
-    void repPlotCoordinate();
+    /*动态画图时调整xy轴，弃用*/
+    //void repPlotCoordinate();
 
     void on_btnClearGraphs_clicked();
 
@@ -112,8 +118,8 @@ private slots:
     void on_tabWidget_currentChanged(int index);
 
     void on_pushButton_released();
-
-    void on_plottest_button_released();
+    /*测试按钮*/
+    //void on_plottest_button_released();
 
 private:
     Ui::Plot *ui;
@@ -124,6 +130,8 @@ private:
     QTimer *timer;
     // 绘图控件中曲线的指针
     QCPGraph *pCurve[20];
+
+    
     // 数据解析对象指针
     DataParser *parsefp = NULL;// 数据解析类
     // 绘图框X轴显示的坐标点数
@@ -163,7 +171,7 @@ private:
 
     void setAutoTrackX(QCustomPlot *pPlot);
 
-    void setManualSettingX(QCustomPlot *pPlot);
+    //void setManualSettingX(QCustomPlot *pPlot);
     void setAutoTrackY(QCustomPlot *pPlot);
 
     void showDashboard(QCustomPlot *customPlot);

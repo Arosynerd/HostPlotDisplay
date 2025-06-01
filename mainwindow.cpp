@@ -9,8 +9,11 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    setWindowTitle("Qt Serial Debugger");
+    setWindowTitle("Boats Debugger");
+    if(1){
     ui->txtRec->setLineWrapMode(QPlainTextEdit::NoWrap);
+    ui->checkBox->setChecked(true);  // 设置为默认选中状态
+    }
     CurveLineNames << "timestamp"
                    << "goDestSpeed"
                    << "originBearing"
@@ -112,14 +115,15 @@ MainWindow::MainWindow(QWidget *parent)
     }
     // qDebug输出它们
     // 输出带有"Serial"字样的串口信息
-    for (const QString &portInfo : serialPortName)
-    {
-        if (portInfo.contains("Serial", Qt::CaseInsensitive))
-        {
-            qDebug() << "serialPortName:" << portInfo;
-            Open_Serial(portInfo);
-        }
-    }
+    /*2025 5 31 暂时不启用这个功能*/
+    // for (const QString &portInfo : serialPortName)
+    // {
+    //     if (portInfo.contains("Serial", Qt::CaseInsensitive))
+    //     {
+    //         qDebug() << "serialPortName:" << portInfo;
+    //         Open_Serial(portInfo);
+    //     }
+    // }
 }
 
 MainWindow::~MainWindow()
@@ -764,7 +768,7 @@ void MainWindow::on_pushButton_3_released()
             {
                 plot->hideCurve(i);
             }
-            for(int i = 0; i < sizeof(defaultCurveDisplayIndex)/sizeof(defaultCurveDisplayIndex[0]); i++){
+            for(size_t i = 0; i < sizeof(defaultCurveDisplayIndex)/sizeof(defaultCurveDisplayIndex[0]); i++){
                 plot->showCurve(defaultCurveDisplayIndex[i]);
             }
             QStringList templist;
@@ -1208,4 +1212,13 @@ void MainWindow::on_pushButton_2_released()
 {
     qDebug() << "test";
     scrollToString("454247: GODEST: 1 2 80 1  178.955  177.908  178.360");
+}
+
+void MainWindow::on_checkBox_stateChanged(int arg1)
+{
+    if(arg1 == 0){
+        ui->txtRec->setLineWrapMode(QPlainTextEdit::WidgetWidth);
+    }else{
+        ui->txtRec->setLineWrapMode(QPlainTextEdit::NoWrap);
+    }
 }

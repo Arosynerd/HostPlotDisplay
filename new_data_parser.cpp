@@ -237,7 +237,7 @@ void DataParser::parseData(const QString &plainText, std::pair<int, int> group_i
             for (const QString &line : betweenLines)
             {
                 QStringList items = line.split(' ', QString::SkipEmptyParts);
-                if (items.size() >= 38)
+                if (items.size() == (MAX_TYPE_COUNT + 1))//滤掉一个已经丢弃的数据
                 {
                     innerGroupCount++;
                     logData[idx_index + innerGroupCount].id = items[0].toInt();
@@ -311,7 +311,7 @@ void DataParser::parseData(const QString &plainText, std::pair<int, int> group_i
             for (const QString &line : betweenLines)
             {
                 QStringList items = line.split(' ', QString::SkipEmptyParts);
-                if (items.size() >= 38)
+                if (items.size() == (MAX_TYPE_COUNT + 1))
                 {
                     innerGroupCount++;
                     logData[idx_index + innerGroupCount].id = items[0].toInt();
